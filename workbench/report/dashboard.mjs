@@ -4,14 +4,18 @@
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export function svgBars(data, { width = 480, barH = 22, gap = 8, pad = 120 } = {}) {
-  const max = Math.max(1, ...data.map((d) => d.value));
+  // Coerce values defensively: a non-numeric datum would otherwise poison every
+  // width via NaN. Real telemetry is numeric, but Plan 2 feeds live data here.
+  const val = (d) => Number(d.value) || 0;
+  const max = Math.max(1, ...data.map(val));
   const h = data.length * (barH + gap) + gap;
   const rows = data.map((d, i) => {
     const y = gap + i * (barH + gap);
-    const w = Math.round((width - pad - 60) * (d.value / max));
+    const v = val(d);
+    const w = Math.round((width - pad - 60) * (v / max));
     return `<text x="0" y="${y + barH * 0.7}" font-size="12">${esc(d.label)}</text>` +
       `<rect x="${pad}" y="${y}" width="${w}" height="${barH}" fill="#4f46e5"></rect>` +
-      `<text x="${pad + w + 6}" y="${y + barH * 0.7}" font-size="12">${d.value.toLocaleString('en-US')}</text>`;
+      `<text x="${pad + w + 6}" y="${y + barH * 0.7}" font-size="12">${v.toLocaleString('en-US')}</text>`;
   }).join('');
   return `<svg width="${width}" height="${h}" viewBox="0 0 ${width} ${h}" xmlns="http://www.w3.org/2000/svg">${rows}</svg>`;
 }
