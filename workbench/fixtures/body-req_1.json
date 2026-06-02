@@ -1,0 +1,8 @@
+{
+  "id": "msg_1",
+  "content": [
+    { "type": "thinking", "thinking": "0123456789012345678901234567890123456789" },
+    { "type": "text", "text": "0123456789" }
+  ],
+  "usage": { "output_tokens": 40 }
+}
