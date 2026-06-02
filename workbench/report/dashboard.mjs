@@ -1,0 +1,39 @@
+// workbench/report/dashboard.mjs
+// Self-contained dashboard: inline data + inline-SVG bars. No external assets.
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+export function svgBars(data, { width = 480, barH = 22, gap = 8, pad = 120 } = {}) {
+  const max = Math.max(1, ...data.map((d) => d.value));
+  const h = data.length * (barH + gap) + gap;
+  const rows = data.map((d, i) => {
+    const y = gap + i * (barH + gap);
+    const w = Math.round((width - pad - 60) * (d.value / max));
+    return `<text x="0" y="${y + barH * 0.7}" font-size="12">${esc(d.label)}</text>` +
+      `<rect x="${pad}" y="${y}" width="${w}" height="${barH}" fill="#4f46e5"></rect>` +
+      `<text x="${pad + w + 6}" y="${y + barH * 0.7}" font-size="12">${d.value.toLocaleString('en-US')}</text>`;
+  }).join('');
+  return `<svg width="${width}" height="${h}" viewBox="0 0 ${width} ${h}" xmlns="http://www.w3.org/2000/svg">${rows}</svg>`;
+}
+
+export function renderDashboard(r) {
+  const tokenBars = svgBars(r.rollup.perAgent.map((a) => ({ label: a.agent, value: a.tokens.total })));
+  const timeBars = svgBars(r.rollup.perAgent.map((a) => ({ label: a.agent, value: a.timeMs })));
+  const data = esc(JSON.stringify(r));
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Workbench — ${esc(r.trialId)}</title>
+<style>body{font:14px system-ui,sans-serif;margin:2rem;max-width:900px}h1{margin-bottom:0}
+section{margin:2rem 0}code{background:#f3f4f6;padding:.1em .3em;border-radius:3px}
+.note{color:#6b7280;font-size:.85rem}</style></head>
+<body>
+<h1>Workbench Report — ${esc(r.trialId)}</h1>
+<p class="note">Token-dominant: <b>${esc(r.rollup.dominance.tokens)}</b> · Time-dominant: <b>${esc(r.rollup.dominance.time)}</b> · OTEL↔costs.jsonl Δ ${esc(r.rollup.crossCheck.deltaPct)}%</p>
+<section><h2>Tokens per agent (total)</h2>${tokenBars}
+<p class="note">Thinking tokens are estimated (spec §3.3).</p></section>
+<section><h2>Time per agent (sum duration ms)</h2>${timeBars}</section>
+<section><h2>Raw results</h2>
+<script type="application/json" id="results-data">${data}</script>
+<details><summary>Show JSON</summary><pre>${data}</pre></details></section>
+</body></html>`;
+}
