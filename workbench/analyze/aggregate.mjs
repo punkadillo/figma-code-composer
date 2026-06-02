@@ -2,6 +2,9 @@
 // Join events + spans + thinking estimate into per-agent rows, fan-in gaps,
 // and a cross-run rollup. nanos are BigInt; we convert ns→ms as Number.
 
+// ns→ms, floored via BigInt integer division. Sub-ms precision is intentionally
+// dropped: pipeline durations are seconds-scale, so the <1ms truncation bias is
+// negligible. Subtraction always happens in ns BEFORE this divide (precision).
 const nsToMs = (ns) => Number(ns / 1000000n);
 
 // events: see otlp.extractApiRequestEvents; spans: otlp.extractLlmSpans
@@ -48,7 +51,11 @@ export function aggregateRun(events, spans, thinkingByAgent = new Map(), toolUse
   return [...byAgent.values()];
 }
 
-// Blocking = max(0, iconGeneratorEnd - componentBuilderEnd). [] if no icon span.
+// Icon fan-in blocking (spec §7). We use componentBuilderEnd as the
+// "consumer-ready" proxy: story-author/test-author consumers can only run once
+// the component is built, so max(0, iconGeneratorEnd − componentBuilderEnd) is
+// the EXTRA wall-clock the icon dependency imposes after the component was ready.
+// Returns [] when there is no icon-generator span (the icon-free control).
 export function fanInBlocking(spans) {
   const iconEnds = spans.filter(s => s.querySource === 'icon-generator' && s.endNs !== null).map(s => s.endNs);
   const compEnds = spans.filter(s => s.querySource === 'component-builder' && s.endNs !== null).map(s => s.endNs);

@@ -1,7 +1,7 @@
 // workbench/analyze/build-results.mjs
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { extractApiRequestEvents, extractLlmSpans, extractTokenDataPoints } from './otlp.mjs';
+import { extractApiRequestEvents, extractLlmSpans } from './otlp.mjs';
 import { loadResponseBodies } from './bodies.mjs';
 import { estimateThinkingByAgent } from './thinking.mjs';
 import { aggregateRun, fanInBlocking, buildRollup } from './aggregate.mjs';
@@ -18,15 +18,17 @@ function readCostsJsonl(dir) {
   let total = 0;
   for (const f of readdirSync(costsDir).filter(f => f.endsWith('.jsonl')))
     for (const line of readJsonl(join(costsDir, f)))
-      total += Number(line.total_tokens || line.totalTokens || 0);
+      total += Number(line.total_tokens ?? line.totalTokens ?? 0);
   return total;
 }
 
 export function buildResults(trialDir) {
   const manifest = JSON.parse(readFileSync(join(trialDir, 'run-manifest.json'), 'utf8'));
+  if ((manifest.runs?.length ?? 0) > 1) {
+    throw new Error(`build-results: multi-run trial dir not supported in Plan 1 (got ${manifest.runs.length} runs). Capture one trial dir per run — see workbench/RUNBOOK.md. Per-run window splitting is a Plan 2 task.`);
+  }
   const eventPayloads = readJsonl(join(trialDir, 'events.jsonl'));
   const spanPayloads = readJsonl(join(trialDir, 'spans.jsonl'));
-  const metricPayloads = readJsonl(join(trialDir, 'metrics.jsonl'));
 
   const events = extractApiRequestEvents(eventPayloads);
   const spans = extractLlmSpans(spanPayloads);
@@ -47,7 +49,6 @@ export function buildResults(trialDir) {
 
   const otelTotalTokens = runs.reduce((s, r) => s + r.agents.reduce((x, a) => x + a.tokens.total, 0), 0);
   const rollup = buildRollup(runs, { otelTotalTokens, costsJsonlTotalTokens: readCostsJsonl(trialDir) });
-  void extractTokenDataPoints(metricPayloads);
 
   return { trialId: manifest.trialId, generatedAt: null, runs, rollup };
 }
@@ -58,6 +59,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (!trialDir) { console.error('usage: build-results.mjs <trialDir> [outFile]'); process.exit(1); }
   const results = buildResults(trialDir);
   const json = JSON.stringify(results, null, 2);
-  if (outFile) { const { writeFileSync } = await import('node:fs'); writeFileSync(outFile, json); }
+  if (outFile) writeFileSync(outFile, json);
   else console.log(json);
 }
