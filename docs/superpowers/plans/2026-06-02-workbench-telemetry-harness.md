@@ -564,8 +564,8 @@ const events = [
 ];
 // nanos: icon span ends at 4000ns; component span ends at 9000ns
 const spans = [
-  { querySource: 'icon-generator',  startNs: 1000n, endNs: 4000n, ttftMs: 200 },
-  { querySource: 'component-builder', startNs: 1500n, endNs: 9000n, ttftMs: 300 },
+  { querySource: 'icon-generator',  startNs: 1000000n, endNs: 4000000n, ttftMs: 200 },
+  { querySource: 'component-builder', startNs: 1500000n, endNs: 9000000n, ttftMs: 300 },
 ];
 const thinkingByAgent = new Map([['component-builder', 24]]);
 
@@ -587,7 +587,7 @@ test('aggregateRun produces per-agent token/time/cost rows', () => {
 
 test('fanInBlocking = max(0, iconEnd - componentEnd) in ms; 0 when icon finishes first', () => {
   // icon ends 4000ns, component ends 9000ns -> not blocked on icons
-  assert.deepEqual(fanInBlocking(spans), [{ iconEndNs: '4000', componentEndNs: '9000', blockedMs: 0 }]);
+  assert.deepEqual(fanInBlocking(spans), [{ iconEndNs: '4000000', componentEndNs: '9000000', blockedMs: 0 }]);
   // icon ends AFTER component -> blocked
   const blocked = fanInBlocking([
     { querySource: 'component-builder', startNs: 0n, endNs: 3000000n },
