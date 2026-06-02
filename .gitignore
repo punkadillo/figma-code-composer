@@ -22,3 +22,7 @@ graphify-out/
 
 # Generated config (created locally by /init)
 .figma-pipeline/config.json
+
+# workbench — raw trial telemetry & generated dashboards are not committed
+workbench/trials/
+workbench/reports/*/dashboard.html
