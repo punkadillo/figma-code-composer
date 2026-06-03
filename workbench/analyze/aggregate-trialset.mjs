@@ -21,13 +21,14 @@ export function aggregateTrialset({ trialId, runs, comparisons = {} }) {
     if (!run) throw new Error(`aggregateTrialset: input ${i} (trialId=${res.trialId ?? '?'}) has no runs[0] — expected one single-run results.json per file`);
     return {
       rung: run.rung, tier: run.tier, runId: run.runId, icon: !!(run.scenario && run.scenario.icon),
-      agents: run.agents, fanIn: run.fanIn, accuracy: run.accuracy,
+      agents: run.agents, fanIn: run.fanIn, accuracy: run.accuracy, quality: run.quality,
     };
   });
 
   const out = { trialId, generatedAt: null, rungs, comparisons: {}, rollup: null, accuracyByRung: [] };
 
   out.accuracyByRung = rungs.map((r) => ({ rung: r.rung, composite: r.accuracy ? r.accuracy.composite : null }));
+  out.qualityByRung = rungs.map((r) => ({ rung: r.rung, composite: r.quality ? r.quality.composite : null }));
 
   const rollupRuns = rungs.map((r) => ({ agents: r.agents, scenario: { tier: r.tier } }));
   const otelTotal = rungs.reduce((s, r) => s + runTokens(r), 0);
