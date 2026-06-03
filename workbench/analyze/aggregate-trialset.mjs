@@ -16,8 +16,9 @@ const pctDelta = (from, to) => (from ? Math.round(((to - from) / from) * 100) : 
 
 // input: { trialId, runs: [singleRunResults...], comparisons?: {...} }
 export function aggregateTrialset({ trialId, runs, comparisons = {} }) {
-  const rungs = runs.map((res) => {
-    const run = res.runs[0];
+  const rungs = runs.map((res, i) => {
+    const run = res.runs && res.runs[0];
+    if (!run) throw new Error(`aggregateTrialset: input ${i} (trialId=${res.trialId ?? '?'}) has no runs[0] — expected one single-run results.json per file`);
     return {
       rung: run.rung, tier: run.tier, runId: run.runId, icon: !!(run.scenario && run.scenario.icon),
       agents: run.agents, fanIn: run.fanIn, accuracy: run.accuracy,

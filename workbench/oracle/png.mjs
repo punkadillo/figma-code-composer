@@ -12,6 +12,7 @@ export function decodePng(buf) {
   const idat = [];
   while (off < buf.length) {
     const len = buf.readUInt32BE(off);
+    if (off + 12 + len > buf.length) throw new Error('truncated PNG (chunk length exceeds buffer)');
     const type = buf.toString('ascii', off + 4, off + 8);
     const data = buf.subarray(off + 8, off + 8 + len);
     if (type === 'IHDR') {
