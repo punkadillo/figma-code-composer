@@ -37,6 +37,8 @@ export function buildResults(trialDir) {
 
   const runs = manifest.runs.map((m) => ({
     runId: m.runId,
+    rung: m.rung ?? null,
+    tier: m.tier ?? (m.scenario && m.scenario.tier) ?? null,
     scenario: m.scenario || {},
     command: m.command || '',
     startedAt: m.startedAt || null,
