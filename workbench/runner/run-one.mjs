@@ -15,6 +15,7 @@ import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { startReceiver } from '../collector/receiver.mjs';
 import { buildRunManifest } from './run-manifest-builder.mjs';
+import { checkEnv } from './check-env.mjs';
 
 const FLUSH_MS = 8000; // let the last OTEL batch (2-5s interval) land before closing
 
@@ -24,6 +25,18 @@ if (!trialDir || !runId) {
   process.exit(1);
 }
 const port = portArg ? Number(portArg) : 4318;
+
+// Preflight: a partial OTEL env captures nothing. Fail loudly before spending tokens.
+const envCheck = checkEnv(process.env, trialDir);
+if (!envCheck.ok) {
+  console.error('✖  OTEL telemetry env incomplete — aborting before the run.\n');
+  for (const k of envCheck.missing) console.error(`   missing:    ${k}`);
+  for (const m of envCheck.mismatched) console.error(`   mismatched: ${m.key} (want "${m.want}", got "${m.got}")`);
+  console.error('\n   Run `node workbench/runner/check-env.mjs ' + trialDir + '` for the full block.');
+  console.error('   This env must be set BEFORE launching Claude Code (RUNBOOK-live §4).');
+  process.exit(1);
+}
+
 const cfg = JSON.parse(readFileSync(join(trialDir, 'ladder-nodes.json'), 'utf8'));
 const runDir = join(trialDir, runId);
 mkdirSync(runDir, { recursive: true });
