@@ -41,3 +41,30 @@ section{margin:2rem 0}code{background:#f3f4f6;padding:.1em .3em;border-radius:3p
 <details><summary>Show JSON</summary><pre>${data}</pre></details></section>
 </body></html>`;
 }
+
+export function renderTrialsetDashboard(ts) {
+  const accBars = svgBars(ts.accuracyByRung.map((r) => ({ label: r.rung, value: r.composite ?? 0 })));
+  const tokenBars = svgBars(ts.rollup.perAgent.map((a) => ({ label: a.agent, value: a.tokens.total })));
+  const data = esc(JSON.stringify(ts));
+  const c = ts.comparisons || {};
+  const cmp = [
+    c.iconFanIn ? `Icon fan-in Δ ${c.iconFanIn.blockedMsDelta} ms` : null,
+    c.coldWarm ? `Cold→warm ${c.coldWarm.tokenDeltaPct}%` : null,
+    c.buildUpdate ? `Build→update ${c.buildUpdate.tokenDeltaPct}%` : null,
+  ].filter(Boolean).map(esc).join(' · ');
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Workbench Trial — ${esc(ts.trialId)}</title>
+<style>body{font:14px system-ui,sans-serif;margin:2rem;max-width:900px}h1{margin-bottom:0}
+section{margin:2rem 0}.note{color:#6b7280;font-size:.85rem}</style></head>
+<body>
+<h1>Workbench Trial Report — ${esc(ts.trialId)}</h1>
+<p class="note">${cmp}</p>
+<section><h2>Accuracy by rung (composite)</h2>${accBars}
+<p class="note">Composite blends visual/style/structural/gates; build-fail caps the score.</p></section>
+<section><h2>Tokens per agent (all rungs)</h2>${tokenBars}</section>
+<section><h2>Raw trialset</h2>
+<script type="application/json" id="trialset-data">${data}</script>
+<details><summary>Show JSON</summary><pre>${data}</pre></details></section>
+</body></html>`;
+}
