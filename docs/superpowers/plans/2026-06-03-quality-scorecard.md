@@ -169,7 +169,8 @@ Expected: FAIL — `Cannot find module './code.mjs'`.
 // for cyclomatic complexity (not a real CC), documented as such. metricScore
 // maps raw measures to 0-100 (higher = leaner) against soft caps.
 
-const BRANCH = /\b(if|for|while|case|catch)\b|&&|\|\||\?/g;
+// ternary `?` only — not `?.` (chaining), `??` (nullish), or `a?:` (optional prop)
+const BRANCH = /\b(if|for|while|case|catch)\b|&&|\|\||(?<!\?)\?(?![.?:])/g;
 
 export function codeMetrics(src = '') {
   const loc = src.split('\n').filter((l) => l.trim() !== '').length;
