@@ -35,3 +35,16 @@ test('a failed build gate caps the composite at the ceiling', () => {
   }, weights);
   assert.equal(acc.composite, 20);
 });
+
+test('cappedAt records the applied ceiling only when the build cap fires', () => {
+  const base = {
+    visual: { diffPct: 0, score: 100 },
+    style: { matchRate: 100, properties: {} },
+    structural: { score: 100 },
+  };
+  const passing = composeAccuracy({ ...base, gates: { typecheck: true, build: true, tests: true, a11y: true } }, weights);
+  assert.equal(passing.cappedAt, null);
+  const capped = composeAccuracy({ ...base, gates: { typecheck: true, build: false, tests: true, a11y: true } }, weights);
+  assert.equal(capped.cappedAt, 20);
+  assert.equal(capped.composite, 20);
+});

@@ -62,7 +62,7 @@ Each is a pure-ish function over a `{ generated, oracle }` bundle (spec §8). Co
 | --- | --- | --- | --- |
 | `oracle/score-visual.mjs` | visual | pixel/structural diff of the two screenshots (pixelmatch-style over decoded PNG buffers) | `diffPct` (0–100, lower better) → `score` |
 | `oracle/score-style.mjs` | computed-style | compare resolved color/spacing/typography/radius properties | per-property `matchRate` |
-| `oracle/score-structural.mjs` | structural | compare DOM tag/role/ARIA tree + exposed prop/variant surface | `structuralScore` |
+| `oracle/score-structural.mjs` | structural | compare DOM tag/role/ARIA tree + exposed prop/variant surface | `score` |
 | `oracle/score-gates.mjs` | gates | typecheck, build, generated unit tests, a11y scan — pass/fail each | `{ typecheck, build, tests, a11y }` |
 | `oracle/score.mjs` | composite | weighted blend (default visual 0.35 / style 0.30 / structural 0.20 / gates 0.15); a failed `build` gate caps composite at a configurable ceiling (default 20) | `accuracy: { composite, visual, style, structural, gates, weights }` |
 

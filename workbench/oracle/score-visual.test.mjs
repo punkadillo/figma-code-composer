@@ -40,3 +40,12 @@ test('sub-tolerance differences do not count', () => {
   const b = { width: 1, height: 1, data: [104,100,100,255] };
   assert.equal(scoreVisual(a, b, { tolerance: 8 }).diffPct, 0);
 });
+
+test('diffPct keeps one-decimal precision; score stays integer', () => {
+  // 1 of 3 pixels differs -> 33.333% -> diffPct 33.3, score round(66.66)=67
+  const a = { width: 3, height: 1, data: [0,0,0,255, 0,0,0,255, 0,0,0,255] };
+  const b = { width: 3, height: 1, data: [0,0,0,255, 0,0,0,255, 255,255,255,255] };
+  const r = scoreVisual(a, b);
+  assert.equal(r.diffPct, 33.3);
+  assert.equal(r.score, 67);
+});

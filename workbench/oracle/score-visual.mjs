@@ -19,6 +19,7 @@ export function scoreVisual(a, b, { tolerance = 8 } = {}) {
       Math.abs(a.data[o+3] - b.data[o+3]) > tolerance
     ) differing++;
   }
-  const diffPct = Math.round((differing / total) * 100);
-  return { diffPct, score: 100 - diffPct };
+  const rawPct = (differing / total) * 100;
+  const diffPct = Math.round(rawPct * 10) / 10;   // one-decimal precision
+  return { diffPct, score: Math.round(100 - rawPct) };
 }

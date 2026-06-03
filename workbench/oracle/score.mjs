@@ -11,9 +11,14 @@ export function composeAccuracy({ visual, style, structural, gates }, weights) {
     weights.structural * structural.score +
     weights.gates * gateScore;
   let composite = Math.round(raw);
-  if (gates.build === false) composite = Math.min(composite, weights.buildFailCeiling);
+  let cappedAt = null;
+  if (gates.build === false && composite > weights.buildFailCeiling) {
+    composite = weights.buildFailCeiling;
+    cappedAt = weights.buildFailCeiling;
+  }
   return {
     composite,
+    cappedAt,
     visual, style, structural, gates,
     weights: { visual: weights.visual, style: weights.style, structural: weights.structural, gates: weights.gates },
   };
