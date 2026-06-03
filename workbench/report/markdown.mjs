@@ -73,7 +73,7 @@ export function renderTrialsetMarkdown(ts) {
     L.push('| --- | ---: | ---: | ---: | ---: | ---: | ---: |');
     for (const r of ts.rungs) {
       const q = r.quality;
-      if (!q) { L.push(`| ${r.rung} | — | — | — | — | — | — |`); continue; }
+      if (!q || q.composite == null) { L.push(`| ${r.rung} | — | — | — | — | — | — |`); continue; }
       const d = q.dimensions;
       L.push(`| ${r.rung} | ${n(q.composite)} | ${n(d.optimizedCode.score)} | ${n(d.dx.score)} | ${n(d.docs.score)} | ${n(d.testDepth.score)} | ${n(d.storybook.score)} |`);
     }

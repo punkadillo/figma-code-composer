@@ -1,4 +1,4 @@
-# HeroUI live trial runbook (Plan 2)
+# HeroUI live trial runbook (Plans 2 + 3)
 
 Prereq: `export FP_ALLOW_RESTRICTED_WRITE=1` in every shell that writes under `workbench/`.
 Trial id below is `heroui-<date>`; create `workbench/trials/<trialId>/` and `workbench/reports/<trialId>/`.
