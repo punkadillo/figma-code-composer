@@ -1,0 +1,7 @@
+{
+  "visual": 0.35,
+  "style": 0.30,
+  "structural": 0.20,
+  "gates": 0.15,
+  "buildFailCeiling": 20
+}
