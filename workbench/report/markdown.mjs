@@ -47,3 +47,36 @@ export function renderMarkdown(r) {
   L.push('');
   return L.join('\n');
 }
+
+export function renderTrialsetMarkdown(ts) {
+  const L = [];
+  L.push(`# Workbench Trial Report — ${ts.trialId}`);
+  L.push('');
+  L.push(`> Generated: ${ts.generatedAt ?? '(unstamped)'} · Rungs: ${ts.rungs.length}`);
+  L.push('');
+  L.push('## Accuracy by ladder rung');
+  L.push('');
+  L.push('| rung | tier | composite | visual | style | structural | build gate |');
+  L.push('| --- | --- | ---: | ---: | ---: | ---: | :--: |');
+  for (const r of ts.rungs) {
+    const a = r.accuracy || {};
+    const capped = a.cappedAt != null ? ' (capped)' : '';
+    L.push(`| ${r.rung} | ${r.tier} | ${n(a.composite)}${capped} | ${n(a.visual?.score)} | ${n(a.style?.matchRate)} | ${n(a.structural?.score)} | ${a.gates?.build ? '✓' : '✗'} |`);
+  }
+  L.push('');
+  L.push('> Composite blends visual/style/structural/gates; a failed build gate caps the score (see `weights.json`). "(capped)" marks a rung whose composite was reduced by the build-fail ceiling.');
+  L.push('');
+  L.push('## Scenario comparisons');
+  L.push('');
+  const c = ts.comparisons || {};
+  if (c.iconFanIn) L.push(`- **Icon fan-in:** rung \`${c.iconFanIn.withIconsRung}\` blocked ${n(c.iconFanIn.blockedMsDelta)} ms longer than control \`${c.iconFanIn.controlRung}\`.`);
+  if (c.coldWarm) L.push(`- **Cold → warm cache:** token change ${c.coldWarm.tokenDeltaPct}% (run \`${c.coldWarm.coldRunId}\` → \`${c.coldWarm.warmRunId}\`).`);
+  if (c.buildUpdate) L.push(`- **Build → update:** token change ${c.buildUpdate.tokenDeltaPct}% (run \`${c.buildUpdate.buildRunId}\` → \`${c.buildUpdate.updateRunId}\`).`);
+  L.push('');
+  L.push('## Dominance (all rungs)');
+  L.push('');
+  L.push(`- **Token-dominant agent:** ${ts.rollup.dominance.tokens}`);
+  L.push(`- **Time-dominant agent:** ${ts.rollup.dominance.time}`);
+  L.push('');
+  return L.join('\n');
+}
