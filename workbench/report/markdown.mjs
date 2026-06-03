@@ -66,6 +66,21 @@ export function renderTrialsetMarkdown(ts) {
   L.push('');
   L.push('> Composite blends visual/style/structural/gates; a failed build gate caps the score (see `weights.json`). "(capped)" marks a rung whose composite was reduced by the build-fail ceiling.');
   L.push('');
+  if (ts.rungs.some((r) => r.quality)) {
+    L.push('## Quality by ladder rung');
+    L.push('');
+    L.push('| rung | composite | optimizedCode | dx | docs | testDepth | storybook |');
+    L.push('| --- | ---: | ---: | ---: | ---: | ---: | ---: |');
+    for (const r of ts.rungs) {
+      const q = r.quality;
+      if (!q) { L.push(`| ${r.rung} | — | — | — | — | — | — |`); continue; }
+      const d = q.dimensions;
+      L.push(`| ${r.rung} | ${n(q.composite)} | ${n(d.optimizedCode.score)} | ${n(d.dx.score)} | ${n(d.docs.score)} | ${n(d.testDepth.score)} | ${n(d.storybook.score)} |`);
+    }
+    L.push('');
+    L.push('> Quality blends deterministic metrics with a 3-vote judge panel (median) per dimension; see `oracle/rubric.md`.');
+    L.push('');
+  }
   L.push('## Scenario comparisons');
   L.push('');
   const c = ts.comparisons || {};
