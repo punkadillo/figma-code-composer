@@ -17,11 +17,25 @@ Trial id below is `heroui-<date>`; create `workbench/trials/<trialId>/` and `wor
 - Decode screenshots with `workbench/oracle/png.mjs` `decodePng` into the RGBA shape the visual scorer expects.
 
 ## 4. Start telemetry (Plan 1 harness)
-- `node workbench/collector/receiver.mjs workbench/trials/<trialId>/<runId> 4318` (one dir per run).
-- Export the env from `workbench/runner/env.mjs` `telemetryEnv` (see `workbench/RUNBOOK.md` step 2).
+- Export the OTEL env from `workbench/runner/env.mjs` `telemetryEnv` **before launching Claude Code** (see `workbench/RUNBOOK.md` step 2). It can't be set mid-session.
 
-## 5. Run the 9 invocations (one trial dir each)
-Per `workbench/runner/matrix.mjs` `defaultMatrix()` mapped onto the ladder:
+## 5. Run the 9 invocations — use the `run-one` wrapper (one command per run)
+The 9 runIds + their nodes/scenario live in `workbench/trials/<trialId>/ladder-nodes.json`.
+For each runId, in a separate terminal (Terminal B) run:
+
+    node workbench/runner/run-one.mjs workbench/trials/<trialId> <runId>
+
+It starts the receiver for that run dir, prints the exact `/figma-build`|`/figma-update`
+slash command to paste into the Claude session, waits for you to press **Enter** when the
+run completes (Claude prints ✅), then stamps `run-manifest.json`, waits ~8s for the OTEL
+flush, stops the receiver, and prints capture counts. Then run it again with the next runId.
+
+runIds in order: `icon-only atom molecule-cold organism template page all-icons molecule-warm molecule-update`
+(`molecule-cold/warm/update` = the cold/warm + build/update comparison pair).
+
+Manual fallback (no wrapper): `node workbench/collector/receiver.mjs workbench/trials/<trialId>/<runId> 4318`, run the slash command, Ctrl+C after ~8s, hand-write `run-manifest.json`.
+
+Legacy notes — `workbench/runner/matrix.mjs` `defaultMatrix()` is the generic axis source:
 - 7 cold `/figma-build <nodeId>` (icon-only, atom, molecule, organism, template, page, all-icons).
 - 1 warm: re-run a chosen rung's `/figma-build` (cache populated) -> coldWarm pair.
 - 1 update: `/figma-update <nodeId>` on a changed rung -> buildUpdate pair.
