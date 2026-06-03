@@ -32,3 +32,14 @@ test('codeMetrics handles empty input without throwing', () => {
   assert.equal(m.complexity, 0);
   assert.equal(m.metricScore, 100);
 });
+
+test('complexity proxy ignores optional chaining, nullish, and optional props', () => {
+  const src = `interface P { a?: string }
+export function C(p?: P) {
+  const x = p?.a ?? 'd';
+  return p ? x : '';
+}`;
+  // real branches: exactly one ternary `?`. p?.a (chaining), ?? (nullish),
+  // a?: and p?: (optional props/params) must NOT count.
+  assert.equal(codeMetrics(src).complexity, 1);
+});

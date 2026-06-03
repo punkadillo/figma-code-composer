@@ -3,7 +3,10 @@
 // for cyclomatic complexity (not a real CC), documented as such. metricScore
 // maps raw measures to 0-100 (higher = leaner) against soft caps.
 
-const BRANCH = /\b(if|for|while|case|catch)\b|&&|\|\||\?/g;
+// Branch-keyword proxy for cyclomatic complexity (not real CC). The ternary `?`
+// is matched only when it is NOT `?.` (optional chaining), `??` (nullish), or
+// `a?:` (TS optional prop) — those are not branches.
+const BRANCH = /\b(if|for|while|case|catch)\b|&&|\|\||(?<!\?)\?(?![.?:])/g;
 
 export function codeMetrics(src = '') {
   const loc = src.split('\n').filter((l) => l.trim() !== '').length;

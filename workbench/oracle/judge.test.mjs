@@ -22,3 +22,8 @@ test('judgePanel on empty votes returns score 0 and no rationales', () => {
   assert.equal(r.score, 0);
   assert.deepEqual(r.rationales, []);
 });
+
+test('judgePanel even-count median rounds half up (.5 → up)', () => {
+  // (65+66)/2 = 65.5 -> Math.round -> 66
+  assert.equal(judgePanel([{ score: 65, rationale: 'a' }, { score: 66, rationale: 'b' }]).score, 66);
+});
