@@ -1,16 +1,17 @@
 // workbench/report/build-report.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { renderMarkdown } from './markdown.mjs';
-import { renderDashboard } from './dashboard.mjs';
+import { renderMarkdown, renderTrialsetMarkdown } from './markdown.mjs';
+import { renderDashboard, renderTrialsetDashboard } from './dashboard.mjs';
 
 // generatedAt is passed in (Date.now is unavailable in some harness contexts).
 export function buildReport(resultsPath, generatedAt) {
   const r = JSON.parse(readFileSync(resultsPath, 'utf8'));
   r.generatedAt = generatedAt ?? r.generatedAt ?? null;
+  const isTrialset = Array.isArray(r.accuracyByRung);
   const dir = dirname(resultsPath);
-  writeFileSync(join(dir, 'report.md'), renderMarkdown(r));
-  writeFileSync(join(dir, 'dashboard.html'), renderDashboard(r));
+  writeFileSync(join(dir, 'report.md'), isTrialset ? renderTrialsetMarkdown(r) : renderMarkdown(r));
+  writeFileSync(join(dir, 'dashboard.html'), isTrialset ? renderTrialsetDashboard(r) : renderDashboard(r));
   return { md: join(dir, 'report.md'), html: join(dir, 'dashboard.html') };
 }
 
