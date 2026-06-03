@@ -263,7 +263,7 @@ export function surfaceMetrics({ component = '', stories = '', tests = '', docs 
   const propsMatch = component.match(/interface\s+\w*Props\s*\{([^}]*)\}/s)
     || component.match(/type\s+\w*Props\s*=\s*\{([^}]*)\}/s);
   const propCount = propsMatch
-    ? propsMatch[1].split('\n').map((l) => l.trim()).filter((l) => /^\w+\??\s*:/.test(l)).length
+    ? propsMatch[1].split(/[\n;]/).map((l) => l.trim()).filter((l) => /^\w+\??\s*:/.test(l)).length
     : 0;
   const namedExports = (component.match(/export\s+(const|function|class)\s+\w+/g) || []).length;
   const storyCount = (stories.match(/export\s+const\s+\w+/g) || []).length;
