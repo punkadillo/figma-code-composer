@@ -31,6 +31,12 @@ Snapshot each run's `/tmp/figma-<runId>/costs.jsonl` into `<runId>/costs/`. Note
 - `node workbench/analyze/build-results.mjs workbench/trials/<trialId>/<runId> workbench/trials/<trialId>/<runId>/results.json`
 - Render the generated component (`workbench/oracle/render-generated.mjs`) and score it: `scoreComponent({ generated, oracle }, { weights: weights.json, runGate })` -> write the result into that run's `results.json` run row `accuracy` field (replacing null). The `runGate` runs typecheck/build/test/a11y in the target dir.
 
+## 6b. Quality scorecard (per run)
+- Collect the generated artifacts for the rung: component source, `*.stories.tsx`, `*.test.tsx`, and the docs file.
+- For each of the 5 dimensions (optimizedCode, dx, docs, testDepth, storybook), spawn a **3-vote judge panel**: 3 fresh judge agents, each given the artifacts + the HeroUI oracle reference + `workbench/oracle/rubric.md`, each returning `{ score, rationale }`. Wire them through `makeJudgeFor(deps, rubric)` from `workbench/oracle/judge-live.mjs`.
+- Score the run with `scoreBoth(bundle, { fidelityWeights, runGate, qualityWeights: <oracle/quality-weights.json>, judgeFor, judgeVotes: 3 })`. Write the returned `{ fidelity, quality }` into the run row as `accuracy` (= fidelity) and `quality`.
+- Deterministic metric overrides (optional): pass real tsc/coverage/bundler numbers into the metric layer instead of the heuristic defaults.
+
 ## 7. Aggregate + report
 - `node workbench/analyze/aggregate-trialset.mjs workbench/reports/<trialId>/trialset.json workbench/trials/<trialId>/*/results.json --comparisons workbench/trials/<trialId>/comparisons.json` where `comparisons.json` names the iconFanIn / coldWarm / buildUpdate run ids.
 - `npm run workbench:report -- workbench/reports/<trialId>/trialset.json`
