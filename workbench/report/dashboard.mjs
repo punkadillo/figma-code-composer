@@ -44,6 +44,7 @@ section{margin:2rem 0}code{background:#f3f4f6;padding:.1em .3em;border-radius:3p
 
 export function renderTrialsetDashboard(ts) {
   const accBars = svgBars(ts.accuracyByRung.map((r) => ({ label: r.rung, value: r.composite ?? 0 })));
+  const qualBars = svgBars((ts.qualityByRung || []).map((r) => ({ label: r.rung, value: r.composite ?? 0 })));
   const tokenBars = svgBars(ts.rollup.perAgent.map((a) => ({ label: a.agent, value: a.tokens.total })));
   const data = esc(JSON.stringify(ts));
   const c = ts.comparisons || {};
@@ -62,6 +63,8 @@ section{margin:2rem 0}.note{color:#6b7280;font-size:.85rem}</style></head>
 <p class="note">${cmp}</p>
 <section><h2>Accuracy by rung (composite)</h2>${accBars}
 <p class="note">Composite blends visual/style/structural/gates; build-fail caps the score.</p></section>
+<section><h2>Quality by rung (composite)</h2>${qualBars}
+<p class="note">Quality = metrics + 3-vote judge panel (median) per dimension.</p></section>
 <section><h2>Tokens per agent (all rungs)</h2>${tokenBars}</section>
 <section><h2>Raw trialset</h2>
 <script type="application/json" id="trialset-data">${data}</script>
