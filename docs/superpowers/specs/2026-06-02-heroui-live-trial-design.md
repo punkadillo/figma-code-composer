@@ -21,36 +21,36 @@ Decisions locked during brainstorming:
 
 | Role | Concretely | Access |
 | --- | --- | --- |
-| **Reference / oracle** | clone of `heroui-inc/heroui@v3` — its Storybook (`packages/storybook`, 90 components each with `*.stories.tsx`) and the HeroUI Figma Kit (fileKey `JoSiX3iGngB9rlOkHX7vRH`) | read-only |
+| **Reference / oracle** | clone of `heroui-inc/heroui@v3` — its Storybook (`packages/storybook`, 87 components each with `*.stories.tsx`) and the **HeroUI Figma Kit V3 (Community)**, fileKey **`qGjFwr9ZWpLk8xsgskwEHe`** | read-only |
 | **Write-target** | fresh scratch React + Tailwind v4 app at `workbench/trials/<trialId>/target/` | pipeline writes generated components here |
 | **Telemetry** | the Plan 1 harness, unchanged | one trial dir per run |
 
 Config written by `/init-figma-compose`: `framework=react`, `cssSystem=tailwind-v4`, `designSystem=none`, `designMethodology=atomic`. (HeroUI may or may not be a wired design system; irrelevant because we chose atomic/from-scratch.) `workbench/**` must be in `config.writeScope.allowedDirs`.
 
-The Figma file is a **single composed marketing cover** (hero scene: dot-grid art, ~50 decorative Chips, Buttons, an Input, a Tooltip, a Theme switch, Cards, a Logo) plus a separate **Icons** page — NOT a component gallery. The ladder therefore draws atoms/molecules/organisms from elements *within* the cover, template/page from cover sub-sections and the whole cover, and icons from the Icons page.
+> **Figma file updated 2026-06-03.** The trial now uses the **HeroUI Figma Kit V3** file (`qGjFwr9ZWpLk8xsgskwEHe`), which supersedes the earlier community kit (`JoSiX3iGngB9rlOkHX7vRH`). Unlike the old single-cover kit, V3 is a **proper component library**: one top-level page per component (Button `5375:69211`, Card `5375:72791`, Input `17293:26222`, Alert `5375:72355`, Tooltip, Modal, Tabs, …), plus a **Cover** page (`2912:29668`), an **Icons** page (`2217:823`), and a **"Templates & Examples"** canvas (`4672:32615`) holding real composed screens (Form `14065:36430`, Calendar `14065:36403`, a full **mail** app page `18351:18784` at 1440×1024, a MacBook layout `18348:17007`). Component rungs draw from the per-component pages; **template/page rungs draw from the Templates & Examples canvas** per the user's direction.
 
-## 3. Ladder → Figma node mapping (discovery, not hardcoded)
+## 3. Ladder → Figma node mapping (confirmed for V3, 2026-06-03)
 
-A **discovery step** drills the cover frame tree (`get_metadata` on page `0:1`) and the Icons page (`10:1849`), and proposes one node per rung. The operator confirms node IDs before the runs. Seed mapping:
+Discovery drilled the V3 component pages, the Icons page (`2217:823`), and the Templates & Examples canvas (`4672:32615`). Locked node mapping for trial `heroui-20260603`:
 
-| # | Rung | Complexity tier | Seed source | Icon axis |
-| --- | --- | --- | --- | --- |
-| 1 | icon-only | trivial | a node on the **Icons** page (`10:1849`) | — |
-| 2 | atom | trivial/moderate | Button within the cover | no-icon |
-| 3 | molecule | moderate | Input (or Chip + label) | no-icon |
-| 4 | organism | complex | Card / Tooltip / Theme-switch composite | no-icon control |
-| 5 | template | complex | a composed cover sub-section (panel) | — |
-| 6 | page | extreme | the whole **Cover** | — |
-| 7 | all + icons | complex | rung 4 (or 5) rebuilt WITH icons | icon pair vs rung-4 control |
+| # | Rung | Complexity tier | V3 node | Source page | Icon axis |
+| --- | --- | --- | --- | --- | --- |
+| 1 | icon-only | trivial | `13354:830` (check icon) | Icons (`2217:823`) | — |
+| 2 | atom | trivial | `5375:69211` (Button) | Button page | no-icon |
+| 3 | molecule | moderate | `17293:26222` (Input) | Input page | no-icon |
+| 4 | organism | complex | `5375:72791` (Card) | Card page | no-icon **control** |
+| 5 | template | complex | `14065:36430` (Form) | Templates & Examples (`4672:32615`) | — |
+| 6 | page | extreme | `18351:18784` (mail, 1440×1024) | Templates & Examples (`4672:32615`) | — |
+| 7 | all + icons | complex | `5375:72355` (Alert) | Alert page | icon pair vs rung-4 control |
 
-Rungs 4 and 7 form the **icon fan-in pair** (same composite, without vs with icons) that the Plan 1 `fanInBlocking` analyzer measures.
+Rungs 4 and 7 form the **icon fan-in pair**: Card (rung 4, icon-free → `fanInBlocking` returns `[]` as the control) vs Alert (rung 7, status + close icons → icon-generator runs in parallel with component-builder). The Plan 1 `fanInBlocking` analyzer measures the gap on rung 7.
 
 ## 4. Oracle capture (hybrid)
 
 `workbench/oracle/capture.mjs` produces, per rung, a reference bundle `{ screenshotPath, computedStyle, dom }`:
 
-- **Component rungs (1–4):** start HeroUI's Storybook locally (`pnpm --filter @heroui/storybook ...`) or query the connected `storybook-sb-mcp`; Playwright loads the matching story iframe and captures screenshot + `getComputedStyle` of the root + `outerHTML`.
-- **Template/page rungs (5–6):** `mcp__figma__get_screenshot` of the Figma node (visual oracle) + `mcp__figma__get_variable_defs` for the style-token reference (no Storybook equivalent exists).
+- **Component rungs (icon-only, atom, molecule, organism, all-icons):** start HeroUI's Storybook locally (`pnpm --filter @heroui/storybook ...`) or query the connected `storybook-sb-mcp`; Playwright loads the matching story iframe (Button, Input, Card, Alert, an icon) and captures screenshot + `getComputedStyle` of the root + `outerHTML`.
+- **Template/page rungs (Form, mail page):** `mcp__figma__get_screenshot` of the Figma node from the Templates & Examples canvas (visual oracle) + `mcp__figma__get_variable_defs` for the style-token reference (no Storybook equivalent exists).
 
 `workbench/oracle/render-generated.mjs` does the same capture against the generated component in the scratch target (a minimal Storybook or Vite page Playwright drives). Capture is the only part that needs live services; it is thin and IO-only.
 
@@ -86,9 +86,9 @@ Report renderers (`report/markdown.mjs`, `report/dashboard.mjs`) gain an **Accur
 ## 7. Live-trial execution flow (~9 runs)
 
 1. Clone `heroui-inc/heroui@v3` into a read-only reference dir.
-2. `/init-figma-compose` against `workbench/trials/<trialId>/target/` (react / tailwind-v4 / atomic); add `workbench/**` to `writeScope.allowedDirs`.
-3. Discovery: drill the cover + Icons page; confirm the 7 ladder node IDs.
-4. Capture the oracle bundles (Storybook for 1–4, Figma for 5–6).
+2. `/init-figma-compose` against `workbench/trials/<trialId>/target/` (react / tailwind-v4 / atomic); add `workbench/**` to `writeScope.allowedDirs`. Set `figma.defaultFileKeys = ["qGjFwr9ZWpLk8xsgskwEHe"]`.
+3. Discovery: drill the V3 component pages, Icons page (`2217:823`), and Templates & Examples canvas (`4672:32615`); confirm the 7 ladder node IDs (see §3).
+4. Capture the oracle bundles (Storybook for the component rungs, Figma for Form + mail-page rungs).
 5. Start the Plan 1 OTLP receiver; export the telemetry env.
 6. Run the 9 invocations, **one trial dir each**: 7 cold `/figma-build <node>` across the ladder, 1 warm re-build of a chosen rung, 1 `/figma-update` of a chosen rung. Snapshot each run's `costs.jsonl`.
 7. Per run: `buildResults` → single-run `results.json`.
