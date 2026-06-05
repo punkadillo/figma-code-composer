@@ -56,15 +56,22 @@ export function renderTrialsetMarkdown(ts) {
   L.push('');
   L.push('## Accuracy by ladder rung');
   L.push('');
-  L.push('| rung | tier | composite | visual | style | structural | build gate |');
-  L.push('| --- | --- | ---: | ---: | ---: | ---: | :--: |');
+  L.push('| rung | tier | composite | visual | style | struct·src | struct·dom | build gate |');
+  L.push('| --- | --- | ---: | ---: | ---: | ---: | ---: | :--: |');
   for (const r of ts.rungs) {
     const a = r.accuracy || {};
     const capped = a.cappedAt != null ? ' (capped)' : '';
-    L.push(`| ${r.rung} | ${r.tier} | ${n(a.composite)}${capped} | ${n(a.visual?.score)} | ${n(a.style?.matchRate)} | ${n(a.structural?.score)} | ${a.gates?.build ? '✓' : '✗'} |`);
+    const cell = (v) => (v == null ? '—' : n(v));
+    // Build-gate column reflects the deterministic gates (r.gates) when present, so it
+    // agrees with the Build-gates table; falls back to any accuracy.gates.build.
+    const g = r.gates;
+    const gatePass = g ? (g.tsc !== false && g.build !== false && (!g.tests || g.tests.passed === g.tests.total))
+                       : (a.gates ? !!a.gates.build : null);
+    const gateCell = gatePass == null ? '—' : (gatePass ? '✓' : '✗');
+    L.push(`| ${r.rung} | ${r.tier} | ${cell(a.composite)}${capped} | ${cell(a.visual?.score)} | ${cell(a.style?.matchRate)} | ${cell(a.structuralSource?.score)} | ${cell(a.structuralDom?.score)} | ${gateCell} |`);
   }
   L.push('');
-  L.push('> Composite blends visual/style/structural/gates; a failed build gate caps the score (see `weights.json`). "(capped)" marks a rung whose composite was reduced by the build-fail ceiling.');
+  L.push('> Composite/visual/style/structural require live rendering (pixel-diff + computed-style) and read `—` until a render pass runs — see `analysis/01-accuracy-feasibility.md`. The **build gate** column is real (from the deterministic gates below). "(capped)" marks a build-fail-capped composite.');
   L.push('');
   if (ts.rungs.some((r) => r.quality)) {
     L.push('## Quality by ladder rung');
@@ -78,9 +85,51 @@ export function renderTrialsetMarkdown(ts) {
       L.push(`| ${r.rung} | ${n(q.composite)} | ${n(d.optimizedCode.score)} | ${n(d.dx.score)} | ${n(d.docs.score)} | ${n(d.testDepth.score)} | ${n(d.storybook.score)} |`);
     }
     L.push('');
-    L.push('> Quality blends deterministic metrics with a 3-vote judge panel (median) per dimension; see `oracle/rubric.md`.');
+    L.push('> Quality = source-based judge, **3-vote median panel** per dimension (15 judge agents across the 5 scored rungs) over `target` + `ref-heroui` against `oracle/rubric.md`, weighted by `oracle/quality-weights.json`. `icon-only`/`page` are out of scope (no full component). Dimensions are the per-dimension median of the panel; the deterministic metric-blend layer is not yet applied.');
     L.push('');
   }
+  // Build gates — the deterministic, source-derivable half of accuracy (visual/style
+  // need live rendering and are omitted). tsc/build are whole-target; tests are per rung.
+  if (ts.rungs.some((r) => r.gates)) {
+    L.push('## Build gates by rung (deterministic)');
+    L.push('');
+    L.push('| rung | tsc | build | unit tests | gate |');
+    L.push('| --- | :--: | :--: | ---: | :--: |');
+    const mark = (b) => (b == null ? '—' : b ? '✓' : '✗');
+    for (const r of ts.rungs) {
+      const g = r.gates;
+      if (!g) { L.push(`| ${r.rung} | — | — | — | — |`); continue; }
+      const t = g.tests;
+      const testsCell = t ? `${t.passed}/${t.total}` : '—';
+      const pass = g.tsc !== false && g.build !== false && (!t || t.passed === t.total);
+      L.push(`| ${r.rung} | ${mark(g.tsc)} | ${mark(g.build)} | ${testsCell} | ${pass ? '✓' : '✗'} |`);
+    }
+    L.push('');
+    L.push('> The build-gate is the source-derivable slice of accuracy. Visual (pixel-diff) and style (computed-style) scoring require live rendering and are not included here — see `analysis/01-accuracy-feasibility.md`.');
+    L.push('');
+  }
+  // Cost & token ladder — the per-rung deterministic data (spec §7: per-rung
+  // token totals broken out, rolled from each run's OTEL agent aggregation).
+  const sumTok = (agents, k) => (agents || []).reduce((s, a) => s + (a.tokens?.[k] ?? 0), 0);
+  const sumNum = (agents, k) => (agents || []).reduce((s, a) => s + (a[k] ?? 0), 0);
+  // timeMs is a number in the rollup but an object {sumDuration,...} on rung agents.
+  const ms = (v) => (typeof v === 'number' ? v : (v?.sumDuration ?? 0));
+  const sumMs = (agents) => (agents || []).reduce((s, a) => s + ms(a.timeMs), 0);
+  L.push('## Cost & token ladder by rung');
+  L.push('');
+  L.push('| rung | tier | requests | total tokens | output | cacheRead | cacheCreate | model time (ms) | cost (USD) |');
+  L.push('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
+  let tTot = 0, tCost = 0;
+  for (const r of ts.rungs) {
+    const a = r.agents;
+    const total = sumTok(a, 'total'); const cost = sumNum(a, 'costUsd');
+    tTot += total; tCost += cost;
+    L.push(`| ${r.rung} | ${r.tier} | ${n(sumNum(a, 'requests'))} | ${n(total)} | ${n(sumTok(a, 'output'))} | ${n(sumTok(a, 'cacheRead'))} | ${n(sumTok(a, 'cacheCreation'))} | ${n(sumMs(a))} | ${cost.toFixed(4)} |`);
+  }
+  L.push(`| **total** | — | — | **${n(tTot)}** | — | — | — | — | **${tCost.toFixed(4)}** |`);
+  L.push('');
+  L.push('> Tokens are OTEL-reported per run, summed across that run\'s agents. `cacheRead` typically dominates `total` (prompt-cache hits are billed cheap but counted). `model time` is summed request duration, not wall-clock.');
+  L.push('');
   L.push('## Scenario comparisons');
   L.push('');
   const c = ts.comparisons || {};
@@ -92,6 +141,15 @@ export function renderTrialsetMarkdown(ts) {
   L.push('');
   L.push(`- **Token-dominant agent:** ${ts.rollup.dominance.tokens}`);
   L.push(`- **Time-dominant agent:** ${ts.rollup.dominance.time}`);
+  for (const [tier, d] of Object.entries(ts.rollup.dominance.byTier || {}))
+    L.push(`  - tier \`${tier}\`: ${d.tokens}`);
+  L.push('');
+  L.push('## Cross-check (OTEL vs costs.jsonl)');
+  L.push('');
+  const cc = ts.rollup.crossCheck || {};
+  L.push(`- OTEL total tokens: ${n(cc.otelTotalTokens)}`);
+  L.push(`- costs.jsonl total tokens: ${n(cc.costsJsonlTotalTokens)}`);
+  L.push(`- delta: ${cc.deltaPct ?? 0}%`);
   L.push('');
   return L.join('\n');
 }
