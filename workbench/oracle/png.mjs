@@ -23,21 +23,23 @@ export function decodePng(buf) {
     } else if (type === 'IEND') break;
     off += 12 + len; // len + type(4) + data + crc(4)
   }
-  if (bitDepth !== 8 || colorType !== 6) throw new Error(`unsupported PNG (bitDepth=${bitDepth}, colorType=${colorType})`);
+  if (bitDepth !== 8 || (colorType !== 6 && colorType !== 2))
+    throw new Error(`unsupported PNG (bitDepth=${bitDepth}, colorType=${colorType})`);
   const raw = inflateSync(Buffer.concat(idat));
-  const bpp = 4;                       // RGBA
-  const stride = width * bpp;
-  const out = new Uint8ClampedArray(width * height * bpp);
-  let prevRow = new Uint8ClampedArray(stride);
+  const srcBpp = colorType === 6 ? 4 : 3;   // RGBA or RGB
+  const srcStride = width * srcBpp;
+  const outBpp = 4;                          // always output RGBA
+  const out = new Uint8ClampedArray(width * height * outBpp);
+  let prevRow = new Uint8ClampedArray(srcStride);
   let p = 0;
   for (let y = 0; y < height; y++) {
     const filter = raw[p++];
-    const row = new Uint8ClampedArray(stride);
-    for (let x = 0; x < stride; x++) {
+    const row = new Uint8ClampedArray(srcStride);
+    for (let x = 0; x < srcStride; x++) {
       const rawByte = raw[p++];
-      const a = x >= bpp ? row[x - bpp] : 0;       // left
-      const b = prevRow[x];                         // up
-      const c = x >= bpp ? prevRow[x - bpp] : 0;    // up-left
+      const a = x >= srcBpp ? row[x - srcBpp] : 0;       // left
+      const b = prevRow[x];                               // up
+      const c = x >= srcBpp ? prevRow[x - srcBpp] : 0;   // up-left
       let val;
       switch (filter) {
         case 0: val = rawByte; break;                       // None
@@ -52,7 +54,12 @@ export function decodePng(buf) {
       }
       row[x] = val & 0xff;
     }
-    out.set(row, y * stride);
+    // Expand RGB to RGBA (alpha=255)
+    for (let px = 0; px < width; px++) {
+      const si = px * srcBpp, di = (y * width + px) * outBpp;
+      out[di] = row[si]; out[di + 1] = row[si + 1]; out[di + 2] = row[si + 2];
+      out[di + 3] = srcBpp === 4 ? row[si + 3] : 255;
+    }
     prevRow = row;
   }
   return { width, height, data: Array.from(out) };
