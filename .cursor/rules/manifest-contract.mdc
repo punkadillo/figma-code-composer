@@ -39,6 +39,7 @@ When `manifest.ambiguities[]` contains any entry with `blocking: true`, the coor
 - Required top-level keys: `runId`, `intent`, `scope`, `source`, `configSnapshot`, `icons`, `components`, `tokens`, `ambiguities`, `injectionObservations`.
 - `configSnapshot` is frozen at fetch time — mid-run edits to `.figma-pipeline/config.json` do not affect an in-flight run.
 - `existsOnDisk: true` → patch the file at `diskPath`. Never blind-overwrite.
+- `components[].layer` is **advisory** — the coordinator's think-once pass (Step 8.5) sets the authoritative `resolvedLayer` (see § buildPlan). `components[].layerConfidence` is `high|medium|low`.
 
 ## Slicing
 

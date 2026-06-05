@@ -8,13 +8,25 @@ The fetcher classifies each Figma component into a `layer` based on `config.comp
 
 ### `designMethodology: atomic`
 
-| `layer`     | Heuristic                                                              | `targetDir` (default)                |
+Resolve `layer` from INTENT signals, not node depth alone:
+- A leaf control (button, input, single icon+label) → **atom**.
+- Contains ≥1 form-control child (input/select/checkbox/switch) OR composes ≥2 atoms → **molecule**.
+- Contains a button-row, multiple distinct regions, or a labelled section → **organism**.
+- A full-canvas frame (page-sized) or a composed multi-organism screen → **template**.
+- A routed screen with navigation/layout chrome → **page**.
+
+Emit `layerConfidence`: `high` when one signal clearly dominates; `medium` when two adjacent tiers are
+both plausible; `low` when the structure is flat/ambiguous. A `low` confidence is a FLAG for the
+coordinator's think-once pass (Step 8.5) to resolve — it is NOT a silent down-grade. (The Input/Card/Form
+off-by-one came from grading flat trees down a tier without this signal.)
+
+| `layer`     | Intent signals (above)                                                 | `targetDir` (default)                |
 | ----------- | ---------------------------------------------------------------------- | ------------------------------------ |
-| `atom`      | No composed components; primitive only (button, input, badge, icon)    | `config.components.atomicLayout.atomsDir`     |
-| `molecule`  | Composes ≥1 atom; single concern (search-bar, card, pill-tabs)         | `config.components.atomicLayout.moleculesDir` |
-| `organism`  | Composes molecules + atoms; multi-concern (header, product-card grid)  | `config.components.atomicLayout.organismsDir` |
-| `template`  | Page-level layout w/o data; placeholder slots                          | `config.components.atomicLayout.templatesDir` |
-| `page`      | Concrete page                                                          | `config.components.atomicLayout.templatesDir` (filed under `pages/` subdir) |
+| `atom`      | Leaf control; no composed children                                     | `config.components.atomicLayout.atomsDir`     |
+| `molecule`  | Form-control child(ren) OR ≥2 composed atoms; single concern           | `config.components.atomicLayout.moleculesDir` |
+| `organism`  | Button-row, multiple distinct regions, or labelled section             | `config.components.atomicLayout.organismsDir` |
+| `template`  | Full-canvas / page-sized frame; composed multi-organism screen         | `config.components.atomicLayout.templatesDir` |
+| `page`      | Routed screen with navigation/layout chrome                            | `config.components.atomicLayout.templatesDir` (filed under `pages/` subdir) |
 
 ### `designMethodology: feature-sliced`
 

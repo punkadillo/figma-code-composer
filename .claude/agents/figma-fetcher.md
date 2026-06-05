@@ -60,6 +60,8 @@ Any other write → abort.
      - `suggestedFileName` per `configSnapshot.framework` + `namingConvention` (protocol § File layout).
    - **Components** — composed nodes. Resolve `layer` per `configSnapshot.designMethodology`:
      - `atomic` → atom / molecule / organism / template / page (heuristics in `protocols/component-layout.md` § Layer resolution)
+     - Record `layerConfidence` (`high|medium|low`) per `protocols/component-layout.md` § Layer resolution.
+       Surface a `low` confidence as a non-blocking ambiguity so the coordinator's think-once pass resolves it.
      - `feature-sliced` → shared / entity / feature / widget / page
      - `flat` / `custom` → fixed (`components`)
      - Honour `figma-layer:<value>` override annotations (record verbatim + flag).
