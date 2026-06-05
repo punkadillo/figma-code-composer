@@ -3,7 +3,7 @@
 //
 // Subcommands:
 //   init [target]              Scaffold the pipeline into a project (default)
-//   doctor                     Validate config, check RTK install, MCP reachability
+//   doctor                     Validate config + MCP reachability
 //   complexity <manifest>      Print complexity score for a manifest JSON
 //   kg:query                   Retrieve top-K prior components for a manifest slice
 //   kg:stage                   Subagent writes a ledger delta (parallel-safe)
@@ -197,7 +197,7 @@ ${c("bold", "figma-code-composer")} (fcc) — Figma-to-code pipeline scaffold + 
 ${c("bold", "Subcommands:")}
   init [target]              Scaffold the pipeline into a project (default)
   migrate                    De-dupe a pre-ownership-split CLAUDE.md into the PIPELINE.md import
-  doctor                     Validate config, RTK install, MCP reachability
+  doctor                     Validate config + MCP reachability
   complexity <manifest>      Print complexity score for a manifest JSON
   kg:query                   Retrieve top-K prior components for a manifest slice
   kg:stage                   Subagent writes a ledger delta (parallel-safe)
@@ -571,7 +571,6 @@ async function runInit(argv) {
   if (tools.includes("claude")) console.log(`     ${c("cyan", "Claude Code")}  →  /init-figma-compose`);
   if (tools.includes("cursor")) console.log(`     ${c("cyan", "Cursor")}       →  type /init-figma-compose in agent chat`);
   console.log(`  ${c("dim", "3.")} Read ${c("cyan", ".figma-pipeline/PIPELINE.md")} for binding rules + coverage (imported by your CLAUDE.md; AGENTS.md points to it).`);
-  console.log(`  ${c("dim", "4.")} (Optional) install RTK to compress shell-output tokens — the wizard will print the right install + per-tool init commands for your stack (Claude Code / Cursor). RTK is user-level only; never auto-installed.`);
   console.log("");
 }
 
@@ -1146,7 +1145,7 @@ function runDoctor(args) {
   if (!existsSync(CONFIG_PATH)) fail(2, "No .figma-pipeline/config.json — run /init-figma-compose first.");
   const cfg = loadConfig();
   const p = kgPaths(cfg);
-  const report = { config: "ok", kg: {}, rtk: {}, warnings: [] };
+  const report = { config: "ok", kg: {}, warnings: [] };
 
   // config sanity
   for (const k of ["version", "framework", "cssSystem", "tokens", "components", "writeScope"]) {
@@ -1166,9 +1165,6 @@ function runDoctor(args) {
       if (report.kg.orphans) report.warnings.push(`${report.kg.orphans} orphaned ledger entr${report.kg.orphans === 1 ? "y" : "ies"} — run 'fcc kg:repair --prune-orphans'`);
     } catch (e) { report.kg.error = e.message; report.warnings.push(`ledger unreadable: ${e.message}`); }
   } else report.kg.enabled = false;
-
-  // RTK detection
-  report.rtk.installed = !!(cfg.rtk && cfg.rtk.installed);
 
   if (f["explain-output"]) {
     const tree = {

@@ -101,8 +101,5 @@
     "embeddings": { "provider": "local", "model": "Xenova/all-MiniLM-L6-v2" },
     "retention": { "handoverDays": 30, "stagingDays": 7 },
     "visualRegression": { "enabled": false, "thresholdPercent": 2 }
-  },
-  "rtk": {
-    "installed": false
   }
 }

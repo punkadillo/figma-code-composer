@@ -71,12 +71,11 @@ Scaffold the pipeline into a project. (Default when no subcommand given, for bac
 
 ### `fcc doctor`
 
-Validate the local configuration, MCP reachability, and RTK detection.
+Validate the local configuration and MCP reachability.
 
 **Effect (read-only):**
 - Read `.figma-pipeline/config.json`. Validate against `config.schema.json`.
 - Print resolved output-structure tree (where each generated artifact will land).
-- Check `rtk` binary on PATH. Update `config.rtk.installed` + `config.rtk.version` if changed (writes config.json).
 - Check Figma MCP reachability via `mcp__figma__get_metadata` if available; if not, print the manual check.
 - Check `.figma-pipeline/kg/` directory health (sqlite-vec readable, ledger.jsonl parseable, no orphan staging dirs).
 
@@ -85,7 +84,7 @@ Validate the local configuration, MCP reachability, and RTK detection.
 | Flag                  | Effect                                                |
 | --------------------- | ----------------------------------------------------- |
 | `--explain-output`    | Print the resolved output-structure tree only         |
-| `--no-write`          | Don't update config.rtk; doctor is fully read-only    |
+| `--no-write`          | doctor is fully read-only                             |
 | `--mcp-skip`          | Skip MCP reachability check                           |
 
 **Exit codes:**

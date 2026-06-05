@@ -36,10 +36,9 @@ Steps:
     b. If `tools.claudeCode`: ensure `.claude/skills/<name>` symlinks → `../../.figma-pipeline/skills/<name>` for each name in installSet; remove wizard-owned symlinks not in installSet. Else: remove all wizard-owned symlinks under `.claude/skills/`.
     c. If `tools.cursor`: write `.cursor/rules/use-skills.mdc` from the canonical template. Else: delete it.
     d. Update `config.skillsInstall.installed[]` / `missing[]` / `resolvedAt`.
-11.5. **RTK verify** — `command -v rtk` to detect the optional shell-output compressor. Record `config.rtk = { installed, initialized, version, detectedAt }`. If absent, surface a one-line pointer: `"RTK not installed (optional — ~10–15% side-channel token savings). See README § Prerequisites § Optional — RTK."` Never auto-install. Per § Step 7.6.
-11.6. **Graphify detection** — `command -v graphify`; record `config.graphify = { installed, version, outputDir, detectedAt }`. Detect-only (same as RTK): never install the binary, never run `graphify install`, never build the graph. If absent, surface a one-line pointer: `"Graphify not installed (optional — codebase knowledge graph). See README § Prerequisites § Optional — Graphify."` Registration (`graphify install --platform cursor`) and the build (`/graphify .` in Cursor's agent chat) are the user's to run. Per § Step 7.7.
+11.6. **Graphify detection** — `command -v graphify`; record `config.graphify = { installed, version, outputDir, detectedAt }`. Detect-only: never install the binary, never run `graphify install`, never build the graph. If absent, surface a one-line pointer: `"Graphify not installed (optional — codebase knowledge graph). See README § Prerequisites § Optional — Graphify."` Registration (`graphify install --platform cursor`) and the build (`/graphify .` in Cursor's agent chat) are the user's to run. Per § Step 7.7.
 11.7. **Patch project `.gitignore`** — idempotently append `.figma-pipeline/config.json`, `.figma-pipeline/scratch/`, `/tmp/figma-*/`, `graphify-out/`, `.mcp.json`. Record `config.gitignorePatch`. Per § Step 7.8.
-12. **Report** — print the summary block from `.claude/agents/wizard.md` § Step 8 (includes RTK, Graphify, KG, Complexity, .gitignore lines).
+12. **Report** — print the summary block from `.claude/agents/wizard.md` § Step 8 (includes Graphify, KG, Complexity, .gitignore lines).
 
 ## Write scope
 

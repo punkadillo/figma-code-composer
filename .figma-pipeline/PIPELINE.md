@@ -20,7 +20,7 @@ A Figma-driven multi-agent pipeline: Figma file → typed manifest → design to
 /figma-tokens <figma-url>
 ```
 
-The wizard writes `.figma-pipeline/config.json` (single source of truth) and verifies `.mcp.json` is reachable before `config.json` lands (`config.figma.mcpVerifiedAt` stamps it). It also patches the project-root `.gitignore` and **detects** (never installs) optional tools (RTK, Graphify). Every agent reads `config.json` before acting.
+The wizard writes `.figma-pipeline/config.json` (single source of truth) and verifies `.mcp.json` is reachable before `config.json` lands (`config.figma.mcpVerifiedAt` stamps it). It also patches the project-root `.gitignore` and **detects** (never installs) optional tools (Graphify). Every agent reads `config.json` before acting.
 
 ## Repo map
 

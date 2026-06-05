@@ -27,18 +27,18 @@ Every prompt is a **single `AskUserQuestion` call with exactly one question**. N
 
 Concretely: where a step describes multiple questions (`Q1` + `Q2` in Step 1, the four confirmations in Step 3, etc.), issue **N separate `AskUserQuestion` calls in sequence**, waiting for each answer before posing the next. Each call's `questions` array has exactly one element. Multi-select (e.g., Step 5.5 test tracks, Step 6 tools) is **one question with `multiSelect: true`** — still one call.
 
-The one exception is when a question genuinely has no follow-up: e.g., the final RTK install-prompt — that's still one call with one question.
+The one exception is when a question genuinely has no follow-up: e.g., a single confirmation prompt with no answer-dependent branch — that's still one call with one question.
 
 ## Why the wizard never auto-installs user-level tools
 
-Steps 2 (Figma MCP), 7.6 (RTK), and 7.7 (Graphify binary) detect external state but never install it. Users follow `README § Prerequisites` to set each tool up for their AI tool of choice before running the wizard. Same four reasons apply across all three:
+Steps 2 (Figma MCP) and 7.7 (Graphify binary) detect external state but never install it. Users follow `README § Prerequisites` to set each tool up for their AI tool of choice before running the wizard. Same four reasons apply to both:
 
 1. **Package manager isn't guaranteed.** Homebrew on macOS, apt/yum on Linux, winget/scoop on Windows. Auto-install would need OS + PM detection + fallbacks.
 2. **First-time installs can prompt interactively** (sudo, Xcode tools, browser auth) — can't answer from inside an AI chat.
 3. **Touches the user's home dir / shell rc / tool config** (`~/.claude/settings.json`, `~/.zshrc`, `~/.config/figma-mcp/`, …). One project's wizard reconfiguring every other project on the machine is a surprising side-effect.
 4. **Reversibility.** Auto-install means we own the uninstall story too. We don't.
 
-The wizard's job is to **verify** what Prerequisites set up, record the result in `config.json`, and point users back at the README when something's missing. No exceptions — Figma MCP, RTK, and Graphify are all detect-and-record. (`graphify install --platform <tool>` writes to the tool's user-level config dir; there is no repo-scoped `--project` flag in graphify v0.7.x, so it's the user's to run.)
+The wizard's job is to **verify** what Prerequisites set up, record the result in `config.json`, and point users back at the README when something's missing. No exceptions — Figma MCP and Graphify are all detect-and-record. (`graphify install --platform <tool>` writes to the tool's user-level config dir; there is no repo-scoped `--project` flag in graphify v0.7.x, so it's the user's to run.)
 
 ## Inputs
 
@@ -229,29 +229,11 @@ Per `protocols/skills.md` § _Resolution algorithm — Wizard (install phase)_:
 
 Canonical pruning goes through `fcc skills:prune` (step 2) — never a hand-authored `rm -rf` over a shell-expanded skill list (a zsh word-splitting bug in such a command once deleted the entire catalog). The remaining writes are narrow: symlink create/remove (`ln -sfn`, and `rm` only on a path whose `readlink` starts with `../../.figma-pipeline/skills/`) and `Write` for the two text files. Honor-system — the agent MUST limit itself to the target classes above and MUST NOT author destructive globbed deletes.
 
-### Step 7.6 — RTK verify (optional)
-
-[RTK](https://github.com/rtk-ai/rtk) is an external Rust binary that compresses dev-command output 60-90% before it reaches the AI tool. **Detect-only; never auto-install** (see § "Why the wizard never auto-installs" at the top of this file). Full install instructions live in `README § Prerequisites § Optional — RTK`.
-
-Scope: binary on user PATH; `rtk init -g` writes a Bash hook to `~/.claude/settings.json` (or per-tool equivalent). User-level only.
-
-Runtime: only Bash tool calls. Does NOT touch Figma MCP payloads, generated code, or Claude Code's built-in `Read`/`Grep`/`Glob`.
-
-**Flow:**
-
-1. `command -v rtk`. Present → record `{ installed: true, version: <`rtk --version`>, detectedAt: <ISO-8601> }`. Probe user's AI-tool config for the RTK hook → set `initialized`. Continue, no question.
-2. Absent → record `{ installed: false, detectedAt }` AND print a one-liner:
-   ```
-   RTK not installed (optional — ~10–15% side-channel token savings).
-   See README § Prerequisites § Optional — RTK for install + per-tool init commands.
-   ```
-   Continue silently. The wizard does not block on a missing optional tool, but it surfaces the pointer so users know the upside exists.
-
 ### Step 7.7 — Graphify detection (optional)
 
 [Graphify](https://github.com/safishamsi/graphify) — external Python CLI (`graphifyy` on PyPI, command `graphify`). Turns the project into a queryable knowledge graph at `graphify-out/`. Pipeline doesn't require it; agents read `graphify-out/graph.json` when present, degrade gracefully when not.
 
-**Detect-only — same posture as RTK (Step 7.6).** Both the binary install (`uv tool install graphifyy`) AND the per-tool skill registration (`graphify install --platform <tool>`) are user-level actions documented in `README § Prerequisites § Optional — Graphify`. The wizard does NOT run either — `graphify install` writes to the tool's config dir (user-level), so it falls under the same "verify, don't install" principle as RTK and Figma MCP. **The wizard also NEVER builds the graph** — that's `/graphify .` inside the user's assistant.
+**Detect-only — same verify-don't-build posture as Figma MCP (Step 2).** Both the binary install (`uv tool install graphifyy`) AND the per-tool skill registration (`graphify install --platform <tool>`) are user-level actions documented in `README § Prerequisites § Optional — Graphify`. The wizard does NOT run either — `graphify install` writes to the tool's config dir (user-level), so it falls under the same "verify, don't install" principle as Figma MCP. **The wizard also NEVER builds the graph** — that's `/graphify .` inside the user's assistant.
 
 > Note: graphify v0.7.x has no `--project` flag. `graphify install --platform claude|cursor` is the correct form; it copies the skill to the platform's config dir. Don't invent a `--project` variant.
 
@@ -309,7 +291,6 @@ The PreToolUse `check-frozen-paths.sh` permits a single `Write/Edit` against the
   Skills:         kept <K>, removed <R>, missing <M>
   Surfaces:       <claude|none> <cursor|none>
   Tools:          <ClaudeCode|Cursor list>
-  RTK:            <installed ? "✓ v<version>" + (initialized ? " (hook wired)" : " (run rtk init)") : "not installed — see brew install rtk">
   Graphify:       <installed ? "✓ v<version> detected — register with graphify install --platform <tool>, build with /graphify ." : "not installed — see README § Prerequisites">
   KG:             <enabled ? "enabled (storeDir=<storeDir>, embeddings=<provider>)" : "disabled">
   Complexity:     <enabled ? "tier-routed" : "always-complex">

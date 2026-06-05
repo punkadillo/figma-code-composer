@@ -82,9 +82,9 @@ One more thing to watch: if a future release bumps the config schema, `--re-dete
 
 ## Prerequisites
 
-Before running `/init-figma-compose` you need to have **Figma MCP connected** in your AI tool of choice. **Graphify** and **RTK** are optional but recommended — they're both external user-level tools the pipeline benefits from.
+Before running `/init-figma-compose` you need to have **Figma MCP connected** in your AI tool of choice. **Graphify** is optional but recommended — it's an external user-level tool the pipeline benefits from.
 
-> **Using more than one tool?** Unlike `/init-figma-compose` (which you run **once** for the whole repo — see [Quickstart](#quickstart)), these prerequisites are **per-tool**. Figma MCP lives in each tool's own config (Claude Code's `.mcp.json` / Cursor's Settings → MCP), and RTK / Graphify register into each tool's own config dir. So if you use Claude Code + Cursor, **set up Figma MCP — and RTK / Graphify if you want them — individually in each tool you'll build from.** Setting them up in Claude Code does not carry over to Cursor.
+> **Using more than one tool?** Unlike `/init-figma-compose` (which you run **once** for the whole repo — see [Quickstart](#quickstart)), these prerequisites are **per-tool**. Figma MCP lives in each tool's own config (Claude Code's `.mcp.json` / Cursor's Settings → MCP), and Graphify registers into each tool's own config dir. So if you use Claude Code + Cursor, **set up Figma MCP — and Graphify if you want it — individually in each tool you'll build from.** Setting them up in Claude Code does not carry over to Cursor.
 
 ### Required — Figma MCP
 
@@ -165,7 +165,7 @@ graphify install --platform claude       # Claude Code
 graphify install --platform cursor       # Cursor
 ```
 
-`graphify install` copies the skill into the tool's config dir (a user-level action — the wizard detects it but doesn't run it for you, same as RTK). `graphify install --help` lists every supported platform.
+`graphify install` copies the skill into the tool's config dir (a user-level action — the wizard detects it but doesn't run it for you). `graphify install --help` lists every supported platform.
 
 **Build the graph** (you do this inside your assistant chat, not the wizard):
 
@@ -175,30 +175,7 @@ graphify install --platform cursor       # Cursor
 
 Skip it if you don't want the codebase indexed — the pipeline runs identically with or without.
 
-### Optional — RTK (shell-output compression)
-
-[RTK](https://github.com/rtk-ai/rtk) is a Rust binary that sits between your shell and your AI tool, filtering and compressing verbose command output (`git status`, `npm test`, `cargo test`, `ls`, …) **60-90% before the model reads it.**
-
-**Why use it.** Realistic savings on a typical pipeline run: ~10-15% of side-channel tokens (Bash tool calls only — does NOT compress Figma MCP payloads, generated code, or built-in `Read`/`Grep`/`Glob`). For multi-build sessions on large repos the savings compound. Free if you already use Homebrew.
-
-**Install (pick one):**
-
-```bash
-brew install rtk
-curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
-cargo install --git https://github.com/rtk-ai/rtk
-```
-
-**Init for your AI tool** (do this once per tool you use — RTK is user-level, modifies your global tool config):
-
-```bash
-rtk init -g                      # Claude Code (default)
-rtk init -g --agent cursor          # Cursor
-```
-
-Restart your AI tool after init, then test: `git status` (auto-rewritten to `rtk git status`). Re-running `/init-figma-compose` or `fcc doctor` picks up the new state in `config.rtk`.
-
-**Why the wizard doesn't auto-install RTK or Graphify** — both modify user-level state (`~/.claude/settings.json`, shell rc files). A per-project init shouldn't reconfigure your whole workstation, so the wizard detects and offers — you own the install command.
+**Why the wizard doesn't auto-install Graphify** — it modifies user-level state (`~/.claude/settings.json`, shell rc files). A per-project init shouldn't reconfigure your whole workstation, so the wizard detects and offers — you own the install command.
 
 ---
 
@@ -215,7 +192,7 @@ Restart your AI tool after init, then test: `git status` (auto-rewritten to `rtk
 
 > **Do NOT run the wizard again in each tool.** One run with Claude Code + Cursor both selected configures both. Re-running it in another tool just rewrites the same `config.json`. The only reason to run it a second time is to *add* a tool you didn't select the first time (it preserves your existing answers). Verify what's wired with `grep -A3 '"tools"' .figma-pipeline/config.json` — if `claudeCode` and `cursor` are both `true`, you're done.
 
-> **Per-tool environment setup is separate** from the wizard. Figma MCP (required) and RTK / Graphify (optional) live in each tool's own config, not in `config.json` — set them up per tool, per the [Prerequisites](#prerequisites). The wizard only *verifies* them.
+> **Per-tool environment setup is separate** from the wizard. Figma MCP (required) and Graphify (optional) live in each tool's own config, not in `config.json` — set them up per tool, per the [Prerequisites](#prerequisites). The wizard only *verifies* them.
 
 ### Step 2 — Build from any tool
 
@@ -283,7 +260,7 @@ Every agent reads `config.json` + the active protocols under `.figma-pipeline/pr
 
 ## The wizard, in one screen
 
-`/init-figma-compose` (renamed from `/init` to avoid shadowing the built-in) walks through 15 steps. Full protocol: [`.claude/agents/wizard.md`](./.claude/agents/wizard.md). Summary:
+`/init-figma-compose` (renamed from `/init` to avoid shadowing the built-in) walks through these steps. Full protocol: [`.claude/agents/wizard.md`](./.claude/agents/wizard.md). Summary:
 
 | Step | What it does | Notes |
 |---:|---|---|
@@ -297,10 +274,9 @@ Every agent reads `config.json` + the active protocols under `.figma-pipeline/pr
 | 8  | Output structure | Token layout (split / combined / framework-native), prefix, naming; story/test layout; icon fill model + barrel. |
 | 9  | Tools | Multi-select: Claude Code / Cursor. |
 | 10 | Skill prune | Deletes irrelevant skills; symlinks the rest into each enabled tool's surface. |
-| 11 | RTK detection | Detects optional shell-output compressor. Prints per-tool init commands matched to your `config.tools.*`. **Never auto-installs** ([why](#optional-rtk--graphify-user-level-tools)). |
-| 12 | Graphify detection | Detects the external `graphify` CLI; records status in `config.graphify`. If absent, points at Prerequisites. **Does not install or build** — `graphify install --platform <tool>` and `/graphify .` are yours to run (user-level, like RTK). |
-| 13 | `.gitignore` patch | Idempotent append: `.figma-pipeline/config.json`, `.figma-pipeline/scratch/`, `/tmp/figma-*/`, `graphify-out/`, `.mcp.json`. |
-| 14 | Report | Summary + write-allowlist + reminder: *"Build the graph anytime by typing /graphify . in your assistant."* |
+| 11 | Graphify detection | Detects the external `graphify` CLI; records status in `config.graphify`. If absent, points at Prerequisites. **Does not install or build** — `graphify install --platform <tool>` and `/graphify .` are yours to run (user-level). |
+| 12 | `.gitignore` patch | Idempotent append: `.figma-pipeline/config.json`, `.figma-pipeline/scratch/`, `/tmp/figma-*/`, `graphify-out/`, `.mcp.json`. |
+| 13 | Report | Summary + write-allowlist + reminder: *"Build the graph anytime by typing /graphify . in your assistant."* |
 
 Outputs:
 - `.figma-pipeline/config.json` — the contract every agent reads (validated)
@@ -375,7 +351,7 @@ The only thing your agents shell out to. Never bundled into your app.
 | --------------------------------------------------- | ------------------------ | ------------------------------------------------------- |
 | `fcc init [target]`                                 | you                      | Scaffold the pipeline into a project                    |
 | `fcc migrate`                                       | you                      | De-dupe a pre-ownership-split CLAUDE.md into the PIPELINE.md import (backs up first) |
-| `fcc doctor`                                        | you                      | Validate config, RTK install, MCP reachability          |
+| `fcc doctor`                                        | you                      | Validate config + MCP reachability                      |
 | `fcc complexity <manifest>`                         | figma-coordinator        | Compute complexity score + tier                         |
 | `fcc kg:query --slice <path> --top-k 5`             | figma-coordinator        | RAG retrieval — similarity-based component hints        |
 | `fcc kg:query --kind component --figma-node-id <id>`| figma-coordinator        | Instance lookup for cross-screen reuse                  |
@@ -392,13 +368,11 @@ All subcommands are implemented as of v0.1.0 (stdlib-only — local JSON embeddi
 
 ## Optional tools deep-dive
 
-Install instructions for **Figma MCP**, **Graphify**, and **RTK** are in [Prerequisites](#prerequisites). This section covers runtime behavior + scope.
+Install instructions for **Figma MCP** and **Graphify** are in [Prerequisites](#prerequisites). This section covers runtime behavior + scope.
 
-**RTK** — once installed and `rtk init`-ed for your AI tool, it transparently rewrites Bash commands (`git status` → `rtk git status`, `npm test` → `rtk npm test`, etc.) to compress output 60-90% before the model reads it. **Runtime scope:** Bash tool calls only — does NOT touch Figma MCP payloads, generated code, the Anthropic/OpenAI API itself, or Claude Code's built-in `Read`/`Grep`/`Glob` (those bypass the Bash hook). Use `rtk read`/`rtk grep` explicitly if you want compression there. Savings: ~10-15% of side-channel tokens on a typical pipeline run.
+**Graphify** — once installed and registered, **you** trigger the graph build by typing `/graphify .` inside your AI assistant. The wizard never builds the graph itself — that step needs to run inside the assistant where graphify's prompt + Mermaid rendering live. `graphify-out/` is gitignored by the wizard's `.gitignore` patch step regardless of whether graphify is installed. Skip it if you don't want the codebase indexed; the pipeline runs identically without.
 
-**Graphify** — once installed and registered, **you** trigger the graph build by typing `/graphify .` inside your AI assistant. The wizard never builds the graph itself — that step needs to run inside the assistant where graphify's prompt + Mermaid rendering live. `graphify-out/` is gitignored by the wizard's Step 14 regardless of whether graphify is installed. Skip it if you don't want the codebase indexed; the pipeline runs identically without.
-
-**Why the wizard doesn't auto-install either** — both modify user-level state (`~/.claude/settings.json`, shell rc files). A per-project init shouldn't reconfigure your whole workstation — you own the install command. The wizard's Steps 7.6 (RTK) and 7.7 (Graphify) detect, offer per-tool init commands matched to `config.tools.*`, and record status in `config.rtk` / `config.graphify` — never run `brew install` or `uv tool install` themselves.
+**Why the wizard doesn't auto-install it** — it modifies user-level state (`~/.claude/settings.json`, shell rc files). A per-project init shouldn't reconfigure your whole workstation — you own the install command. The wizard's Graphify detection step detects, offers per-tool init commands matched to `config.tools.*`, and records status in `config.graphify` — never runs `uv tool install` itself.
 
 ---
 
@@ -473,7 +447,6 @@ Full attribution + content hashes: [`skills-lock.json`](./skills-lock.json). Per
 | Per-call model routing                      | ✅ `Agent(model=…)` per specialist | ⚠ user-selected; never forced (Free → Auto locked; Paid → Composer 2.5 default + Claude fallback); recommendation shown |
 | KG / handover / complexity                  | ✅                    | ✅                                 |
 | Graphify `/graphify` skill registration     | ✅ `--platform claude` | ✅ `--platform cursor`            |
-| RTK shell-output compression                | ✅ `rtk init -g`      | ✅ `rtk init --agent cursor`        |
 
 ---
 
@@ -488,8 +461,7 @@ Key sections:
 - `complexity` — tier overrides, model overrides, thresholds
 - `knowledgeGraph` — enabled, storeDir, embeddings provider, retention, visual regression
 - `figma.mcpVerifiedAt` — ISO-8601 stamp proving MCP was reachable at wizard time
-- `rtk` — `{ installed, initialized, version, detectedAt }` (read-only)
-- `graphify` — `{ installed, version, outputDir, detectedAt }` (read-only; detect-only, like `rtk`)
+- `graphify` — `{ installed, version, outputDir, detectedAt }` (read-only; detect-only)
 - `gitignorePatch` — `{ appliedAt, entriesAdded }` audit
 - `tools` — wired AI tools
 - `writeScope.allowedDirs` — derived; enforced by `check-frozen-paths.sh`
