@@ -9,17 +9,28 @@
 //   Values are emitted verbatim after "key:". Parsing: split on FIRST ':' only.
 //   Values with embedded newlines break line-based decode → they correctly
 //   fail roundTrips() and fall back to JSON in safeEncode. Acceptable per spec.
-import { BrevitClient, BrevitConfig, JsonOptimizationMode } from 'brevit';
+//
+// Lazy import: brevit is loaded on first encode() call so a missing/broken
+// package NEVER crashes the CLI at module-link time (ERR_MODULE_NOT_FOUND).
+// When brevit is absent the client resolves to null and encode() throws, which
+// causes roundTrips() to return false and safeEncode() to fall back to JSON.
 
 const NULL_SENTINEL = ' n';
 const EMPTY_ARR_SENTINEL = ' []';
 const EMPTY_OBJ_SENTINEL = ' {}';
 
-function makeClient() {
-  return new BrevitClient(new BrevitConfig({
-    jsonMode: JsonOptimizationMode.Flatten,
-    enableAbbreviations: false,
-  }));
+// ── Lazy brevit client ────────────────────────────────────────────────────────
+let _clientPromise = null;
+async function getClient() {
+  if (_clientPromise) return _clientPromise;
+  _clientPromise = (async () => {
+    const { BrevitClient, BrevitConfig, JsonOptimizationMode } = await import('brevit');
+    return new BrevitClient(new BrevitConfig({
+      jsonMode: JsonOptimizationMode.Flatten,
+      enableAbbreviations: false,
+    }));
+  })().catch(() => null); // brevit absent/broken → null → callers fall back to JSON
+  return _clientPromise;
 }
 
 /** nested JS value -> flat { "a.0.b": "<scalar-as-string>" } */
@@ -82,9 +93,13 @@ function normForGuard(v) {
   return o;
 }
 
-/** async encode: pre-flatten then brevit-serialize the flat scalar dict. */
+/** async encode: pre-flatten then brevit-serialize the flat scalar dict.
+ *  Throws when brevit is absent/broken so roundTrips() catches it and
+ *  safeEncode() falls back to JSON. */
 export async function encode(value) {
-  const out = makeClient().brevity(flatten(value));
+  const client = await getClient();
+  if (!client) throw new Error('brevit unavailable');
+  const out = client.brevity(flatten(value));
   return (out && typeof out.then === 'function') ? await out : out;
 }
 
@@ -101,7 +116,6 @@ export function decodeText(text) {
   const flat = {};
   for (const line of String(text).split('\n')) {
     if (!line) continue;
-    if (line.startsWith('@')) continue; // defensive: skip any abbreviation header
     const i = line.indexOf(':');
     if (i === -1) continue;
     const k = line.slice(0, i);

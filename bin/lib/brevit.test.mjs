@@ -37,10 +37,11 @@ test('decodeText recovers the figma path from an encoded payload', async () => {
 });
 
 test('safeEncode falls back to valid raw JSON when the round-trip guard fails', async () => {
+  // newline in value inflates the wire form AND breaks the round-trip guard →
+  // safeEncode MUST return exactly JSON.stringify(tricky), not wire form.
   const tricky = { note: 'colon: and\nnewline, comma' };
   const out = await safeEncode(tricky);
-  const recovered = (await roundTrips(tricky)) || JSON.parse(out);  // either guard passed, or it is valid JSON
-  assert.ok(recovered);
+  assert.equal(out, JSON.stringify(tricky));
 });
 
 test('safeEncode is identity-safe (valid JSON) and never throws on a normal payload', async () => {
@@ -59,4 +60,16 @@ test('safeEncode returns the wire form for a flat-wide scalar dict where it IS s
   const out = await safeEncode(flat);
   assert.ok(!out.trim().startsWith('{'), 'flat-wide dict should use the smaller wire form');
   assert.ok(out.length < JSON.stringify(flat).length);
+});
+
+// ── Pure-function degradation tests (no brevit dependency) ───────────────────
+
+test('flatten/unflatten/decodeText work without invoking brevit (pure, no dependency)', () => {
+  const obj = { a: { b: 'color/x/y' }, n: 3 };
+  assert.deepEqual(unflatten(flatten(obj)), { a: { b: 'color/x/y' }, n: '3' });
+  assert.equal(decodeText('a.b:color/x/y\nn:3').a.b, 'color/x/y');
+});
+
+test('decodeText preserves an @-prefixed key (no longer dropped)', () => {
+  assert.equal(decodeText('@id:abc\nname:Card')['@id'], 'abc');
 });

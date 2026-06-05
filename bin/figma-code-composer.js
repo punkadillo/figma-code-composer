@@ -1277,7 +1277,7 @@ function readStdinSync() {
     let bytes;
     try { bytes = readSync(fd, buf, 0, buf.length, null); }
     catch (e) {
-      if (e.code === 'EAGAIN') { continue; }     // pipe not ready yet — retry
+      if (e.code === 'EAGAIN') { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1); continue; } // 1ms backoff — avoid busy-spin on non-blocking fd
       if (e.code === 'EOF') break;
       throw e;
     }
