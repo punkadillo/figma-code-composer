@@ -3,8 +3,10 @@
 import { GATES } from './score-gates.mjs';
 
 export function composeAccuracy({ visual, style, structural, gates }, weights) {
-  const gatesPassed = GATES.filter((g) => gates[g]).length;
-  const gateScore = (gatesPassed / GATES.length) * 100;
+  const evaluated = GATES.filter((g) => gates[g] !== undefined);
+  const denom = evaluated.length || 1;
+  const gatesPassed = evaluated.filter((g) => gates[g]).length;
+  const gateScore = (gatesPassed / denom) * 100;
   const raw =
     weights.visual * visual.score +
     weights.style * style.matchRate +

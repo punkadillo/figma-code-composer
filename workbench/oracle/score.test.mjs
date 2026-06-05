@@ -48,3 +48,15 @@ test('cappedAt records the applied ceiling only when the build cap fires', () =>
   assert.equal(capped.cappedAt, 20);
   assert.equal(capped.composite, 20);
 });
+
+test('gate term uses only evaluated gates (a11y omitted → denom 3)', () => {
+  const weights = { visual: 0.35, style: 0.30, structural: 0.20, gates: 0.15, buildFailCeiling: 20 };
+  const acc = composeAccuracy({
+    visual: { diffPct: 0, score: 100 },
+    style: { matchRate: 100, properties: {} },
+    structural: { score: 100 },
+    gates: { typecheck: true, build: true, tests: true },   // a11y absent
+  }, weights);
+  // all 3 evaluated gates pass → gate term 100 → full composite 100
+  assert.equal(acc.composite, 100);
+});
