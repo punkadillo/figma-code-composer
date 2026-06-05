@@ -36,9 +36,11 @@ Steps:
     b. If `tools.claudeCode`: ensure `.claude/skills/<name>` symlinks → `../../.figma-pipeline/skills/<name>` for each name in installSet; remove wizard-owned symlinks not in installSet. Else: remove all wizard-owned symlinks under `.claude/skills/`.
     c. If `tools.cursor`: write `.cursor/rules/use-skills.mdc` from the canonical template. Else: delete it.
     d. Update `config.skillsInstall.installed[]` / `missing[]` / `resolvedAt`.
+11.55. **Brevit install (project dependency)** — detect the project's package manager from the lockfile (`package-lock.json`→npm, `pnpm-lock.yaml`→pnpm, `yarn.lock`→yarn, `bun.lockb`→bun; default npm) and run e.g. `npm install brevit`. Record `config.brevit = { installed: true, version: <from node_modules/brevit/package.json>, enabled: true, mode: "flatten", abbreviation: false }`. On failure → record `{ installed: false, enabled: false }` and surface: `"brevit not installed — agent payloads will use raw JSON. Run npm install brevit later and re-run /init-figma-compose."` Do NOT abort. Per § Step 7.55 in `.claude/agents/wizard.md`. Unlike Figma MCP and Graphify (user-level tools), Brevit is a project npm dependency and thus in-scope for the wizard to install.
 11.6. **Graphify detection** — `command -v graphify`; record `config.graphify = { installed, version, outputDir, detectedAt }`. Detect-only: never install the binary, never run `graphify install`, never build the graph. If absent, surface a one-line pointer: `"Graphify not installed (optional — codebase knowledge graph). See README § Prerequisites § Optional — Graphify."` Registration (`graphify install --platform cursor`) and the build (`/graphify .` in Cursor's agent chat) are the user's to run. Per § Step 7.7.
 11.7. **Patch project `.gitignore`** — idempotently append `.figma-pipeline/config.json`, `.figma-pipeline/scratch/`, `/tmp/figma-*/`, `graphify-out/`, `.mcp.json`. Record `config.gitignorePatch`. Per § Step 7.8.
-12. **Report** — print the summary block from `.claude/agents/wizard.md` § Step 8 (includes Graphify, KG, Complexity, .gitignore lines).
+11.8. **Build the design system from Figma (opt-in)** — on greenfield projects (no existing tokens on disk), ask two questions one at a time: (1) "Figma design-system URL? (builds your token system from Figma variables — leave blank to skip)" — blank skips the rest; non-blank records `config.figma.dsUrl`. (2) "Build the token system now?" yes / no — yes invokes `figma-coordinator` with `{ url: dsUrl, intent: "create", scope: "tokens-only" }` and surfaces the token-builder report; no records the URL only and the final report ends with `Next: /figma-tokens <dsUrl>`. Skip on non-greenfield projects. Per § Step 7.9 in `.claude/agents/wizard.md`.
+12. **Report** — print the summary block from `.claude/agents/wizard.md` § Step 8 (includes Graphify, KG, Complexity, Brevit, Design system, .gitignore lines).
 
 ## Write scope
 
@@ -52,6 +54,7 @@ Cursor in agent mode may write only:
 - `.cursor/rules/use-skills.mdc` — write/delete, at Step 11(c)
 - `<projectRoot>/.gitignore` — append-only, at Step 11.7
 - `<projectRoot>/graphify-out/` — written indirectly by the `graphify` binary at Step 11.6
+- `node_modules/brevit/` + `package.json` / lockfile — written indirectly by `npm install brevit` at Step 11.55
 
 Any other write → stop and tell the user. The Cursor rule `.cursor/rules/frozen-paths.mdc` enforces this in agent mode.
 

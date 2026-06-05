@@ -38,7 +38,7 @@ Steps 2 (Figma MCP) and 7.7 (Graphify binary) detect external state but never in
 3. **Touches the user's home dir / shell rc / tool config** (`~/.claude/settings.json`, `~/.zshrc`, `~/.config/figma-mcp/`, …). One project's wizard reconfiguring every other project on the machine is a surprising side-effect.
 4. **Reversibility.** Auto-install means we own the uninstall story too. We don't.
 
-The wizard's job is to **verify** what Prerequisites set up, record the result in `config.json`, and point users back at the README when something's missing. No exceptions — Figma MCP and Graphify are all detect-and-record. (`graphify install --platform <tool>` writes to the tool's user-level config dir; there is no repo-scoped `--project` flag in graphify v0.7.x, so it's the user's to run.)
+The wizard's job is to **verify** what Prerequisites set up, record the result in `config.json`, and point users back at the README when something's missing. Figma MCP and Graphify are all detect-and-record. (`graphify install --platform <tool>` writes to the tool's user-level config dir; there is no repo-scoped `--project` flag in graphify v0.7.x, so it's the user's to run.) **Exception: Brevit (Step 7.55)** — Brevit is a *project* npm dependency, not a user-level tool, so installing it is in-scope for the wizard the same way any `npm install` in a project is. It does not touch the user's machine config, home dir, or shell rc.
 
 ## Inputs
 
@@ -229,6 +229,21 @@ Per `protocols/skills.md` § _Resolution algorithm — Wizard (install phase)_:
 
 Canonical pruning goes through `fcc skills:prune` (step 2) — never a hand-authored `rm -rf` over a shell-expanded skill list (a zsh word-splitting bug in such a command once deleted the entire catalog). The remaining writes are narrow: symlink create/remove (`ln -sfn`, and `rm` only on a path whose `readlink` starts with `../../.figma-pipeline/skills/`) and `Write` for the two text files. Honor-system — the agent MUST limit itself to the target classes above and MUST NOT author destructive globbed deletes.
 
+### Step 7.55 — Brevit install (token-efficient wire format)
+
+Unlike the user-level detect-only tools (Figma MCP, Graphify), Brevit is a **project dependency** — the
+wizard installs it (installing an npm package into the project is in-scope; reconfiguring the user's machine
+is not). Brevit gives the pipeline an opportunistic, size-guarded wire format for inter-agent payloads
+(`protocols/brevit.md`).
+
+1. Install with the project's package manager (detect from the lockfile: `package-lock.json`→npm,
+   `pnpm-lock.yaml`→pnpm, `yarn.lock`→yarn, `bun.lockb`→bun; default npm): e.g. `npm install brevit`.
+2. Record `config.brevit = { installed: true, version: <from node_modules/brevit/package.json>, enabled: true, mode: "flatten", abbreviation: false }`.
+3. On failure (no network / install error) → record `config.brevit = { installed: false, enabled: false }`
+   and surface: `"brevit not installed — agent payloads will use raw JSON (no token savings, no failure).
+   Run npm install brevit later and re-run /init-figma-compose."` Do NOT abort the wizard — a missing
+   brevit degrades gracefully (`fcc brevit:*` is identity passthrough).
+
 ### Step 7.7 — Graphify detection (optional)
 
 [Graphify](https://github.com/safishamsi/graphify) — external Python CLI (`graphifyy` on PyPI, command `graphify`). Turns the project into a queryable knowledge graph at `graphify-out/`. Pipeline doesn't require it; agents read `graphify-out/graph.json` when present, degrade gracefully when not.
@@ -272,6 +287,25 @@ Append-only, idempotent. Consumers can `npm install` the package without later c
 
 The PreToolUse `check-frozen-paths.sh` permits a single `Write/Edit` against the project-root `.gitignore` during the wizard run.
 
+### Step 7.9 — Build the design system from Figma (opt-in)
+
+Greenfield projects (no existing tokens on disk) can bootstrap their whole token system from Figma
+variables now. This is the ONE place the wizard orchestrates a build — gated behind an explicit opt-in, so
+the verify-don't-build posture holds when declined. Two prompts (one `AskUserQuestion` each — per the §
+Prompt cadence one-question-at-a-time rule):
+
+- **Q-ds-url** — "Figma design-system URL? (builds your token system from Figma variables — leave blank to
+  skip)". Blank → skip the rest of this step entirely. Non-blank → record `config.figma.dsUrl`.
+- **Q-build-now** — "Build the token system now?" yes / no.
+  - **Yes** → run the full-variable token build as the closing onboarding step: invoke the pipeline the same
+    way `/figma-tokens` does — `figma-coordinator` with `{ url: dsUrl, intent: "create", scope: "tokens-only" }`
+    (the fetcher uses full-variable mode for `tokens-only`; see `figma-fetcher.md` step 4). Surface the
+    token-builder's report.
+  - **No** → record `config.figma.dsUrl` only; the final report ends with `Next: /figma-tokens <dsUrl>`.
+
+Skip this step on a non-greenfield project (tokens already exist on disk) — those use `/figma-tokens`
+explicitly. Declining either prompt preserves the wizard's verify-don't-build posture.
+
 ### Step 8 — Report
 
 ```
@@ -293,6 +327,8 @@ The PreToolUse `check-frozen-paths.sh` permits a single `Write/Edit` against the
   Tools:          <ClaudeCode|Cursor list>
   Graphify:       <installed ? "✓ v<version> detected — register with graphify install --platform <tool>, build with /graphify ." : "not installed — see README § Prerequisites">
   KG:             <enabled ? "enabled (storeDir=<storeDir>, embeddings=<provider>)" : "disabled">
+  Brevit:         <installed ? "✓ v<version> (flatten wire-format, size-guarded)" : "not installed — payloads use raw JSON">
+  Design system:  <dsUrl ? (builtNow ? "built from <dsUrl>" : "recorded — run /figma-tokens <dsUrl>") : "—">
   Complexity:     <enabled ? "tier-routed" : "always-complex">
   .gitignore:     patched (<entriesAdded> entries)
 

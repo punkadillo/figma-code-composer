@@ -21,8 +21,10 @@ The wizard recipe:
 6. **Paths + stories + tests + output-structure** — derived per stack, with confirmation prompts.
 7. **Tools** — Claude Code / Cursor multi-select.
 8. **Skills install/strip** — prunes canonical `.figma-pipeline/skills/` to the resolved install set and refreshes per-tool surfaces.
+8.5. **Brevit install (project dependency)** — detects the project's package manager from the lockfile (`package-lock.json`→npm, `pnpm-lock.yaml`→pnpm, `yarn.lock`→yarn, `bun.lockb`→bun) and runs e.g. `npm install brevit`. Records `config.brevit = { installed, version, enabled, mode, abbreviation }`. On failure, records `installed: false` and surfaces a one-liner; the wizard continues — a missing Brevit degrades gracefully (raw JSON fallback). Unlike the user-level detect-only tools (Figma MCP, Graphify), Brevit is a project npm dependency and thus in-scope for the wizard to install.
 9. **Graphify detection (optional)** — `command -v graphify`; records status in `config.graphify`. Detect-only: never installs the binary, never runs `graphify install`, never builds the graph. If absent, surfaces a one-line pointer to `README § Prerequisites § Optional — Graphify`. Registration (`graphify install --platform <tool>`) and the build (`/graphify .`) are yours to run.
 10. **Patch target `.gitignore`** — appends the scaffold-generated paths (`.figma-pipeline/config.json`, `graphify-out/`, `/tmp/figma-*/`) so consumers never accidentally commit local-only state. Idempotent.
+10.5. **Optional design-system token build (greenfield, opt-in)** — on greenfield projects (no existing tokens on disk), asks two questions: (1) Figma design-system URL (blank = skip step entirely; records `config.figma.dsUrl`), (2) "Build the token system now?" Yes → invokes `figma-coordinator` with `{ url: dsUrl, intent: "create", scope: "tokens-only" }` and surfaces the token-builder report. No → records the URL only; the final report ends with `Next: /figma-tokens <dsUrl>`. Skipped on non-greenfield projects. Declining preserves the verify-don't-build posture.
 
 Final output:
 
