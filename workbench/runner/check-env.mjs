@@ -7,7 +7,8 @@
 // Usage: node workbench/runner/check-env.mjs <trialDir>
 // Exits 0 if every expected var matches process.env; 1 (with a diff) otherwise.
 
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+import { writeFileSync } from 'node:fs';
 import { telemetryEnv } from './env.mjs';
 
 // OTEL_LOG_RAW_API_BODIES is a `file:<path>` pointer; compare by resolved path
@@ -35,6 +36,31 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const trialDir = process.argv[2];
   if (!trialDir) { console.error('usage: check-env.mjs <trialDir>'); process.exit(1); }
   const { ok, missing, mismatched, expected } = checkEnv(process.env, trialDir);
+
+  // Leave a proof artifact recording that verification happened. Claude Code's
+  // Bash tool strips OTEL_*-prefixed vars from its subprocess env, so a plain
+  // `echo $OTEL_*` in a tool call is blind. Two ways to see the truth anyway:
+  //   1. This file — written by the node process the sourced shell launches
+  //      directly, which sees the real values (records var NAMES only, no values).
+  //   2. workbench/runner/show-otel-env.sh — recovers the live VALUES on demand
+  //      from the parent `claude` process via `ps eww` (verified working on darwin;
+  //      the OTEL_* vars are inherited by claude, just not by its bash children).
+  const proof = {
+    verifiedAt: new Date().toISOString(),
+    ok,
+    varsExpected: Object.keys(expected).length,
+    varsSet: Object.keys(expected).length - missing.length,
+    missing,
+    mismatched: mismatched.map((m) => m.key),
+    pid: process.pid,
+    ppid: process.ppid,
+  };
+  try {
+    writeFileSync(join(trialDir, '.env-proof.json'), JSON.stringify(proof, null, 2) + '\n');
+  } catch (e) {
+    console.error(`   (could not write .env-proof.json: ${e.message})`);
+  }
+
   if (ok) {
     console.error(`✔  OTEL telemetry env complete (${Object.keys(expected).length} vars set).`);
     process.exit(0);

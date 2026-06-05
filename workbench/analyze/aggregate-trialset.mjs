@@ -21,7 +21,7 @@ export function aggregateTrialset({ trialId, runs, comparisons = {} }) {
     if (!run) throw new Error(`aggregateTrialset: input ${i} (trialId=${res.trialId ?? '?'}) has no runs[0] — expected one single-run results.json per file`);
     return {
       rung: run.rung, tier: run.tier, runId: run.runId, icon: !!(run.scenario && run.scenario.icon),
-      agents: run.agents, fanIn: run.fanIn, accuracy: run.accuracy, quality: run.quality,
+      agents: run.agents, fanIn: run.fanIn, accuracy: run.accuracy, quality: run.quality, gates: run.gates ?? null,
     };
   });
 
