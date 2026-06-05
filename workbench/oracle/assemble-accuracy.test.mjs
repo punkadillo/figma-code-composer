@@ -5,29 +5,30 @@ import { assembleAccuracy } from './assemble-accuracy.mjs';
 
 const BASE = { visual: 0.35, style: 0.30, structural: 0.20, gates: 0.15, buildFailCeiling: 20 };
 
-test('structural+gates only → composite from renormalised weights, availability flagged', () => {
+test('source-only structural (dom null) → source is primary; both stored', () => {
   const acc = assembleAccuracy({
     visual: null, style: null,
-    structural: { score: 80 },
+    structuralSource: { score: 80 }, structuralDom: null,
     gates: { typecheck: true, build: true, tests: true },
   }, BASE);
-  // structural 80 @ 0.20/0.35 + gates 100 @ 0.15/0.35 = 45.71 + 42.86 = 88.57 -> 89
-  assert.equal(acc.composite, 89);
+  assert.equal(acc.composite, 89);                 // structural(80)@0.571 + gates(100)@0.429
+  assert.equal(acc.structural.score, 80);          // primary = source (dom null)
+  assert.equal(acc.structuralSource.score, 80);
+  assert.equal(acc.structuralDom, null);
   assert.deepEqual(acc.availability, { visual: false, style: false, structural: true, gates: true });
-  assert.equal(acc.weights.visual, 0);
-  // unavailable sub-scores are nulled so the report renders `—`, not a misleading 0
   assert.equal(acc.visual, null);
   assert.equal(acc.style, null);
 });
 
-test('all sub-scores available → standard weighting', () => {
+test('structuralDom present → dom is primary in the composite', () => {
   const acc = assembleAccuracy({
-    visual: { diffPct: 0, score: 60 },
-    style: { matchRate: 50, properties: {} },
-    structural: { score: 70 },
+    visual: { diffPct: 0, score: 60 }, style: { matchRate: 50, properties: {} },
+    structuralSource: { score: 10 }, structuralDom: { score: 70 },
     gates: { typecheck: true, build: true, tests: true, a11y: true },
   }, BASE);
-  // 0.35*60 + 0.30*50 + 0.20*70 + 0.15*100 = 21+15+14+15 = 65
+  // 0.35*60 + 0.30*50 + 0.20*70(dom) + 0.15*100 = 21+15+14+15 = 65
   assert.equal(acc.composite, 65);
-  assert.equal(acc.availability.visual, true);
+  assert.equal(acc.structural.score, 70);
+  assert.equal(acc.structuralSource.score, 10);
+  assert.equal(acc.structuralDom.score, 70);
 });

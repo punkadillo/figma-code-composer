@@ -5,7 +5,8 @@
 import { composeAccuracy } from './score.mjs';
 import { effectiveWeights } from './effective-weights.mjs';
 
-export function assembleAccuracy({ visual, style, structural, gates }, baseWeights) {
+export function assembleAccuracy({ visual, style, structuralSource, structuralDom, gates }, baseWeights) {
+  const structural = structuralDom ?? structuralSource;   // rendered DOM preferred, source fallback
   const availability = {
     visual: visual != null,
     style: style != null,
@@ -14,14 +15,15 @@ export function assembleAccuracy({ visual, style, structural, gates }, baseWeigh
   };
   const weights = effectiveWeights(baseWeights, availability);
   const acc = composeAccuracy({
-    visual: visual ?? { diffPct: 100, score: 0 },        // weight 0 → contributes nothing
-    style: style ?? { matchRate: 0, properties: {} },    // weight 0 → contributes nothing
+    visual: visual ?? { diffPct: 100, score: 0 },
+    style: style ?? { matchRate: 0, properties: {} },
     structural: structural ?? { score: 0 },
     gates: gates ?? {},
   }, weights);
-  // Null out unavailable sub-scores so the report renders `—`, not a misleading 0.
   if (!availability.visual) acc.visual = null;
   if (!availability.style) acc.style = null;
+  acc.structuralSource = structuralSource ?? null;
+  acc.structuralDom = structuralDom ?? null;
   acc.availability = availability;
   return acc;
 }
