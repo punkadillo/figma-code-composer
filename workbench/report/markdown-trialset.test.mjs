@@ -79,3 +79,8 @@ test('renderTrialsetMarkdown emits a build-gates table with per-rung pass/fail',
   assert.match(md, /\| atom \| ✓ \| ✓ \| 17\/17 \| ✓ \|/);
   assert.match(md, /\| page \| ✓ \| ✓ \| 12\/13 \| ✗ \|/);
 });
+
+test('accuracy note explains renormalised weights for unavailable sub-scores', () => {
+  const md = renderTrialsetMarkdown(ts);
+  assert.match(md, /renormal/i);
+});

@@ -71,7 +71,7 @@ export function renderTrialsetMarkdown(ts) {
     L.push(`| ${r.rung} | ${r.tier} | ${cell(a.composite)}${capped} | ${cell(a.visual?.score)} | ${cell(a.style?.matchRate)} | ${cell(a.structuralSource?.score)} | ${cell(a.structuralDom?.score)} | ${gateCell} |`);
   }
   L.push('');
-  L.push('> Composite/visual/style/structural require live rendering (pixel-diff + computed-style) and read `—` until a render pass runs — see `analysis/01-accuracy-feasibility.md`. The **build gate** column is real (from the deterministic gates below). "(capped)" marks a build-fail-capped composite.');
+  L.push('> Accuracy sub-scores are computed live: **visual** = pixel-diff of the component rendered in the target Storybook vs the HeroUI oracle Storybook (fixed clip); **style** = `getComputedStyle` match over a fixed prop set; **struct·src** = source-tree similarity and **struct·dom** = rendered-DOM similarity (the composite uses dom when available, else src). A cell reads `—` when that sub-score was not computed (no HeroUI story for the rung, or rendering unavailable); its weight is then **renormalised** across the remaining sub-scores, so the composite reflects only what was measured (see `availability` in `results.json`). The target is `designSystem: none` (plain Tailwind) vs the HeroUI design system, so **visual/style read low by design** — they measure divergence from HeroUI\'s look, not code quality; `struct·dom` and the cross-rung trend are the meaningful signals. The **build gate** column is deterministic; a11y is not in the gate set (axe unavailable). "(capped)" marks a build-fail-capped composite.');
   L.push('');
   if (ts.rungs.some((r) => r.quality)) {
     L.push('## Quality by ladder rung');
