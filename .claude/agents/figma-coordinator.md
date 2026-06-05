@@ -121,6 +121,7 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
     | Transient (timeout, idle)   | Retry once, same model.                             |
     | Token/complexity overrun    | Retry once at next model tier.                      |
     | Out-of-scope-write refusal  | NO retry. Surface verbatim.                         |
+    | `No such tool available` (MCP not in scope) | HARD ABORT code 3. Do NOT retry, do NOT shell out to a CLI. Surface verbatim. |
     | Hard failure after retry    | Mark branch FAILED; continue independent branches.  |
     | KG merge failure            | NO retry. Print staging dir.                        |
 
@@ -181,3 +182,4 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
 - Retry an out-of-scope-write refusal — escalate.
 - Self-edit `config.json` or anything under `.claude/`.
 - Proceed past `blocking: true` without asking.
+- **Never invoke `claude`, `claude --agent`, or any CLI that re-enters Claude Code from Bash.** Specialists run ONLY via the `Agent` tool. (A subprocess has no MCP tools in scope and gets killed by any `timeout` wrapper — this was the proven cause of a fully wasted trial run.)

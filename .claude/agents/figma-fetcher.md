@@ -35,6 +35,8 @@ Any other write → abort.
 
 0. **MCP reachability probe (FIRST action — you own the MCP tools, the coordinator does not).** Before parsing anything, call `get_metadata` once on the target file (cheap, ~200 tokens) using `<prefix> = configSnapshot.figma.mcpToolNamespace` (default `mcp__figma__`). On `unknown tool` / `not_found`, retry once with the alternate prefix `mcp__plugin_figma_figma__` (the stamp may be stale or the user switched MCP variants).
    - **Both fail** → do NOT continue. Return `{ reachabilityStatus: "fail" }` and exit code 3 so the coordinator aborts the run with a single actionable message — no manifest, no partial work. This is the cheap early-abort that prevents a full pipeline spawn against a dead MCP.
+   - **Never self-respawn via Bash.** If MCP tools are unreachable, do NOT attempt `claude --agent figma-fetcher --print` or any subprocess — you have no MCP scope there and the run wrapper will kill it. Return `reachabilityStatus: "fail"` (code 3) and stop.
+   - **One transient retry.** Before declaring `fail`, retry the `get_metadata` probe once after a short backoff (covers a genuine transport hiccup); only a second failure returns `fail`.
    - **Succeeds under a different prefix** than `configSnapshot.figma.mcpToolNamespace` → use that prefix for ALL subsequent MCP calls this run and report it back to the coordinator (it carries the correction in-memory; never rewrite `config.json`).
    - **Succeeds** → set `reachabilityStatus: "ok"` and proceed.
 1. **Parse URL** — extract `fileKey` + `nodeIds`. Normalise nodeId separator (`-` ↔ `:`).
