@@ -71,6 +71,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const { openShots } = await import('./render-harness.mjs');
     shots = await openShots();
   }
-  await runAccuracy({ render, shots });
-  if (shots) await shots.close();
+  try {
+    await runAccuracy({ render, shots });
+  } finally {
+    if (shots) await shots.close();
+  }
 }
