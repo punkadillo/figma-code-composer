@@ -4,15 +4,15 @@
 
 ## Accuracy by ladder rung
 
-| rung | tier | composite | visual | style | structural | build gate |
-| --- | --- | ---: | ---: | ---: | ---: | :--: |
-| icon-only | trivial | — | — | — | — | ✓ |
-| atom | trivial | 51 | — | — | 15 | ✓ |
-| molecule | moderate | 46 | — | — | 5 | ✓ |
-| organism | complex | 44 | — | — | 2 | ✓ |
-| template | complex | 31 | — | — | 5 | ✗ |
-| page | extreme | — | — | — | — | — |
-| all-icons | complex | 46 | — | — | 6 | ✓ |
+| rung | tier | composite | visual | style | struct·src | struct·dom | build gate |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | :--: |
+| icon-only | trivial | — | — | — | — | — | ✓ |
+| atom | trivial | 59 | — | — | 28 | — | ✓ |
+| molecule | moderate | 59 | — | — | 29 | — | ✓ |
+| organism | complex | 49 | — | — | 11 | — | ✓ |
+| template | complex | 31 | — | — | 5 | — | ✗ |
+| page | extreme | — | — | — | — | — | — |
+| all-icons | complex | 54 | — | — | 20 | — | ✓ |
 
 > Composite/visual/style/structural require live rendering (pixel-diff + computed-style) and read `—` until a render pass runs — see `analysis/01-accuracy-feasibility.md`. The **build gate** column is real (from the deterministic gates below). "(capped)" marks a build-fail-capped composite.
 

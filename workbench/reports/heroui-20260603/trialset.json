@@ -67,14 +67,14 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 51,
+        "composite": 59,
         "cappedAt": null,
         "visual": null,
         "style": null,
         "structural": {
-          "score": 15,
+          "score": 28,
           "tree": 25,
-          "prop": 0
+          "prop": 31
         },
         "gates": {
           "typecheck": true,
@@ -87,6 +87,12 @@
           "structural": 0.5714285714285715,
           "gates": 0.4285714285714286
         },
+        "structuralSource": {
+          "score": 28,
+          "tree": 25,
+          "prop": 31
+        },
+        "structuralDom": null,
         "availability": {
           "visual": false,
           "style": false,
@@ -154,14 +160,14 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 46,
+        "composite": 59,
         "cappedAt": null,
         "visual": null,
         "style": null,
         "structural": {
-          "score": 5,
+          "score": 29,
           "tree": 8,
-          "prop": 0
+          "prop": 60
         },
         "gates": {
           "typecheck": true,
@@ -174,6 +180,12 @@
           "structural": 0.5714285714285715,
           "gates": 0.4285714285714286
         },
+        "structuralSource": {
+          "score": 29,
+          "tree": 8,
+          "prop": 60
+        },
+        "structuralDom": null,
         "availability": {
           "visual": false,
           "style": false,
@@ -241,14 +253,14 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 44,
+        "composite": 49,
         "cappedAt": null,
         "visual": null,
         "style": null,
         "structural": {
-          "score": 2,
-          "tree": 3,
-          "prop": 0
+          "score": 11,
+          "tree": 14,
+          "prop": 7
         },
         "gates": {
           "typecheck": true,
@@ -261,6 +273,12 @@
           "structural": 0.5714285714285715,
           "gates": 0.4285714285714286
         },
+        "structuralSource": {
+          "score": 11,
+          "tree": 14,
+          "prop": 7
+        },
+        "structuralDom": null,
         "availability": {
           "visual": false,
           "style": false,
@@ -348,6 +366,12 @@
           "structural": 0.5714285714285715,
           "gates": 0.4285714285714286
         },
+        "structuralSource": {
+          "score": 5,
+          "tree": 9,
+          "prop": 0
+        },
+        "structuralDom": null,
         "availability": {
           "visual": false,
           "style": false,
@@ -447,13 +471,13 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 46,
+        "composite": 54,
         "cappedAt": null,
         "visual": null,
         "style": null,
         "structural": {
-          "score": 6,
-          "tree": 6,
+          "score": 20,
+          "tree": 29,
           "prop": 8
         },
         "gates": {
@@ -467,6 +491,12 @@
           "structural": 0.5714285714285715,
           "gates": 0.4285714285714286
         },
+        "structuralSource": {
+          "score": 20,
+          "tree": 29,
+          "prop": 8
+        },
+        "structuralDom": null,
         "availability": {
           "visual": false,
           "style": false,
@@ -560,15 +590,15 @@
     },
     {
       "rung": "atom",
-      "composite": 51
+      "composite": 59
     },
     {
       "rung": "molecule",
-      "composite": 46
+      "composite": 59
     },
     {
       "rung": "organism",
-      "composite": 44
+      "composite": 49
     },
     {
       "rung": "template",
@@ -580,7 +610,7 @@
     },
     {
       "rung": "all-icons",
-      "composite": 46
+      "composite": 54
     }
   ],
   "qualityByRung": [
