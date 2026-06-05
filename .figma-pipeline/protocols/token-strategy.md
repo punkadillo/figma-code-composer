@@ -61,3 +61,12 @@ When the project already has tokens at `config.tokens.outputDir`:
 - **Sass**: native CSS vars and SCSS vars coexist; emit both when project uses modern Sass.
 
 Adapter-specific notes live in `.figma-pipeline/adapters/css/<system>.md`.
+
+## Three-layer DS emission
+
+A design-system token build emits three real layers (never collapsed):
+1. **primitives** — raw values (`--<prefix><id>: <value>`).
+2. **semantic** — aliases referencing primitives via `var()` (`--color-surface-foreground: var(--<prefix>foreground)`); kept in their own file, never a hollow `:root {}`.
+3. **`@theme inline` bridge** — maps tokens into Tailwind namespaces over the `var()` chain so utilities stay theme-reactive.
+
+Per-mode theming: `default` mode → `:root`; each other Figma mode → `[data-theme="<mode>"]`. Every fetched variable type is mapped (color/spacing/radius/effect-shadow/blur/easing/fontWeight/letterSpacing); unmappable types go to `skipped[]`, never silently dropped.

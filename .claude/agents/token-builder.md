@@ -52,8 +52,29 @@ ONLY files under `config.tokens.outputDir/**`. Any other write → abort.
    | `scss-variables`          | SCSS maps + `@mixin theme($name)` per mode                        |
    | `js-tokens`               | TS const exports: `export const tokens = { … }`                   |
    | `unocss-theme`            | `theme` block extending `unocss.config.ts`                        |
+   **Three-layer emission (kill the hollow-file bug — workbench report 05).** A design-system token
+   build MUST emit three REAL layers, never collapse them into one flat `@theme`:
+   1. `primitives.css` — raw values only (`--<prefix><id>: <value>;`).
+   2. `semantic.css` — semantic aliases that reference primitives via `var()`:
+      `--color-surface-foreground: var(--<prefix>foreground);`. NEVER emit this file as an empty
+      `:root {}` no-op (that was the defect). If the manifest carries semantic variable names, alias them
+      to their primitives; pairs like `surface`/`surface-foreground` must travel together across themes.
+   3. `@theme inline { … }` bridge — map each `--<token>` into the Tailwind `--color-*`/`--radius-*`/
+      `--shadow-*` namespace OVER the `var()` chain, so utilities stay theme-reactive (dark mode keeps
+      working). Do NOT inline hex straight into `@theme` — that breaks re-theming.
+
+   **Token-type coverage (no silent drops — workbench report 05).** Map EVERY fetched variable `type`,
+   not just colors: `color → --color-*`, `dimension/spacing → --spacing-*`, `radius → --radius-*`,
+   `effect/shadow → --shadow-*`, `blur → --blur-*`, `easing → --ease-*`, `fontWeight → --font-weight-*`,
+   `letterSpacing → --tracking-*`. A fetched variable that maps to NONE of these is recorded in
+   `skipped[]` with a reason — NEVER silently dropped (the report-05 `blur`/effect loss).
+
 7. **Naming.** Convert Figma path → identifier per `tokens.namingConvention` (default `kebab-case`). Prepend `tokens.prefix`. Examples in `protocols/token-strategy.md` § Token naming.
-8. **Theming.** Single-mode → emit once to `:root`. Multi-mode → `default` to `:root`, other modes to `[data-theme="<mode>"]` (CSS) or one JS export per mode (JS).
+8. **Theming.** Single-mode → emit once to `:root`. Multi-mode (full-variable DS build) → `default` mode
+   to `:root`, EACH other Figma mode to `[data-theme="<mode>"]` (CSS) or one JS export per mode (JS). A DS
+   build that captured `light`+`dark` MUST emit BOTH — never just the default mode (the report-05 single-
+   mode collapse). Semantic aliases (`var()` chains) are emitted ONCE and stay correct across all modes
+   because only the primitives' values change per `[data-theme]` block.
 9. **Update flow — write-first discipline.** On `intent: "create"`: emit each token file in ONE `Write` call. On `intent: "update"`: patch in place via `Edit` only when name matches. Include every change in the report (added/modified/removed). Rename requires both old + new; one side only → flag and skip. **Never run formatter probes** — consumer's tooling owns that.
 10. **Tailwind safety** (when `cssSystem.name` starts with `tailwind-`). `config.cssSystem.config.extendTailwindMergePath` set → append new token-group entries to that file (`extendTailwindMerge` config). Otherwise flag: "register the new token group in tailwind-merge to avoid silent class stripping."
 11. **Validate.** Run CSS-system parser-light check (`npx postcss <file> --no-map` for CSS systems). Report syntax errors with line numbers per file; don't abort other files.
