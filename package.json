@@ -45,7 +45,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test 'workbench/**/*.test.mjs'",
+    "test": "node --test 'workbench/**/*.test.mjs' 'bin/**/*.test.mjs'",
     "workbench:report": "node workbench/report/build-report.mjs",
     "workbench:trialset": "node workbench/analyze/aggregate-trialset.mjs",
     "test:cli": "node bin/figma-code-composer.js init --dry-run /tmp/fcc-dry-run-test",
