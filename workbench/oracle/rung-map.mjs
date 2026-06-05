@@ -9,7 +9,7 @@ export const RUNG_MAP = {
     oracleTsx: 'ref-heroui/packages/react/src/components/button/button.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-atoms-button--default',
-    oracleStoryId: 'components-button--default',
+    oracleStoryId: 'components-buttons-button--default',
   },
   molecule: {
     rung: 'molecule', component: 'Input',
@@ -17,7 +17,7 @@ export const RUNG_MAP = {
     oracleTsx: 'ref-heroui/packages/react/src/components/input/input.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-atoms-input--default',
-    oracleStoryId: 'components-input--default',
+    oracleStoryId: 'components-forms-input--default',
   },
   organism: {
     rung: 'organism', component: 'Card',
@@ -25,13 +25,13 @@ export const RUNG_MAP = {
     oracleTsx: 'ref-heroui/packages/react/src/components/card/card.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-molecules-card--default',
-    oracleStoryId: 'components-card--default',
+    oracleStoryId: 'components-layout-card--default',
   },
   template: {
     rung: 'template', component: 'Form',
     targetTsx: 'target/src/components/organisms/Form/Form.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/form/form.tsx',
-    hasOracleStory: false,   // HeroUI Form has source but no story
+    hasOracleStory: false,   // HeroUI Form has no story in the storybook
     targetStoryId: 'components-organisms-form--default',
     oracleStoryId: null,
   },
@@ -41,7 +41,7 @@ export const RUNG_MAP = {
     oracleTsx: 'ref-heroui/packages/react/src/components/alert/alert.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-molecules-alert--default',
-    oracleStoryId: 'components-alert--default',
+    oracleStoryId: 'components-feedback-alert--default',
   },
 };
 
