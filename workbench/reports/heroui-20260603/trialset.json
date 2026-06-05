@@ -3,42 +3,6 @@
   "generatedAt": null,
   "rungs": [
     {
-      "rung": "icon-only",
-      "tier": "trivial",
-      "runId": "icon-only",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 25,
-          "tokens": {
-            "input": 329,
-            "output": 6661,
-            "thinkingEst": 0,
-            "cacheRead": 455176,
-            "cacheCreation": 49063,
-            "total": 511229
-          },
-          "timeMs": {
-            "sumDuration": 135902,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 0.2963374499999999
-        }
-      ],
-      "fanIn": [],
-      "accuracy": null,
-      "quality": null,
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": null
-      }
-    },
-    {
       "rung": "atom",
       "tier": "trivial",
       "runId": "atom",
@@ -91,9 +55,9 @@
           }
         },
         "structural": {
-          "score": 20,
+          "score": 19,
           "tree": 13,
-          "prop": 31
+          "prop": 29
         },
         "gates": {
           "typecheck": true,
@@ -107,14 +71,14 @@
           "gates": 0.15000000000000002
         },
         "structuralSource": {
-          "score": 28,
+          "score": 27,
           "tree": 25,
-          "prop": 31
+          "prop": 29
         },
         "structuralDom": {
-          "score": 20,
+          "score": 19,
           "tree": 13,
-          "prop": 31
+          "prop": 29
         },
         "availability": {
           "visual": true,
@@ -480,38 +444,6 @@
       }
     },
     {
-      "rung": "page",
-      "tier": "extreme",
-      "runId": "page",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 66,
-          "tokens": {
-            "input": 68,
-            "output": 19196,
-            "thinkingEst": 0,
-            "cacheRead": 3866037,
-            "cacheCreation": 191155,
-            "total": 4076456
-          },
-          "timeMs": {
-            "sumDuration": 452054,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 2.164786350000001
-        }
-      ],
-      "fanIn": [],
-      "accuracy": null,
-      "quality": null,
-      "gates": null
-    },
-    {
       "rung": "all-icons",
       "tier": "complex",
       "runId": "all-icons",
@@ -626,6 +558,74 @@
           "total": 25
         }
       }
+    },
+    {
+      "rung": "icon-only",
+      "tier": "trivial",
+      "runId": "icon-only",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 25,
+          "tokens": {
+            "input": 329,
+            "output": 6661,
+            "thinkingEst": 0,
+            "cacheRead": 455176,
+            "cacheCreation": 49063,
+            "total": 511229
+          },
+          "timeMs": {
+            "sumDuration": 135902,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 0.2963374499999999
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "quality": null,
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": null
+      }
+    },
+    {
+      "rung": "page",
+      "tier": "extreme",
+      "runId": "page",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 66,
+          "tokens": {
+            "input": 68,
+            "output": 19196,
+            "thinkingEst": 0,
+            "cacheRead": 3866037,
+            "cacheCreation": 191155,
+            "total": 4076456
+          },
+          "timeMs": {
+            "sumDuration": 452054,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 2.164786350000001
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "quality": null,
+      "gates": null
     }
   ],
   "comparisons": {
@@ -677,10 +677,6 @@
   },
   "accuracyByRung": [
     {
-      "rung": "icon-only",
-      "composite": null
-    },
-    {
       "rung": "atom",
       "composite": 24
     },
@@ -697,19 +693,19 @@
       "composite": 31
     },
     {
-      "rung": "page",
-      "composite": null
-    },
-    {
       "rung": "all-icons",
       "composite": 43
-    }
-  ],
-  "qualityByRung": [
+    },
     {
       "rung": "icon-only",
       "composite": null
     },
+    {
+      "rung": "page",
+      "composite": null
+    }
+  ],
+  "qualityByRung": [
     {
       "rung": "atom",
       "composite": 86
@@ -727,12 +723,16 @@
       "composite": 50
     },
     {
-      "rung": "page",
+      "rung": "all-icons",
+      "composite": 90
+    },
+    {
+      "rung": "icon-only",
       "composite": null
     },
     {
-      "rung": "all-icons",
-      "composite": 90
+      "rung": "page",
+      "composite": null
     }
   ]
 }
