@@ -42,7 +42,17 @@ Any other write → abort.
 1. **Parse URL** — extract `fileKey` + `nodeIds`. Normalise nodeId separator (`-` ↔ `:`).
 2. **Pre-call hygiene** — invoke the `figma:figma-use` skill before any `mcp__figma__use_figma` call.
 3. **Metadata + structure** — `mcp__figma__get_metadata` and `mcp__figma__get_design_context` for each node. Walk children.
-4. **Variables** — `mcp__figma__get_variable_defs` populates the `tokens` dict. Preserve original paths verbatim. Per variable: `{ type, value (default mode), modes? }`.
+4. **Variables.**
+   - **Node-scoped (default — component builds):** `get_variable_defs` for the variables the walked
+     nodes bind. Preserve original paths verbatim. Per variable: `{ type, value (default mode), modes? }`.
+   - **Full-variable mode (`scope ∈ {tokens-only, full}` on a design-system build):** enumerate ALL
+     collections and ALL modes — not just the variables this node binds. This is the fix for the
+     "~25% of one mode" token collapse: a DS build must capture the whole variable space (every mode,
+     every collection — colors, spacing, radius, shadows/effects, easing, typography, blur). For each
+     variable emit `{ type, value (default mode), modes: { <mode>: <value>, … } }`. Cap at a sane
+     ceiling (≈1000 variables); if a collection would exceed it, emit a non-blocking ambiguity recording
+     the collection name + count rather than truncating silently.
+   - **Never resolve a variable to a hex/rem yourself — preserve the path** (binding rule 3).
 5. **Screenshots** — `mcp__figma__get_screenshot` for the top node + every component subtree (cap ~12/run; pick distinct visual states). Save to `/tmp/figma-<runId>/shot-<nodeId>.png`.
 6. **Classify nodes:**
    - **Icons** — single-frame SVG-like nodes (no composed children, only vectors/paths, typically ≤32×32 or named `icon/*`).

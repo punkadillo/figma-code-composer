@@ -6,3 +6,9 @@ Cursor deltas (MCP failure path):
 
 - **Never self-respawn via Bash.** If MCP tools are unreachable, do NOT attempt `claude --agent figma-fetcher --print` or any subprocess — you have no MCP scope there and the run wrapper will kill it. Return `reachabilityStatus: "fail"` (code 3) and stop.
 - **One transient retry.** Before declaring `fail`, retry the `get_metadata` probe once after a short backoff (covers a genuine transport hiccup); only a second failure returns `fail`.
+
+Cursor delta (full-variable mode for DS / token builds):
+
+- **Node-scoped (default — component builds):** `get_variable_defs` for the variables the walked nodes bind only.
+- **Full-variable mode (`scope ∈ {tokens-only, full}` on a design-system build):** enumerate ALL collections and ALL modes — not just the variables the selected node binds. This fixes the "~25% of one mode" token collapse seen in workbench analysis (oracle: 140+ variables across 2 modes; node-scoped fetch: ~33 tokens in one mode). A DS/token build must capture the whole variable space (every mode, every collection — colors, spacing, radius, shadows/effects, easing, typography, blur). For each variable emit `{ type, value (default mode), modes: { <mode>: <value>, … } }`. Cap at ≈1000 variables; if a collection would exceed it, emit a non-blocking ambiguity recording the collection name + count rather than truncating silently.
+- **Never resolve a variable to a hex/rem yourself — preserve the path** (binding rule 3).
