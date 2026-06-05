@@ -7,12 +7,12 @@
 | rung | tier | composite | visual | style | struct·src | struct·dom | build gate |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | :--: |
 | icon-only | trivial | — | — | — | — | — | ✓ |
-| atom | trivial | 59 | — | — | 28 | — | ✓ |
-| molecule | moderate | 59 | — | — | 29 | — | ✓ |
-| organism | complex | 49 | — | — | 11 | — | ✓ |
+| atom | trivial | 24 | 0 | 17 | 28 | 20 | ✓ |
+| molecule | moderate | 42 | 2 | 50 | 29 | 54 | ✓ |
+| organism | complex | 48 | 27 | 58 | 11 | 30 | ✓ |
 | template | complex | 31 | — | — | 5 | — | ✗ |
 | page | extreme | — | — | — | — | — | — |
-| all-icons | complex | 54 | — | — | 20 | — | ✓ |
+| all-icons | complex | 43 | 48 | 33 | 20 | 7 | ✓ |
 
 > Composite/visual/style/structural require live rendering (pixel-diff + computed-style) and read `—` until a render pass runs — see `analysis/01-accuracy-feasibility.md`. The **build gate** column is real (from the deterministic gates below). "(capped)" marks a build-fail-capped composite.
 

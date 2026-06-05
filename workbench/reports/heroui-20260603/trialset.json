@@ -67,13 +67,32 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 59,
+        "composite": 24,
         "cappedAt": null,
-        "visual": null,
-        "style": null,
+        "visual": {
+          "diffPct": 99.9,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 17,
+          "properties": {
+            "color": false,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": false,
+            "font-size": false,
+            "font-weight": false,
+            "font-family": false,
+            "line-height": false,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
         "structural": {
-          "score": 28,
-          "tree": 25,
+          "score": 20,
+          "tree": 13,
           "prop": 31
         },
         "gates": {
@@ -82,20 +101,24 @@
           "tests": true
         },
         "weights": {
-          "visual": 0,
-          "style": 0,
-          "structural": 0.5714285714285715,
-          "gates": 0.4285714285714286
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
         },
         "structuralSource": {
           "score": 28,
           "tree": 25,
           "prop": 31
         },
-        "structuralDom": null,
+        "structuralDom": {
+          "score": 20,
+          "tree": 13,
+          "prop": 31
+        },
         "availability": {
-          "visual": false,
-          "style": false,
+          "visual": true,
+          "style": true,
           "structural": true,
           "gates": true
         }
@@ -160,13 +183,32 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 59,
+        "composite": 42,
         "cappedAt": null,
-        "visual": null,
-        "style": null,
+        "visual": {
+          "diffPct": 98,
+          "score": 2
+        },
+        "style": {
+          "matchRate": 50,
+          "properties": {
+            "color": false,
+            "background-color": false,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": false,
+            "border-color": false
+          }
+        },
         "structural": {
-          "score": 29,
-          "tree": 8,
+          "score": 54,
+          "tree": 50,
           "prop": 60
         },
         "gates": {
@@ -175,20 +217,24 @@
           "tests": true
         },
         "weights": {
-          "visual": 0,
-          "style": 0,
-          "structural": 0.5714285714285715,
-          "gates": 0.4285714285714286
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
         },
         "structuralSource": {
           "score": 29,
           "tree": 8,
           "prop": 60
         },
-        "structuralDom": null,
+        "structuralDom": {
+          "score": 54,
+          "tree": 50,
+          "prop": 60
+        },
         "availability": {
-          "visual": false,
-          "style": false,
+          "visual": true,
+          "style": true,
           "structural": true,
           "gates": true
         }
@@ -253,13 +299,32 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 49,
+        "composite": 48,
         "cappedAt": null,
-        "visual": null,
-        "style": null,
+        "visual": {
+          "diffPct": 73.3,
+          "score": 27
+        },
+        "style": {
+          "matchRate": 58,
+          "properties": {
+            "color": true,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
         "structural": {
-          "score": 11,
-          "tree": 14,
+          "score": 30,
+          "tree": 45,
           "prop": 7
         },
         "gates": {
@@ -268,20 +333,24 @@
           "tests": true
         },
         "weights": {
-          "visual": 0,
-          "style": 0,
-          "structural": 0.5714285714285715,
-          "gates": 0.4285714285714286
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
         },
         "structuralSource": {
           "score": 11,
           "tree": 14,
           "prop": 7
         },
-        "structuralDom": null,
+        "structuralDom": {
+          "score": 30,
+          "tree": 45,
+          "prop": 7
+        },
         "availability": {
-          "visual": false,
-          "style": false,
+          "visual": true,
+          "style": true,
           "structural": true,
           "gates": true
         }
@@ -471,13 +540,32 @@
       ],
       "fanIn": [],
       "accuracy": {
-        "composite": 54,
+        "composite": 43,
         "cappedAt": null,
-        "visual": null,
-        "style": null,
+        "visual": {
+          "diffPct": 51.7,
+          "score": 48
+        },
+        "style": {
+          "matchRate": 33,
+          "properties": {
+            "color": true,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": false,
+            "font-size": false,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": false,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
         "structural": {
-          "score": 20,
-          "tree": 29,
+          "score": 7,
+          "tree": 7,
           "prop": 8
         },
         "gates": {
@@ -486,20 +574,24 @@
           "tests": true
         },
         "weights": {
-          "visual": 0,
-          "style": 0,
-          "structural": 0.5714285714285715,
-          "gates": 0.4285714285714286
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
         },
         "structuralSource": {
           "score": 20,
           "tree": 29,
           "prop": 8
         },
-        "structuralDom": null,
+        "structuralDom": {
+          "score": 7,
+          "tree": 7,
+          "prop": 8
+        },
         "availability": {
-          "visual": false,
-          "style": false,
+          "visual": true,
+          "style": true,
           "structural": true,
           "gates": true
         }
@@ -590,15 +682,15 @@
     },
     {
       "rung": "atom",
-      "composite": 59
+      "composite": 24
     },
     {
       "rung": "molecule",
-      "composite": 59
+      "composite": 42
     },
     {
       "rung": "organism",
-      "composite": 49
+      "composite": 48
     },
     {
       "rung": "template",
@@ -610,7 +702,7 @@
     },
     {
       "rung": "all-icons",
-      "composite": 54
+      "composite": 43
     }
   ],
   "qualityByRung": [
