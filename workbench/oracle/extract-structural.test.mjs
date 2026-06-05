@@ -41,3 +41,48 @@ export const Thing = forwardRef<E, ThingProps>(({ alpha, beta, ...rest }, ref) =
   assert.equal(tree.children[0].role, 'alert');
   assert.ok(props.includes('alpha') && props.includes('beta'));
 });
+
+// Fix 2: role with single quotes
+test("role attribute with single quotes is captured", () => {
+  const src = `export const C = () => <div role='alert' />;`;
+  const { tree } = extractStructural(src);
+  assert.equal(tree.children.length, 1);
+  assert.equal(tree.children[0].role, 'alert');
+});
+
+// Fix 3: default-valued destructured props
+test('extractStructural captures default-valued and aliased destructured props', () => {
+  const src = `
+export const Foo = ({ a = 1, b, c: alias }: FooProps) => <span />;
+`;
+  const { props } = extractStructural(src);
+  assert.ok(props.includes('a'), 'a (with default) should be included');
+  assert.ok(props.includes('b'), 'b should be included');
+  assert.ok(props.includes('c'), 'c (aliased as alias) should be included');
+  assert.ok(!props.includes('alias'), 'alias (rhs of rename) should NOT be included');
+});
+
+// Fix 4: single-line type XxxProps = { ... } extracts props
+test('extractStructural handles single-line type alias Props', () => {
+  const src = `type FooProps = { a: string; b: number };`;
+  const { props } = extractStructural(src);
+  assert.ok(props.includes('a'), 'prop a should be extracted');
+  assert.ok(props.includes('b'), 'prop b should be extracted');
+});
+
+// Fix 7: commented-out interface contributes no props
+test('extractStructural ignores props inside block comments', () => {
+  // Multiline interface inside a /* ... */ block — must not leak phantom props
+  const src = `
+/*
+interface GhostProps {
+  phantom: string;
+  specter: boolean
+}
+*/
+export const Real = () => <div />;
+`;
+  const { props } = extractStructural(src);
+  assert.ok(!props.includes('phantom'), 'commented-out prop should not appear');
+  assert.ok(!props.includes('specter'), 'commented-out prop should not appear');
+});
