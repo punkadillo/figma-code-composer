@@ -52,13 +52,19 @@ ONLY `config.icons.outputDir/**` + the icon barrel (`config.icons.outputDir/<con
 1. **Fetch SVG** — `mcp__figma__get_design_context` per icon (or screenshot fallback if vector unavailable). Optimise: collapse `<g>` wrappers, drop empty `<defs>`, round paths to 2 decimals, dedupe transforms.
 2. **Raster fallback** — if a node renders as raster (e.g. multicolour brand logo), embed `<image href="<base64 PNG>" />` + `<title>`. Flag it.
 3. **Sub-frame offset** — icon inside a larger frame → capture frame offset, translate inner content so viewBox starts at `0 0`. Otherwise visual layout breaks.
-4. **A11y default** — every icon sets `role="img"` + `aria-hidden="true"`; consumer can pass `title` (rendered as `<title>` inside SVG) and `aria-label` for meaningful icons.
+4. **A11y — resolve the `aria-hidden`/`aria-label` contradiction.** An icon is decorative OR labelled,
+   never both: if `aria-label`/`title` is provided → set `role="img"` and OMIT `aria-hidden`; otherwise →
+   `aria-hidden="true"` with no `role`. Do NOT hardcode `aria-hidden="true"` on a component that also
+   accepts `aria-label` (the report-04 dead-label defect).
 5. **Per-framework template** (per `protocols/component-layout.md`):
    - React: `.tsx` function component, props `{ className, size?, color?, title?, "aria-label"? }`.
    - Vue: `.vue` SFC, `<script setup lang="ts">` with the same props.
    - Angular: `<kebab-name>.component.ts` standalone, `[size]` `[color]` inputs.
    - Svelte: `.svelte` with `<script lang="ts">` props.
-6. **Barrel** — regenerate `<config.icons.outputDir>/<config.icons.barrelFile>` re-exporting every icon alphabetically.
+6. **Barrel export consistency.** Every icon export uses the SAME form in the barrel (`index.ts`): named
+   re-exports — `export { CircleCheckIcon } from "./CircleCheckIcon";` (and `export type { … }` if types are
+   exported). Mixing default and named re-exports broke the render build (report-08). Pick named, apply
+   uniformly. Regenerate `<config.icons.outputDir>/<config.icons.barrelFile>` re-exporting every icon alphabetically.
 7. **Update flow — write-first discipline.** On `intent: "create"`: emit each icon file in ONE `Write` call. On `intent: "update"` + `existsOnDisk: true`: diff fillModel + viewBox; patch via `Edit`. **Never run formatter probes** — consumer's tooling owns that.
 8. **Stage to KG (when enabled)** — once per icon written:
    ```bash

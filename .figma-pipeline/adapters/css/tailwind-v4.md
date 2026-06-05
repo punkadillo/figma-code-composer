@@ -89,6 +89,10 @@ export function cn(...inputs: ClassValue[]) {
 
 ## Gotchas
 
+- **Prefer named scale utilities over arbitrary brackets.** Use token-backed scale utilities
+  (`shadow-field`, `rounded-3xl`, `gap-4`) over arbitrary values (`shadow-[…]`, `rounded-[12px]`) whenever a
+  scale utility exists for the value. Arbitrary brackets are a last resort for genuinely one-off BOUND
+  values — never for unbound ones (those block per binding rule 4).
 - **No config file**: `tailwind.config.{js,ts,cjs,mjs}` is always blocked. All configuration goes in CSS.
 - **Prefix order**: see above. Grep before declaring done.
 - **Prefer the spacing scale over arbitrary brackets (ALL sizing/spacing utilities).** v4's spacing scale is dynamic — `<utility>-<n>` compiles to `calc(var(--spacing) * n)` for ANY `n`, decimals included — so a raw px value should become a scale utility, not an arbitrary `[…px]` value. Convert with `n = px ÷ baseSpacingPx`, where `baseSpacingPx` is the project's `--spacing` base in px (Tailwind default `0.25rem` = **4px**; read the project's `@theme` in case it's customized — this is project-specific). Applies to `w/h`, `min-/max-w/h`, `p*`, `m*`, `gap*`, `inset/top/right/bottom/left`, `space-*`, `size-*`, etc. Examples (default 4px base, honoring the configured prefix e.g. `tw:`):
