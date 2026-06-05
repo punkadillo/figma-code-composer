@@ -17,6 +17,16 @@ Binding: `protocols/component-layout.md` § File layout (per-framework conventio
 
 `icons[]` entries: `nodeId`, `dataName`, `suggestedFileName`, `viewBox`, `fillModel`, `literalColors`, `existsOnDisk`, `diskPath`, optional `notes`. Plus `intent` (`create`/`update`) and `configSnapshot` = frozen `{ framework, language, namingConvention, designSystemName }`.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `fillModel`, `a11y`. Re-derive ONLY what the directive omits. If a field
+you need is absent, derive it and note that in your return `notes`. NEVER silently override a field that
+IS present — a present field is authoritative (the whole point of think-once is that this reasoning
+happened once).
+
 ## Write scope
 
 ONLY `config.icons.outputDir/**` + the icon barrel (`config.icons.outputDir/<config.icons.barrelFile>`). Any other write → abort.

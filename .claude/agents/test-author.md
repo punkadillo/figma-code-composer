@@ -19,6 +19,16 @@ Binding: `protocols/skills.md` — load skills per stack + agent additions: `sen
 
 `componentNames`, `paths` from run-summary; `variants`, `states` from manifest; `configSnapshot` = frozen `{ framework, language, tests.{unit.{enabled,framework,outputDir,testingLibrary},e2e.{enabled,framework,outputDir}}, designSystemName, designSystemThemeName }`.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `resolvedLayer`, `apiShape`, `renderMode`. Re-derive ONLY what the directive
+omits. If a field you need is absent, derive it and note that in your return `notes`. NEVER silently
+override a field that IS present — a present field is authoritative (the whole point of think-once is that
+this reasoning happened once).
+
 ## Write scope
 
 - Unit/integration tests — co-located with each component (or under `tests.unit.outputDir` when not `co-located`). Only when `tests.unit.enabled`.

@@ -31,6 +31,16 @@ Binding:
 - `routing` (optional) — `{ tier, skills[], model }` from coordinator. Load only the listed skills.
 - `adapterExcerpts` (optional, **prefer when present**) — `{ framework: { fileLayout, stateIdiom, classComposition, … }, css: { tokenReference, … }, designSystem?: { componentMap, providerWrapping, … } }`. Coordinator pre-reads the adapter files ONCE per run and hands you the sections you'd otherwise read yourself. **When `adapterExcerpts` is present and the field you need isn't `truncated: true`, use it instead of re-Reading the adapter file.** Falling through to a direct adapter Read is allowed only when the excerpt is missing or truncated. This saves ~4-5 Read tool calls per component dispatch.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `resolvedLayer`, `apiShape`, `renderMode`, `requiredA11y`, `unboundDecision`,
+`dropPolicy`. Re-derive ONLY what the directive omits. If a field you need is absent, derive it and note
+that in your return `notes`. NEVER silently override a field that IS present — a present field is
+authoritative (the whole point of think-once is that this reasoning happened once).
+
 ## Write scope
 
 ONLY files inside the active methodology's component target directories (`atomicLayout.*Dir` / `featureSlicedLayout.*Dir` / `flatLayout.componentsDir`) and their `index.ts`/`index.js` barrels. Any other write → abort. Never write tokens / icons / stories / tests.
