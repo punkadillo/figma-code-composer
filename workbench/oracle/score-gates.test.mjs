@@ -22,3 +22,11 @@ test('a thrown runner is treated as a failed gate, not a crash', async () => {
   assert.equal(r.tests, false);
   assert.equal(r.a11y, true);
 });
+
+test('scoreGates honours a gates subset (a11y omitted)', async () => {
+  const runGate = async (g) => ({ ok: g !== 'tests' });   // tests fails
+  const res = await scoreGates({ runGate, gates: ['typecheck', 'build', 'tests'] });
+  assert.deepEqual(Object.keys(res).sort(), ['build', 'tests', 'typecheck']);
+  assert.equal(res.a11y, undefined);
+  assert.equal(res.tests, false);
+});

@@ -4,9 +4,9 @@
 
 export const GATES = ['typecheck', 'build', 'tests', 'a11y'];
 
-export async function scoreGates({ runGate }) {
+export async function scoreGates({ runGate, gates = GATES }) {
   const result = {};
-  for (const g of GATES) {
+  for (const g of gates) {
     try {
       const { ok } = await runGate(g);
       result[g] = !!ok;
