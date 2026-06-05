@@ -287,6 +287,10 @@
           "type": "string",
           "enum": ["mcp__figma__", "mcp__plugin_figma_figma__"],
           "description": "Which Figma MCP tool prefix is exposed in the user's environment. Set by the wizard at Step 2 after probing both variants. Downstream agents prefer this prefix; their tool allowlists list both so they tolerate either."
+        },
+        "dsUrl": {
+          "type": "string",
+          "description": "Optional Figma design-system URL recorded at init for the token-system build (wizard Step 7.9)."
         }
       }
     },
@@ -435,6 +439,17 @@
         "version": { "type": "string" },
         "outputDir": { "type": "string", "default": "graphify-out" },
         "detectedAt": { "type": "string", "description": "ISO-8601 of the last wizard/doctor detection." }
+      }
+    },
+    "brevit": {
+      "type": "object",
+      "description": "Brevit token-efficient wire format for inter-agent payloads (protocols/brevit.md). Opportunistic + size-guarded: the wire form is used only when smaller than JSON. Flatten mode only.",
+      "properties": {
+        "installed":    { "type": "boolean", "description": "True when `brevit` is a project dependency." },
+        "version":      { "type": "string" },
+        "enabled":      { "type": "boolean", "default": true },
+        "mode":         { "type": "string", "enum": ["flatten"], "default": "flatten" },
+        "abbreviation": { "type": "boolean", "enum": [false], "default": false }
       }
     },
     "gitignorePatch": {

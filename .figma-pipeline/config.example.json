@@ -68,7 +68,8 @@
   "figma": {
     "mcpServerName": "figma",
     "defaultFileKeys": [],
-    "linkConvention": "design-addon"
+    "linkConvention": "design-addon",
+    "dsUrl": "https://www.figma.com/design/EXAMPLE/Design-System"
   },
   "writeScope": {
     "allowedDirs": [
@@ -101,5 +102,12 @@
     "embeddings": { "provider": "local", "model": "Xenova/all-MiniLM-L6-v2" },
     "retention": { "handoverDays": 30, "stagingDays": 7 },
     "visualRegression": { "enabled": false, "thresholdPercent": 2 }
+  },
+  "brevit": {
+    "installed": true,
+    "version": "0.0.0",
+    "enabled": true,
+    "mode": "flatten",
+    "abbreviation": false
   }
 }
