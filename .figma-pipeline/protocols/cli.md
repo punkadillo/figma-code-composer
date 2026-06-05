@@ -322,6 +322,14 @@ Guarded prune of `.figma-pipeline/skills/` down to a keep-set. The vetted replac
 - `2` — bad input (empty/unsafe `--keep`, no skills dir)
 - `3` — guard tripped (disjoint keep-set) or out-of-scope target
 
+## `fcc brevit:encode [file]` / `fcc brevit:decode [file]`
+
+Opportunistic, size-guarded token-efficient wire format (`protocols/brevit.md`). `encode` reads `file`
+or stdin and writes the Brevit wire form ONLY when it round-trips AND is smaller than the JSON, else the
+raw JSON (it never inflates or loses data). `decode` inflates a wire payload back to JSON for tooling
+(scalars return as strings — documented drift). Absent/broken brevit → identity passthrough, exit 0.
+Never mutates config.
+
 ## Exit-code conventions (summary)
 
 - `0` — success

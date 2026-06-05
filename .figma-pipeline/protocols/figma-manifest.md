@@ -8,6 +8,11 @@
 
 > `@`-imported by every agent in the Figma multi-agent system. **`figma-fetcher` is the only writer.** Every other agent treats the manifest as read-only input.
 
+> **Canonical vs wire form.** The manifest's canonical form is JSON on disk (`manifest.json`). Its *wire*
+> form for in-context slices MAY be Brevit-flattened when that is smaller — see `protocols/brevit.md`
+> (opportunistic + size-guarded). Brevit must round-trip variable paths byte-exact (binding rule 3); on
+> guard failure or when not smaller, slices stay raw JSON.
+
 ## Purpose
 
 One canonical JSON document, emitted by `figma-fetcher`, that every downstream agent consumes. It carries the parsed Figma design — classified by layer (per the active design methodology), with **original Figma variable names preserved** (never resolved to values) so the token-builder + component-builder can map them against the project's CSS system.
