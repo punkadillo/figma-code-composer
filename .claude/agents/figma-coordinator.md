@@ -97,9 +97,36 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
 
 8. **Branch by scope.** `tokens-only` → token-builder only. `icons-only` → icon-generator only. `full` → schedule token-builder (when changed), icon-generator (icons[] non-empty), component-builder (components[] non-empty). All empty → abort.
 
+8.5. **Think once — produce the `buildPlan` (the single reasoning pass; see `protocols/figma-manifest.md` § buildPlan).**
+   This is the ONE place the pipeline reasons about *what each component is*. Do it here, in your
+   already-cached context — do NOT push this thinking down into the builders (that was the token-blowout
+   pattern: every builder re-deriving the same facts). For every scheduled component and icon, decide and
+   record one directive:
+   - `resolvedLayer` + `layerConfidence` — take the fetcher's advisory `layer`/`layerConfidence`; if
+     confidence is `low`, resolve it NOW using `protocols/component-layout.md` § Layer resolution (child
+     depth, form-control children, button-rows, full-canvas). This is the off-by-one fix's decision point.
+   - `apiShape` — `compound` when the node has repeated optional sub-regions (header/body/footer);
+     `discriminated-union` when variant props are mutually exclusive; else `props`.
+   - `renderMode` — `client` iff the component needs state/effects/handlers; else `server`.
+   - `requiredA11y` — e.g. icon-only buttons need an accessible name; labelled regions need `aria-labelledby`.
+   - `tokenBindings` — the bound Figma variable paths the component consumes.
+   - `unboundDecision` — `skip` by default (per the Step 3 unbound gate); `approved-inline` ONLY if the
+     user explicitly approved inlining this run; never `bind` a value you invented.
+   - `dropPolicy` — `surface-to-attention` (collapsed affordances are reported, never silent).
+
+   Write the `buildPlan` to `/tmp/figma-<runId>/build-plan.json` (canonical JSON). You pass each builder
+   only its own directive entry (next step), in Brevit wire form when smaller.
+
 9. **Dispatch (respect the DAG).**
    - token-builder runs first when scheduled (sonnet floor if dict > 100 entries).
    - **Pre-read adapter excerpts ONCE per run** (before the first component-builder dispatch). Read `adapters/frameworks/<framework>.md`, `adapters/css/<cssSystem>.md`, and (when `designSystem.name != "none"`) `adapters/design-systems/<designSystem>.md`. Extract only the sections each builder needs (component-builder takes File-layout + State-idiom + Class-composition + Token-reference; story-author takes Story-idiom; test-author takes Test-idiom; icon-generator takes Icon-mapping). Pass these as `adapterExcerpts: { framework, css, designSystem }` in every builder slice. **Builders MUST prefer `adapterExcerpts` over re-reading the adapter files themselves** — only fall through to a direct adapter Read when an excerpt is missing or claims `"truncated": true`. This cuts ~4-5 Read tool calls per component, the dominant duration cost on multi-component builds.
+   - **Pass each builder its buildPlan directive, size-guarded via Brevit.** Build the per-component
+     slice (manifest slice + its `buildPlan` entry + `adapterExcerpts`), write it to
+     `/tmp/figma-<runId>/slice-<name>.json` (canonical JSON), then inject
+     `fcc brevit:encode /tmp/figma-<runId>/slice-<name>.json` into the spawn prompt. `fcc brevit:encode`
+     emits the Brevit wire form ONLY when it round-trips AND is smaller than the JSON, else the raw JSON
+     (`protocols/brevit.md` — opportunistic + size-guarded, never inflates, never loses a variable path).
+     Builders read whichever form they receive; the canonical JSON slice stays on disk.
    - Reuse-resolved entries never reach a builder — their consuming screens get a `reusedComposes[]` slice block so component-builder emits `import` not a new file.
    - Build-main entries dispatch first (topo from Step 6), then consuming screens.
    - icon-generator + component-builder run in parallel once tokens exist.

@@ -35,6 +35,29 @@ Current Cursor model will be used — switch in Settings → Models if you want 
 
 This prefix appears before any specialist is invoked. Do not block on the user's response — proceed with the current model.
 
+## Step 8.5 — Think-once buildPlan (Cursor delta)
+
+Step 8.5 applies identically to Cursor: before dispatching any builder, produce the full `buildPlan`
+for every scheduled component and icon (see `protocols/figma-manifest.md` § buildPlan for the schema:
+`resolvedLayer`, `layerConfidence`, `apiShape`, `renderMode`, `requiredA11y`, `tokenBindings`,
+`unboundDecision`, `dropPolicy`, `compose`). Write the canonical JSON to
+`/tmp/figma-<runId>/build-plan.json`.
+
+Cursor delta: **no sub-spawn cost ledger**, but Step 8.5 reasoning still executes inline in the same
+thread. The buildPlan is the output of that inline reasoning pass — builders (also inline) receive only
+their directive entry, not the full plan.
+
+## Step 9 dispatch — Brevit-encoded directive slices (Cursor delta)
+
+After the think-once pass, for each component/icon to build:
+1. Build the per-component slice (manifest slice + its `buildPlan` entry + `adapterExcerpts`) and write
+   it to `/tmp/figma-<runId>/slice-<name>.json` (canonical JSON).
+2. Run `fcc brevit:encode /tmp/figma-<runId>/slice-<name>.json` via Cursor's terminal. `fcc brevit:encode`
+   emits Brevit wire form ONLY when it round-trips AND is smaller than the JSON, else the raw JSON
+   (`protocols/brevit.md` — opportunistic + size-guarded, never inflates, never loses a variable path).
+3. Inject the encoded (or raw-JSON fallback) into the inline builder context. Builders read whichever
+   form they receive; the canonical JSON slice stays on disk.
+
 ## KG / handover CLI calls
 
 These work identically under Cursor because they're plain shell — `npx fcc kg:query`, `npx fcc kg:stage`, `npx fcc kg:merge`, `npx fcc handover` all run via Cursor's terminal-execution capability. Same exit codes apply.
