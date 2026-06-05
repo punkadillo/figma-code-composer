@@ -11,6 +11,8 @@
 //   kg:rebuild                 Rebuild graph.json + embeddings from ledger.jsonl
 //   handover                   Emit handover .md for a run
 //   skills:prune               Guarded prune of .figma-pipeline/skills/ to a keep-set
+//   brevit:encode              Flatten a JSON payload to Brevit wire format (round-trip-guarded)
+//   brevit:decode              Inflate a Brevit payload back to JSON (for tooling)
 //
 // Legacy: invoking without a subcommand defaults to `init` for backward compat.
 //
@@ -34,6 +36,7 @@
 
 import { createRequire } from "node:module";
 import { readFileSync, existsSync, mkdirSync, cpSync, chmodSync, statSync, readdirSync, writeFileSync, appendFileSync, openSync, closeSync, rmSync, renameSync } from "node:fs";
+import { safeEncode, decodeText } from './lib/brevit.mjs';
 import { dirname, join, relative, resolve, isAbsolute, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline/promises";
@@ -120,6 +123,8 @@ const KNOWN_SUBCOMMANDS = new Set([
   "kg:repair",
   "handover",
   "skills:prune",
+  "brevit:encode",
+  "brevit:decode",
 ]);
 
 const SUBCOMMAND_HANDLERS = {
@@ -134,6 +139,8 @@ const SUBCOMMAND_HANDLERS = {
   "kg:repair":  runKgRepair,
   handover:     runHandover,
   "skills:prune": runSkillsPrune,
+  "brevit:encode": runBrevitEncode,
+  "brevit:decode": runBrevitDecode,
 };
 
 async function dispatch(argv) {
@@ -207,6 +214,8 @@ ${c("bold", "Subcommands:")}
   kg:repair                  User-driven cleanup: prune orphans, rebuild, resolve paths
   handover                   Emit handover .md for a run
   skills:prune               Guarded prune of .figma-pipeline/skills/ to a --keep set
+  brevit:encode              Flatten a JSON payload to Brevit wire format (round-trip-guarded)
+  brevit:decode              Inflate a Brevit payload back to JSON (for tooling)
 
 ${c("bold", "Init usage:")}
   npx figma-code-composer [target] [options]
@@ -1257,6 +1266,31 @@ async function runMigrate(args) {
 
   emit({ migrated: results, note: f["dry-run"] ? "dry run — nothing written" : "review CLAUDE.md.bak if anything looks off" }, true);
   process.exit(0);
+}
+
+// ─── fcc brevit:encode / brevit:decode ─────────────────────────────────────
+function readPayloadInput(argv) {
+  const fileArg = argv.find((a) => !a.startsWith('-'));
+  return fileArg ? readFileSync(fileArg, 'utf8') : readFileSync(0, 'utf8'); // 0 = stdin
+}
+
+async function runBrevitEncode(argv) {
+  let raw;
+  try { raw = readPayloadInput(argv); }
+  catch { console.error('brevit:encode — no input (pass a file or pipe JSON on stdin)'); process.exit(2); }
+  let value;
+  try { value = JSON.parse(raw); }
+  catch { process.stdout.write(raw); return; } // already non-JSON → pass through
+  // Absent/broken brevit or guard failure → safeEncode returns raw JSON. Never fatal.
+  process.stdout.write(String(await safeEncode(value)));
+}
+
+async function runBrevitDecode(argv) {
+  let raw;
+  try { raw = readPayloadInput(argv); }
+  catch { console.error('brevit:decode — no input'); process.exit(2); }
+  try { process.stdout.write(JSON.stringify(decodeText(raw))); }
+  catch { process.stdout.write(raw); } // unparseable → pass through
 }
 
 // ─── entry ──────────────────────────────────────────────────────────────────
