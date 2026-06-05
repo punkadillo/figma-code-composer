@@ -2,7 +2,7 @@
 
 > **Scaffold-owned canonical reference.** This file is the single source of truth for the figma-to-code pipeline's binding rules, repo map, and coverage. It is refreshed by `npx figma-code-composer` updates. Your project's `CLAUDE.md` imports it (`@.figma-pipeline/PIPELINE.md`) and your `AGENTS.md` points at it — so you can edit those freely without losing pipeline rules on update, and the pipeline rules stay current without touching your authored docs.
 
-A Figma-driven multi-agent pipeline: Figma file → typed manifest → design tokens → framework-native components → stories + tests + docs.
+A Figma-driven multi-agent pipeline: Figma file → typed manifest → design tokens → framework-native components → stories + tests + docs. The coordinator runs a single think-once `buildPlan` reasoning pass before dispatch so all builder agents execute mechanically without redundant re-reasoning.
 
 **Framework-agnostic.** Configure once via `/init-figma-compose`; agents adapt to your stack (React / Vue / Angular / Svelte), CSS system (Tailwind v4/v3, UnoCSS, vanilla CSS-vars, CSS Modules, Sass, vanilla-extract, Panda, styled-components), and **design system** (Atomic, AntD, Chakra, Hero UI, Mantine, MUI, Radix, shadcn, or none). Works in **Claude Code** and **Cursor** — same agents, two entry points.
 
@@ -28,7 +28,7 @@ The wizard writes `.figma-pipeline/config.json` (single source of truth) and ver
 | ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `.figma-pipeline/config.json`                        | Wizard output — stack, paths, Figma keys (created by `/init-figma-compose`)            |
 | `.figma-pipeline/PIPELINE.md`                        | This file — scaffold-owned canonical reference (binding rules, repo map, coverage)     |
-| `.figma-pipeline/protocols/`                         | Framework-agnostic data contracts (manifest, token-strategy, component-layout, allowlist, skills, complexity, knowledge-graph, handover, cli) |
+| `.figma-pipeline/protocols/`                         | Framework-agnostic data contracts (manifest, token-strategy, component-layout, allowlist, skills, complexity, knowledge-graph, handover, cli, brevit) |
 | `.figma-pipeline/adapters/{frameworks,css,design-systems}/<name>.md` | Per-stack code-generation templates                                    |
 | `.claude/{agents,commands,hooks}/`                   | Claude Code surface                                                                    |
 | `.cursor/{prompts,rules}/`                           | Cursor mirrors                                                                         |
