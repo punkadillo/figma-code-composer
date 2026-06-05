@@ -39,7 +39,8 @@ export async function runAccuracy({ render = false, shots = null } = {}) {
 
     const gStruct = extractStructural(readFileSync(join(TRIAL, r.targetTsx), 'utf8'));
     const oStruct = extractStructural(readFileSync(join(TRIAL, r.oracleTsx), 'utf8'));
-    const structural = scoreStructural(gStruct, oStruct);
+    const structuralSource = scoreStructural(gStruct, oStruct);
+    let structuralDom = null;
 
     const gates = await scoreGates({ runGate: runGateFor(run.gates), gates: ['typecheck', 'build', 'tests'] });
 
@@ -50,14 +51,15 @@ export async function runAccuracy({ render = false, shots = null } = {}) {
         const o = await shots.oracleShot(r);
         visual = scoreVisual(decodePng(t.pngBuffer), decodePng(o.pngBuffer));
         style = scoreStyle(t.style, o.style);
+        structuralDom = scoreStructural({ tree: t.dom, props: gStruct.props }, { tree: o.dom, props: oStruct.props });
       } catch (e) {
         console.error(`[accuracy] ${r.rung} render failed, marking visual/style unavailable: ${e.message}`);
       }
     }
 
-    run.accuracy = assembleAccuracy({ visual, style, structural, gates }, WEIGHTS);
+    run.accuracy = assembleAccuracy({ visual, style, structuralSource, structuralDom, gates }, WEIGHTS);
     writeFileSync(p, JSON.stringify(json, null, 2));
-    console.error(`[accuracy] ${r.rung}: composite ${run.accuracy.composite} (visual ${visual ? visual.score : '—'}, style ${style ? style.matchRate : '—'}, structural ${structural.score})`);
+    console.error(`[accuracy] ${r.rung}: composite ${run.accuracy.composite} (visual ${visual ? visual.score : '—'}, style ${style ? style.matchRate : '—'}, struct·src ${structuralSource.score}, struct·dom ${structuralDom ? structuralDom.score : '—'})`);
   }
 }
 
