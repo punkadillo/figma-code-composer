@@ -47,3 +47,16 @@ test('safeEncode is identity-safe (valid JSON) and never throws on a normal payl
   const out = await safeEncode({ a: 1, b: [1, 2, 3] });
   assert.ok(typeof out === 'string' && out.length > 0);
 });
+
+test('safeEncode returns JSON (not wire) when the wire form is not smaller (deep/sparse payload)', async () => {
+  const deep = { components: [{ name: 'Card', styledProperties: [{ figmaVariable: 'color/surface/brand-primary', unbound: false }] }] };
+  const out = await safeEncode(deep);
+  assert.equal(out, JSON.stringify(deep)); // brevit inflates this shape → must fall back to JSON
+});
+
+test('safeEncode returns the wire form for a flat-wide scalar dict where it IS smaller', async () => {
+  const flat = {}; for (let i = 0; i < 40; i++) flat['color/scale/' + i] = '#abc' + i;
+  const out = await safeEncode(flat);
+  assert.ok(!out.trim().startsWith('{'), 'flat-wide dict should use the smaller wire form');
+  assert.ok(out.length < JSON.stringify(flat).length);
+});

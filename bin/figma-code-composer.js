@@ -35,7 +35,7 @@
 //   --version / -v     Print package version
 
 import { createRequire } from "node:module";
-import { readFileSync, existsSync, mkdirSync, cpSync, chmodSync, statSync, readdirSync, writeFileSync, appendFileSync, openSync, closeSync, rmSync, renameSync } from "node:fs";
+import { readFileSync, readSync, existsSync, mkdirSync, cpSync, chmodSync, statSync, readdirSync, writeFileSync, appendFileSync, openSync, closeSync, rmSync, renameSync } from "node:fs";
 import { safeEncode, decodeText } from './lib/brevit.mjs';
 import { dirname, join, relative, resolve, isAbsolute, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1269,9 +1269,27 @@ async function runMigrate(args) {
 }
 
 // ─── fcc brevit:encode / brevit:decode ─────────────────────────────────────
+function readStdinSync() {
+  const chunks = [];
+  const buf = Buffer.alloc(65536);
+  let fd = 0;
+  while (true) {
+    let bytes;
+    try { bytes = readSync(fd, buf, 0, buf.length, null); }
+    catch (e) {
+      if (e.code === 'EAGAIN') { continue; }     // pipe not ready yet — retry
+      if (e.code === 'EOF') break;
+      throw e;
+    }
+    if (bytes === 0) break;
+    chunks.push(Buffer.from(buf.subarray(0, bytes)));
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 function readPayloadInput(argv) {
   const fileArg = argv.find((a) => !a.startsWith('-'));
-  return fileArg ? readFileSync(fileArg, 'utf8') : readFileSync(0, 'utf8'); // 0 = stdin
+  return fileArg ? readFileSync(fileArg, 'utf8') : readStdinSync(); // 0 = stdin
 }
 
 async function runBrevitEncode(argv) {

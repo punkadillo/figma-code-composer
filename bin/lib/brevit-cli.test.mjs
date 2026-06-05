@@ -26,3 +26,12 @@ test('brevit:encode reads a file arg and writes non-empty output', () => {
   const out = run(['brevit:encode', f]);
   assert.ok(out.length > 0);
 });
+
+test('brevit:decode reads piped stdin and recovers a nested payload', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fcc-brevit-'));
+  const f = join(dir, 'in.json');
+  writeFileSync(f, JSON.stringify({ x: { y: 'color/a/b' } }));
+  const encoded = run(['brevit:encode', f]);
+  const decoded = run(['brevit:decode'], encoded);
+  assert.equal(JSON.parse(decoded).x.y, 'color/a/b');
+});

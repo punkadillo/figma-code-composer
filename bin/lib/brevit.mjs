@@ -123,10 +123,15 @@ export async function roundTrips(value) {
   }
 }
 
-/** encode if it round-trips; else fall back to raw JSON. Never throws, never loses data. */
+/** encode if it round-trips AND the wire form is strictly smaller; else fall back to raw JSON.
+ *  Never throws, never loses data. Brevit is opportunistic — only used when it actually saves. */
 export async function safeEncode(value) {
+  const json = JSON.stringify(value);
   try {
-    if (await roundTrips(value)) return await encode(value);
+    if (await roundTrips(value)) {
+      const wire = await encode(value);
+      if (typeof wire === 'string' && wire.length < json.length) return wire; // only when it actually saves
+    }
   } catch { /* fall through */ }
-  return JSON.stringify(value);
+  return json; // round-trip failed OR wire not smaller → JSON
 }
