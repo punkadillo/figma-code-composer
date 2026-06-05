@@ -68,5 +68,8 @@
   "homepage": "https://github.com/raveracker/figma-code-composer#readme",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "brevit": "^1.0.2"
   }
 }
