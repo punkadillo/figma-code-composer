@@ -42,3 +42,37 @@ test('buildRunManifest carries the icon flag for the icon-bearing rung', () => {
 test('buildRunManifest throws on an unknown runId', () => {
   assert.throws(() => buildRunManifest(cfg, 'nope', 'a', 'b'), /unknown runId/i);
 });
+
+import { isScorableTrial } from './run-manifest-builder.mjs';
+
+test('isScorableTrial: manifest without reachabilityStatus:ok is not scorable', () => {
+  assert.equal(isScorableTrial({ manifest: { manifestVersion: '1.2' } }), false);
+  assert.equal(isScorableTrial({ manifest: { reachabilityStatus: 'fail' } }), false);
+});
+
+test('isScorableTrial: manifest with reachabilityStatus:ok is scorable', () => {
+  assert.equal(isScorableTrial({ manifest: { reachabilityStatus: 'ok', manifestVersion: '1.2' } }), true);
+});
+
+test('isScorableTrial: degraded-fallback scratch markers make a trial non-scorable', () => {
+  assert.equal(isScorableTrial({
+    manifest: { reachabilityStatus: 'ok' },
+    scratchFiles: ['contract.json', 'mcp-probe.sh'],
+  }), false);
+  assert.equal(isScorableTrial({
+    manifest: { reachabilityStatus: 'ok' },
+    scratchFiles: ['mcp-call.sh'],
+  }), false);
+});
+
+test('isScorableTrial: a zero-byte fetcher-output marker makes a trial non-scorable', () => {
+  assert.equal(isScorableTrial({
+    manifest: { reachabilityStatus: 'ok' },
+    zeroByteFetcherOutput: true,
+  }), false);
+});
+
+test('isScorableTrial: null/missing manifest is not scorable', () => {
+  assert.equal(isScorableTrial({}), false);
+  assert.equal(isScorableTrial(), false);
+});
