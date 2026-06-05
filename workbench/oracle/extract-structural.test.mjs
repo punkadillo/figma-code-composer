@@ -30,3 +30,14 @@ test('extractStructural collects host tags, role attrs, and prop names', () => {
 test('extractStructural is empty-safe', () => {
   assert.deepEqual(extractStructural(''), { tree: { tag: 'root', children: [] }, props: [] });
 });
+
+test('de-noise: dom.X -> X, single-letter tags dropped, destructured props captured', () => {
+  const NOISE = `
+export const Thing = forwardRef<E, ThingProps>(({ alpha, beta, ...rest }, ref) => (
+  <dom.div role="alert"><E/><span/></dom.div>
+));`;
+  const { tree, props } = extractStructural(NOISE);
+  assert.deepEqual(tree.children.map((c) => c.tag), ['div', 'span']);  // dom.div->div, <E/> dropped
+  assert.equal(tree.children[0].role, 'alert');
+  assert.ok(props.includes('alpha') && props.includes('beta'));
+});

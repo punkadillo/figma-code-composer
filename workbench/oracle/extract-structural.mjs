@@ -15,6 +15,16 @@ const stripComments = (s) =>
 // <Tag ...> or <Tag ... />, not a closing tag, not a generic.
 const TAG_RE = /(?<![A-Za-z0-9_])<([A-Za-z][A-Za-z0-9._]*)((?:[^>"']|"[^"]*"|'[^']*')*?)\/?>/g;
 const ROLE_RE = /\brole\s*=\s*"([^"]*)"/;
+const normTag = (t) => (t.startsWith('dom.') ? t.slice(4) : t);
+
+function extractDestructuredProps(source) {
+  // First object-destructured function/arrow param: ({ a, b, ...rest })
+  const m = source.match(/\(\s*\{([^{}]*)\}\s*(?::[^)]*)?[,)]/);
+  if (!m) return [];
+  return m[1].split(',')
+    .map((s) => s.trim().split(':')[0].trim().replace(/^\.\.\./, ''))
+    .filter((n) => /^[A-Za-z_]\w*$/.test(n) && n !== 'ref');
+}
 
 function extractProps(source) {
   // First `interface XxxProps {...}` or `type XxxProps = {...}` block.
@@ -34,10 +44,13 @@ export function extractStructural(source = '') {
   let m;
   TAG_RE.lastIndex = 0;
   while ((m = TAG_RE.exec(code))) {
-    const node = { tag: m[1] };
+    const tag = normTag(m[1]);
+    if (/^[A-Z]$/.test(tag)) continue;            // drop single-letter noise (generic <E,...>)
+    const node = { tag };
     const role = (m[2] || '').match(ROLE_RE);
     if (role) node.role = role[1];
     children.push(node);
   }
-  return { tree: { tag: 'root', children }, props: extractProps(source) };
+  const props = [...new Set([...extractProps(source), ...extractDestructuredProps(source)])];
+  return { tree: { tag: 'root', children }, props };
 }
