@@ -244,3 +244,36 @@ After all build/story/test specialists finish, `figma-coordinator` aggregates th
 ```
 
 The coordinator does NOT persist this to disk — it is surfaced to the user verbatim. Specialists verify their own writes against the filesystem before reporting; mismatches surface as flags.
+
+## § buildPlan (coordinator-produced, Step 8.5)
+
+The coordinator's think-once pass emits ONE `buildPlan` per run, derived from the validated manifest.
+It is the decided execution contract; builders execute it and do NOT re-derive its fields. Written to
+`/tmp/figma-<runId>/build-plan.json` (canonical JSON on disk); passed to builders in Brevit wire form
+when smaller (`protocols/brevit.md`, opportunistic + size-guarded).
+
+```jsonc
+{
+  "runId": "20260606-1200-heroui",
+  "components": [{
+    "name": "Card",
+    "resolvedLayer": "organism",          // final layer (NOT the fetcher's raw guess)
+    "layerConfidence": "high",            // "high" | "medium" | "low"
+    "apiShape": "compound",               // "props" | "compound" | "discriminated-union"
+    "renderMode": "server",               // "client" if state/effects/handlers present, else "server"
+    "requiredA11y": ["labelledby-on-region"],
+    "tokenBindings": ["color/surface/brand-primary", "radius/lg"],
+    "unboundDecision": "skip",            // "bind" | "skip" | "approved-inline" (per Step 3 gate)
+    "dropPolicy": "surface-to-attention", // how to report any collapsed affordance
+    "compose": []                         // reuse imports when a KG hit resolved the component
+  }],
+  "icons":  [{ "name": "CircleCheck", "fillModel": "currentColor", "a11y": "decorative-or-labelled" }],
+  "tokens": { "scope": "full-variable", "modes": ["light","dark"] }
+}
+```
+
+**Field authority.** A field PRESENT in a component's directive is authoritative — a builder MUST NOT
+re-decide it. A field the directive OMITS is the builder's to derive. `resolvedLayer` supersedes the
+fetcher's advisory `components[].layer`; `renderMode` supersedes any builder client/server guess;
+`apiShape` decides compound-vs-props-vs-union; `unboundDecision` reflects the Step 3 unbound gate
+(default `skip` — never an invented binding).
