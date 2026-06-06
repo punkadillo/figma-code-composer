@@ -28,5 +28,5 @@ test('renderMarkdown includes title, per-agent table, dominance, fan-in, thinkin
   assert.match(md, /Token-dominant agent.*component-builder/s);
   assert.match(md, /blocked.*2 ?ms/i);
   assert.match(md, /thinkingEst|estimate/i);
-  assert.match(md, /accuracy.*Plan 2|pending/i);
+  assert.match(md, /accuracy pending/i);
 });

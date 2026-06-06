@@ -43,7 +43,7 @@ export function renderMarkdown(r) {
   L.push('## Accuracy');
   L.push('');
   const hasAccuracy = r.runs.some(run => run.accuracy != null);
-  L.push(hasAccuracy ? '_See per-run accuracy below._' : '_Accuracy scoring is pending (Plan 2 — oracle + live trial)._');
+  L.push(hasAccuracy ? '_See per-run accuracy below._' : '_Accuracy pending — run `run-accuracy.mjs` for this trial._');
   L.push('');
   return L.join('\n');
 }
