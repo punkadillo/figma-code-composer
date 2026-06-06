@@ -85,7 +85,7 @@ git commit -m "build: add brevit dependency for token-efficient agent payloads"
 - Test: `bin/lib/brevit.test.mjs`
 - Modify: `package.json` (broaden the `test` glob to include `bin/**/*.test.mjs`)
 
-**Design note:** `encode()` calls brevit's real Flatten API. `decode()` is **our own deterministic un-flatten** (we do not assume brevit ships a decoder). The format un-flattened is the one captured in Task 1 Step 3 — calibrate the parser to those exact delimiters. `roundTrips(x)` = `deepEqual(decode(encode(x)), normalize(x))` where `normalize` coerces numbers→strings only if Task 1 showed brevit stringifies them. If a payload fails `roundTrips`, callers fall back to raw JSON.
+**Design note — REVISED per Task 1 findings.** Task 1 proved: (1) `brevity()` is **async**; (2) brevit has **no decoder**; (3) `enableAbbreviations` defaults **true** (must be set false); (4) brevit **mangles nested arrays-of-objects to `"[object Object]"`** — so feeding a raw manifest slice loses data. Therefore the wrapper **pre-flattens** nested JSON into a flat scalar dict (`{ "components.0.styledProperties.0.figmaVariable": "color/surface/brand-primary", … }`), feeds THAT to brevit (clean `key:value` lines, no `[object Object]`), and owns a lossless `unflatten` for the round-trip guard + tooling decode. Scalars round-trip as strings (documented drift); `null`/empty-array/empty-object use sentinels so structure is exact. The guard compares `unflatten(parse(await encode(x)))` against a string-normalized twin of `x`; on any mismatch, `safeEncode` falls back to raw JSON. The decoder parses brevit's flat `key:value` output — calibrate value-escaping to the extra probe in Step 0 below.
 
 - [ ] **Step 1: Write the failing test**
 
