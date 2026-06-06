@@ -12,15 +12,17 @@ is reviewed against. It exists to be approved/edited before any trial scaffoldin
 
 ## 1. Why a new trial
 
-The previous trial (`heroui-20260603`) exposed defects that drove an agent redesign (think-once buildPlan,
+An earlier workbench trial exposed defects that drove the agent redesign (think-once buildPlan,
 MCP-subprocess ban, full-variable token fetch + 3-layer token-builder, intent-based layer classification,
 Brevit wire format, the component-builder/icon/react-adapter fixes). This trial **re-runs the ladder to
 validate those fixes hit their targets** (98–100% source/structural accuracy, ~80% fewer tokens, zero
 MCP-fallback failures) and **adds scenarios the old trial lacked** (a pure token build; stateful + compound
 rungs that target specific fixes; a real composed demo).
 
-Review criteria are **unchanged** from `heroui-20260603` (accuracy · quality · build gates · tokens-per-agent),
-and generated code is reviewed **against the hero-ui v3 repo** (the oracle) — see §6.
+Component placement is now **FLAT** (config `designMethodology: flat`); runs are named by complexity tier
+(trivial / moderate / complex / extreme) — not atomic design. Review criteria use the established
+four-axis rubric (accuracy · quality · build gates · tokens-per-agent); generated code is reviewed
+**against the hero-ui v3 repo** (the oracle) — see §6.
 
 ---
 
@@ -81,25 +83,25 @@ Each row is one run. `cmd` is the pipeline entry point. `oracle` is what the gen
 
 | runId | tier | Figma node | component / target | cmd | oracle | what it validates |
 |---|---|---|---|---|---|---|
-| `icon-only` | trivial | from `2217:823` | a single glyph (e.g. `check`) | `/figma-icons` | storybook icon | icon a11y fix (role/aria-hidden), barrel consistency |
-| `atom` | trivial | `5375:69211` | **Button** | `/figma-build` | story | baseline atom; tokens-per-agent floor |
-| `chip` | trivial | `5375:71211` | **Chip** *(NEW)* | `/figma-build` | story | leaf w/ removable affordance; placeholder-copy rule |
-| `molecule-cold` | moderate | `17293:26222` | **Input** | `/figma-build` | story | `"use client"` + native-union fixes; cold KG |
-| `switch` | moderate | `5375:71127` | **Switch** *(NEW)* | `/figma-build` | story | **stateful → verifies `"use client"` lands** |
-| `organism` | complex | `5375:72791` | **Card** | `/figma-build` | story | **`apiShape=compound`** (sub-components, not prop-bag) |
-| `all-icons` | complex | `5375:72355` | **Alert** | `/figma-build` | story | icon fan-in; unbound-width flag discipline |
-| `tabs` | complex | `5375:79785` | **Tabs** *(NEW)* | `/figma-build` | story | multi-region/panels; discriminated-union API |
-| `template` | complex | `4672:32646` | **Dashboard demo** *(NEW)* | `/figma-build` | storybook-demo | **think-once on a real composed layout** |
-| `extreme` | extreme | `5375:71626` | **Calendar** *(NEW)* | `/figma-build` | story | heavy stateful (date state, RAC), build-gate stress |
+| `trivial-icon` | trivial | from `2217:823` | a single glyph (e.g. `check`) | `/figma-icons` | storybook icon | icon a11y fix (role/aria-hidden), barrel consistency |
+| `trivial-button` | trivial | `5375:69211` | **Button** | `/figma-build` | story | baseline trivial; tokens-per-agent floor |
+| `trivial-chip` | trivial | `5375:71211` | **Chip** *(NEW)* | `/figma-build` | story | leaf w/ removable affordance; placeholder-copy rule |
+| `moderate-input-cold` | moderate | `17293:26222` | **Input** | `/figma-build` | story | `"use client"` + native-union fixes; cold KG |
+| `moderate-switch` | moderate | `5375:71127` | **Switch** *(NEW)* | `/figma-build` | story | **stateful → verifies `"use client"` lands** |
+| `complex-card` | complex | `5375:72791` | **Card** | `/figma-build` | story | **`apiShape=compound`** (sub-components, not prop-bag) |
+| `complex-alert` | complex | `5375:72355` | **Alert** | `/figma-build` | story | icon fan-in; unbound-width flag discipline |
+| `complex-tabs` | complex | `5375:79785` | **Tabs** *(NEW)* | `/figma-build` | story | multi-region/panels; discriminated-union API |
+| `complex-dashboard` | complex | `4672:32646` | **Dashboard demo** *(NEW)* | `/figma-build` | storybook-demo | **think-once on a real composed layout** |
+| `extreme-calendar` | extreme | `5375:71626` | **Calendar** *(NEW)* | `/figma-build` | story | heavy stateful (date state, RAC), build-gate stress |
 | `tokens` | — | full var collection | **design tokens** *(NEW)* | `/figma-tokens` | `packages/styles` | **full-variable fetch + non-hollow `semantic.css` + per-mode `[data-theme]`** |
 
 **Comparison scenarios** (kept from the old trial — they isolate specific levers):
 
 | pair | runs | measures |
 |---|---|---|
-| cold → warm | `molecule-cold` → `molecule-warm` (`17293:26222` rebuilt) | KG reuse / skip-unchanged token savings |
-| build → update | `molecule-cold` → `molecule-update` (`/figma-update`) | patch-in-place vs rebuild |
-| icon fan-in | `all-icons` vs `organism` control | icon-set blocking cost |
+| cold → warm | `moderate-input-cold` → `moderate-input-warm` (`17293:26222` rebuilt) | KG reuse / skip-unchanged token savings |
+| build → update | `moderate-input-cold` → `moderate-input-update` (`/figma-update`) | patch-in-place vs rebuild |
+| icon fan-in | `complex-alert` vs `complex-card` control | icon-set blocking cost |
 
 ---
 
@@ -111,14 +113,14 @@ Each row is one run. `cmd` is the pipeline entry point. `oracle` is what the gen
 | 2 | **`switch` rung** (stateful) | — | the `"use client"` self-check (the `Input.tsx` build-break) |
 | 3 | **`tabs` rung** (multi-region) | — | `apiShape=discriminated-union`, drop-policy reporting |
 | 4 | **`chip` rung** (extra trivial) | — | placeholder-copy rule, named scale utilities |
-| 5 | **`template` = real dashboard demo** | old `template` was a Figma-only Form | think-once buildPlan on a composed layout (the core token-savings lever) |
-| 6 | **cross-trial token delta** | — | tokens-per-agent vs `heroui-20260603` baseline → proves the ~80% target |
+| 5 | **`complex-dashboard` = real dashboard demo** | prior trial's composed demo was a Figma-only Form | think-once buildPlan on a composed layout (the core token-savings lever) |
+| 6 | **per-rung tokens-per-agent recorded as the NEW baseline** (the prior trial was removed) | — | proves the ~80% reduction target; becomes the reference for future trials |
 
 ---
 
-## 6. Review criteria (unchanged) + what's reviewed against the repo
+## 6. Review criteria + what's reviewed against the repo
 
-Same four-axis rubric as `heroui-20260603`:
+Established four-axis rubric:
 
 - **Accuracy** — visual (pixel-diff vs HeroUI storybook), style (computed-style match), structural
   (source + rendered-DOM tree similarity), **build gate** (tsc + build + unit tests). Visual/style read low
@@ -136,7 +138,7 @@ architecture is expected under `designSystem: none` and is **flagged, not penali
 
 **New measurables this trial:**
 - token-layer fidelity: is `semantic.css` non-empty and aliasing primitives? token count vs oracle's **87**? both modes emitted?
-- think-once proof: tokens-per-agent on `template`/`all-icons` vs the `heroui-20260603` baseline.
+- think-once proof: tokens-per-agent on `complex-dashboard`/`complex-alert` recorded as the new baseline.
 - no degraded trials scored: every run's manifest carries `reachabilityStatus: "ok"` (enforced by `isScorableTrial`).
 
 ---
@@ -149,7 +151,7 @@ architecture is expected under `designSystem: none` and is **flagged, not penali
   drafts first; otherwise this kit is equivalent.
 - **icon-only node:** the old trial pinned `13354:830` ("check icon"); the exact glyph node will be re-confirmed
   against the Icons page `2217:823` at scaffold time.
-- **`template` oracle:** the dashboard demo has no 1:1 source component in the repo — it is scored
+- **`complex-dashboard` oracle:** the dashboard demo has no 1:1 source component in the repo — it is scored
   structurally + by quality judge against the closest storybook composition, not pixel-diffed to a single oracle.
 - **Node-id drift:** all node ids above were read live from `qGjFwr9ZWpLk8xsgskwEHe` on 2026-06-06; re-verify at
   scaffold time before the run.

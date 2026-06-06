@@ -1,8 +1,7 @@
 # heroui-20260606 — live trial run steps
 
 > Validates the agent redesign (think-once `buildPlan`, MCP-subprocess ban, full-variable token fetch +
-> 3-layer token-builder, intent-based layer classification, opportunistic Brevit) against the
-> `heroui-20260603` baseline. Ladder selected in
+> 3-layer token-builder, flat placement, opportunistic Brevit). This trial establishes the baseline. Ladder selected in
 > `workbench/docs/2026-06-06-heroui-trial-component-selection-review.md`.
 > Figma kit: `qGjFwr9ZWpLk8xsgskwEHe` · Oracle: heroui `v3` @ `bf7e58f`.
 
@@ -62,7 +61,7 @@ Wait for the acknowledgement. It must NOT run anything.
 
 ## Step 4 — Terminal B: start run #1
 ```bash
-node workbench/runner/run-one.mjs workbench/trials/heroui-20260606 icon-only
+node workbench/runner/run-one.mjs workbench/trials/heroui-20260606 trivial-icon
 ```
 It boots the receiver and prints a slash command + "press Enter when Claude prints ✅".
 
@@ -85,31 +84,32 @@ For the current run:
 
 runIds IN THIS EXACT ORDER (cold must precede warm + update — they form the comparison pairs):
 ```
-icon-only  tokens  atom  chip  molecule-cold  switch  organism  all-icons  tabs  template  extreme  molecule-warm  molecule-update
+trivial-icon  tokens  trivial-button  trivial-chip  moderate-input-cold  moderate-switch  complex-card  complex-alert  complex-tabs  complex-dashboard  extreme-calendar  moderate-input-warm  moderate-input-update
 ```
 
-| runId            | command        | node         | name            | tier     |
-|------------------|----------------|--------------|-----------------|----------|
-| icon-only        | /figma-icons   | 13354:830    | check icon      | trivial  |
-| tokens           | /figma-tokens  | 0:1          | design tokens   | moderate |
-| atom             | /figma-build   | 5375:69211   | Button          | trivial  |
-| chip             | /figma-build   | 5375:71211   | Chip            | trivial  |
-| molecule-cold    | /figma-build   | 17293:26222  | Input           | moderate |
-| switch           | /figma-build   | 5375:71127   | Switch          | moderate |
-| organism         | /figma-build   | 5375:72791   | Card            | complex  |
-| all-icons        | /figma-build   | 5375:72355   | Alert           | complex  |
-| tabs             | /figma-build   | 5375:79785   | Tabs            | complex  |
-| template         | /figma-build   | 4672:32646   | Dashboard demo  | complex  |
-| extreme          | /figma-build   | 5375:71626   | Calendar        | extreme  |
-| molecule-warm    | /figma-build   | 17293:26222  | Input (warm)    | moderate |
-| molecule-update  | /figma-update  | 17293:26222  | Input (update)  | moderate |
+| runId                  | command        | node         | name            | tier     |
+|------------------------|----------------|--------------|-----------------|----------|
+| trivial-icon           | /figma-icons   | 13354:830    | check icon      | trivial  |
+| tokens                 | /figma-tokens  | 0:1          | design tokens   | moderate |
+| trivial-button         | /figma-build   | 5375:69211   | Button          | trivial  |
+| trivial-chip           | /figma-build   | 5375:71211   | Chip            | trivial  |
+| moderate-input-cold    | /figma-build   | 17293:26222  | Input           | moderate |
+| moderate-switch        | /figma-build   | 5375:71127   | Switch          | moderate |
+| complex-card           | /figma-build   | 5375:72791   | Card            | complex  |
+| complex-alert          | /figma-build   | 5375:72355   | Alert           | complex  |
+| complex-tabs           | /figma-build   | 5375:79785   | Tabs            | complex  |
+| complex-dashboard      | /figma-build   | 4672:32646   | Dashboard demo  | complex  |
+| extreme-calendar       | /figma-build   | 5375:71626   | Calendar        | extreme  |
+| moderate-input-warm    | /figma-build   | 17293:26222  | Input (warm)    | moderate |
+| moderate-input-update  | /figma-update  | 17293:26222  | Input (update)  | moderate |
 
 (Exact slash-command string is whatever `run-one` prints — paste that, don't hand-type.)
 
 ## Step 6 — Reconcile target paths, then score
 
-Before scoring, the intent-based classifier decides where each component lands, so **reconcile
-`workbench/oracle/rung-map.mjs` `targetTsx` to the actual build output**:
+Before scoring, the flat-placement classifier puts each component in
+`target/src/components/<Name>/`, so **reconcile `workbench/oracle/rung-map.mjs` `targetTsx` to the
+actual build output** (flat — no atoms/molecules/organisms subdirs):
 ```bash
 for c in Button Chip Input Switch Card Alert Tabs Calendar Dashboard; do
   find workbench/trials/heroui-20260606/target/src/components -path "*/$c/$c.tsx";
@@ -124,13 +124,13 @@ Then, in Terminal A, tell Claude: **"All runs captured — score and aggregate."
 3. aggregates → `trialset.json`, renders `report.md` + dashboard.
    `export TRIAL=workbench/trials/heroui-20260606` is set by `resume-trial.sh`.
 
-## Review criteria (unchanged) + new measurables
+## Review criteria + new measurables
 - **Accuracy** (visual/style/struct/gates), **Quality** (5-dim judge), **Build gates**, **Tokens-per-agent** —
-  same rubric as `heroui-20260603`. Generated code reviewed against the hero-ui `v3` repo.
+  the established four-axis rubric (accuracy · quality · build gates · tokens-per-agent). Generated code reviewed against the hero-ui `v3` repo.
 - **NEW:** `tokens` rung — `semantic.css` non-empty + aliases primitives? token count vs oracle's ~87? both
-  light+dark modes emitted? · stateful `switch`/`molecule` ship `"use client"`? · `organism`/`tabs` use
-  compound/discriminated APIs (not prop-bags)? · `template` think-once token cost vs the `all-icons`
-  baseline · **cross-trial:** tokens-per-agent vs `heroui-20260603` (the ~80% target).
+  light+dark modes emitted? · stateful `moderate-switch`/`moderate-input` ship `"use client"`? · `complex-card`/`complex-tabs` use
+  compound/discriminated APIs (not prop-bags)? · `complex-dashboard` think-once token cost vs the `complex-alert`
+  baseline · tokens-per-agent per rung is recorded as the new baseline for future trials.
 
 ---
 
