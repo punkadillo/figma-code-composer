@@ -1129,11 +1129,11 @@ git commit -m "docs(pipeline): document brevit protocol + think-once buildPlan i
 
 - [ ] **Step 1: Re-run a representative rung (e.g. `all-icons`, the token-heavy one)**
 
-Run the workbench trial for the HeroUI Alert/all-icons rung per `workbench/trials/heroui-20260603/STEPS.md` (the resume script the user referenced: `source workbench/trials/heroui-20260603/resume-trial.sh`), into a NEW dated trial dir (do not overwrite `heroui-20260603`).
+Run the workbench trial for the HeroUI Alert/all-icons rung per `workbench/trials/<trial-id>/STEPS.md` (the resume script the user referenced: `source workbench/trials/<trial-id>/resume-trial.sh`), into a NEW dated trial dir (do not overwrite `<trial-id>`).
 
 - [ ] **Step 2: Compare against the baseline**
 
-Build the report (`npm run workbench:report`) and check, vs `workbench/reports/heroui-20260603/report.md`:
+Build the report (`npm run workbench:report`) and check, vs `workbench/reports/<trial-id>/report.md`:
 - Total tokens on the re-reasoning-heavy rungs ↓ (target ~80%).
 - Build gate ✓ on all rungs (Input client + Form className-merge fixed).
 - `semantic.css` non-empty; token count ≥ oracle across modes.

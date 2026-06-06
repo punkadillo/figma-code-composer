@@ -1,7 +1,7 @@
 # Figma Pipeline Redesign — "Fetch once, think once, execute mechanically"
 
 > Spec date: 2026-06-06 · Status: **Draft for review** · Owner: pipeline maintainers
-> Evidence base: `workbench/reports/heroui-20260603/report.md` + `analysis/00-index.md` … `08-render-harness-notes.md`
+> Evidence base: `workbench/reports/<trial-id>/report.md` + `analysis/00-index.md` … `08-render-harness-notes.md`
 
 ## 1. Problem statement
 
@@ -239,7 +239,7 @@ Cursor mirrors (`.cursor/prompts/*`, `.cursor/rules/*`) updated alongside each a
 - **Full-variable fetch latency/size.** Cap + flag oversized collections; screenshots already capped.
 
 ## 9. Validation
-Re-run the HeroUI workbench ladder and compare against `heroui-20260603`:
+Re-run the HeroUI workbench ladder and compare against `<trial-id>`:
 - Tokens per rung ↓ (target ~80% on the re-reasoning-heavy rungs).
 - Build gate ✓ on all rungs (Form className-merge + Input client fixed).
 - `semantic.css` non-empty; token count ≥ oracle across modes.

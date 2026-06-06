@@ -7,7 +7,7 @@
 
 ## 1. Context & problem
 
-The HeroUI workbench trial (`workbench/trials/heroui-20260603`) reports **accuracy as `null` for every rung**. The dashboard renders that null as a `0`-height bar; the markdown renders `—`. The cause is not a bug — accuracy was simply never computed: `analyze/build-results.mjs` hardcodes `accuracy: null`, and the live render pass that the scorers need was never run.
+The HeroUI workbench trial (`workbench/trials/<trial-id>`) reports **accuracy as `null` for every rung**. The dashboard renders that null as a `0`-height bar; the markdown renders `—`. The cause is not a bug — accuracy was simply never computed: `analyze/build-results.mjs` hardcodes `accuracy: null`, and the live render pass that the scorers need was never run.
 
 The scoring layer already exists and is fully unit-tested as **pure functions with injected IO `deps`**:
 

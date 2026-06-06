@@ -15,7 +15,7 @@
 - All paths below are relative to `workbench/` unless absolute.
 - Run tests with: `node --test 'oracle/*.test.mjs'` (from `workbench/`).
 - File writes under `workbench/trials/**` require `FP_ALLOW_RESTRICTED_WRITE=1` on the shell (frozen-paths hook). The new `oracle/*.mjs` files are under `workbench/**` and write-allowed directly.
-- Trial root constant used throughout: `TRIAL = workbench/trials/heroui-20260603`.
+- Trial root constant used throughout: `TRIAL = workbench/trials/<trial-id>`.
 - Commit messages end with the Co-Authored-By trailer per repo policy. Commit only the files each task touches.
 
 ## File Structure
@@ -470,7 +470,7 @@ Expected: FAIL — module not found.
 // oracle/rung-map.mjs
 // Maps each fidelity-scored rung to its target/oracle source files and the
 // canonical Storybook story id on each side. Paths are relative to the trial
-// root (workbench/trials/heroui-20260603). icon-only and page are out of scope.
+// root (workbench/trials/<trial-id>). icon-only and page are out of scope.
 export const RUNG_MAP = {
   atom: {
     rung: 'atom', component: 'Button',
@@ -566,7 +566,7 @@ import { scoreStyle } from './score-style.mjs';
 import { decodePng } from './png.mjs';
 import { RUNG_MAP, RUNG_TO_RUNID, scoredRungs } from './rung-map.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260603';
+const TRIAL = process.env.TRIAL || 'trials/<trial-id>';
 const WEIGHTS = JSON.parse(readFileSync(new URL('./weights.json', import.meta.url), 'utf8'));
 
 const readResults = (runId) => {
@@ -628,12 +628,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 - [ ] **Step 2: Run the P1 driver (writes structural+gates accuracy for 5 rungs)**
 
-Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/heroui-20260603 node oracle/run-accuracy.mjs`
+Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/<trial-id> node oracle/run-accuracy.mjs`
 Expected: 5 lines like `[accuracy] atom: composite NN (visual —, style —, structural NN)`; every composite is a real integer, none null.
 
 - [ ] **Step 3: Verify results.json got a real accuracy**
 
-Run: `node -e "const r=require('./trials/heroui-20260603/atom/results.json'); console.log(JSON.stringify(r.runs[0].accuracy.availability), r.runs[0].accuracy.composite)"`
+Run: `node -e "const r=require('./trials/<trial-id>/atom/results.json'); console.log(JSON.stringify(r.runs[0].accuracy.availability), r.runs[0].accuracy.composite)"`
 Expected: `{"visual":false,"style":false,"structural":true,"gates":true} <int>`
 
 - [ ] **Step 4: Commit**
@@ -654,27 +654,27 @@ git commit -m "feat(workbench): run-accuracy driver (P1 structural+gates)"
 
 Run:
 ```bash
-T=trials/heroui-20260603
-FP_ALLOW_RESTRICTED_WRITE=1 node analyze/aggregate-trialset.mjs reports/heroui-20260603/trialset.json \
+T=trials/<trial-id>
+FP_ALLOW_RESTRICTED_WRITE=1 node analyze/aggregate-trialset.mjs reports/<trial-id>/trialset.json \
   $T/icon-only/results.json $T/atom/results.json $T/molecule-cold/results.json $T/organism/results.json \
   $T/template/results.json $T/page/results.json $T/all-icons/results.json \
   --comparisons $T/comparisons.json
 ```
-Expected: `[trialset] wrote reports/heroui-20260603/trialset.json (7 rungs)`.
+Expected: `[trialset] wrote reports/<trial-id>/trialset.json (7 rungs)`.
 
 - [ ] **Step 2: Verify accuracyByRung is now populated**
 
-Run: `node -e "const t=require('./reports/heroui-20260603/trialset.json'); console.log(JSON.stringify(t.accuracyByRung))"`
+Run: `node -e "const t=require('./reports/<trial-id>/trialset.json'); console.log(JSON.stringify(t.accuracyByRung))"`
 Expected: composites are integers for atom/molecule/organism/template/all-icons (null only for icon-only/page).
 
 - [ ] **Step 3: Rebuild report.md + dashboard.html**
 
-Run: `FP_ALLOW_RESTRICTED_WRITE=1 node report/build-report.mjs reports/heroui-20260603/trialset.json 2026-06-05T00:00:00Z`
+Run: `FP_ALLOW_RESTRICTED_WRITE=1 node report/build-report.mjs reports/<trial-id>/trialset.json 2026-06-05T00:00:00Z`
 Expected: `[report] wrote ...report.md and ...dashboard.html`.
 
 - [ ] **Step 4: Confirm the accuracy table shows real numbers**
 
-Run: `grep -E '^\| (atom|template|all-icons) \|' reports/heroui-20260603/report.md | head`
+Run: `grep -E '^\| (atom|template|all-icons) \|' reports/<trial-id>/report.md | head`
 Expected: the Accuracy-by-rung rows show a numeric composite and `—` for visual/style (P1), with a real build-gate mark.
 
 - [ ] **Step 5: Run the full report + analyze suites (regression)**
@@ -685,7 +685,7 @@ Expected: all PASS.
 - [ ] **Step 6: Commit the regenerated artifacts**
 
 ```bash
-git add reports/heroui-20260603/trialset.json reports/heroui-20260603/report.md reports/heroui-20260603/dashboard.html trials/heroui-20260603/*/results.json
+git add reports/<trial-id>/trialset.json reports/<trial-id>/report.md reports/<trial-id>/dashboard.html trials/<trial-id>/*/results.json
 git commit -m "feat(workbench): populate accuracy (P1 structural+gates) in trial report"
 ```
 
@@ -888,7 +888,7 @@ Replace the assemble + log lines:
 
 - [ ] **Step 2: Re-run the P1 driver (structuralDom stays null without --render)**
 
-Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/heroui-20260603 node oracle/run-accuracy.mjs`
+Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/<trial-id> node oracle/run-accuracy.mjs`
 Expected: 5 lines with `struct·src NN, struct·dom —`; composites are real integers. (De-noise may shift the source scores slightly vs the first P1 run — that's expected.)
 
 - [ ] **Step 3: Commit**
@@ -961,7 +961,7 @@ git commit -m "feat(workbench): split structural into src/dom columns in accurac
 
 - [ ] **Step 2: Confirm the split columns render**
 
-Run: `grep -E 'struct·src' reports/heroui-20260603/report.md`
+Run: `grep -E 'struct·src' reports/<trial-id>/report.md`
 Expected: the accuracy table header shows both `struct·src` and `struct·dom`; rows show source numbers and `—` for dom (no render yet).
 
 - [ ] **Step 3: Full suite green**
@@ -972,7 +972,7 @@ Expected: all PASS.
 - [ ] **Step 4: Commit regenerated artifacts**
 
 ```bash
-git add reports/heroui-20260603/trialset.json reports/heroui-20260603/report.md
+git add reports/<trial-id>/trialset.json reports/<trial-id>/report.md
 git commit -m "feat(workbench): regenerate report with dual-structural accuracy"
 ```
 
@@ -993,12 +993,12 @@ git commit -m "feat(workbench): regenerate report with dual-structural accuracy"
 
 - [ ] **Step 1: Build the target Storybook static**
 
-Run: `cd trials/heroui-20260603/target && npx storybook build -o storybook-static --quiet; cd -`
+Run: `cd trials/<trial-id>/target && npx storybook build -o storybook-static --quiet; cd -`
 Expected: `storybook-static/` created, exit 0. (`storybook-static/` is gitignored under target — confirm with `git status`.)
 
 - [ ] **Step 2: List the real story ids and reconcile `rung-map.mjs`**
 
-Run: `node -e "const s=require('./trials/heroui-20260603/target/storybook-static/index.json'); console.log(Object.keys(s.entries).join('\n'))"`
+Run: `node -e "const s=require('./trials/<trial-id>/target/storybook-static/index.json'); console.log(Object.keys(s.entries).join('\n'))"`
 Expected: includes `atoms-button--default`, `atoms-input--default`, `molecules-card--default`, `molecules-alert--default`, `organisms-form--default`. If any differ, edit `oracle/rung-map.mjs` `targetStoryId` to match and re-run `node --test oracle/rung-map.test.mjs`.
 
 - [ ] **Step 3: Commit any rung-map reconciliation**
@@ -1020,7 +1020,7 @@ git commit -m "fix(workbench): reconcile target story ids with built Storybook"
 
 Run:
 ```bash
-cd trials/heroui-20260603/ref-heroui
+cd trials/<trial-id>/ref-heroui
 pnpm build --filter=@heroui/react || true
 pnpm build --filter=@heroui/storybook --output-logs=new-only
 cd -
@@ -1029,7 +1029,7 @@ Expected: a `storybook-static` (location printed by the build; commonly `package
 
 - [ ] **Step 2: Confirm oracle story ids**
 
-Run: `node -e "const s=require('./trials/heroui-20260603/ref-heroui/packages/storybook/storybook-static/index.json'); console.log(Object.keys(s.entries).filter(k=>/button|input|card|alert/.test(k)).join('\n'))"`
+Run: `node -e "const s=require('./trials/<trial-id>/ref-heroui/packages/storybook/storybook-static/index.json'); console.log(Object.keys(s.entries).filter(k=>/button|input|card|alert/.test(k)).join('\n'))"`
 Expected: includes `components-button--*`, `components-alert--*`, etc. Reconcile `oracle/rung-map.mjs` `oracleStoryId` to the real `--default`/first story id; re-run `node --test oracle/rung-map.test.mjs`.
 
 - [ ] **Step 3: Decision checkpoint**
@@ -1061,7 +1061,7 @@ import { join, extname } from 'node:path';
 import { chromium } from 'playwright';            // resolved from project-root node_modules
 import { STYLE_PROPS } from './score-style.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260603';
+const TRIAL = process.env.TRIAL || 'trials/<trial-id>';
 export const CLIP = { x: 0, y: 0, width: 360, height: 240 };
 const TARGET_SB = join(TRIAL, 'target/storybook-static');
 const ORACLE_SB = join(TRIAL, 'ref-heroui/packages/storybook/storybook-static');
@@ -1124,7 +1124,7 @@ export async function openShots() {
 
 Run:
 ```bash
-TRIAL=trials/heroui-20260603 node -e "
+TRIAL=trials/<trial-id> node -e "
 import('./oracle/render-harness.mjs').then(async (m) => {
   const s = await m.openShots();
   const { RUNG_MAP } = await import('./oracle/rung-map.mjs');
@@ -1151,7 +1151,7 @@ git commit -m "feat(workbench): dual-Storybook Playwright render harness"
 
 - [ ] **Step 1: Run with `--render`**
 
-Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/heroui-20260603 node oracle/run-accuracy.mjs --render`
+Run: `FP_ALLOW_RESTRICTED_WRITE=1 TRIAL=trials/<trial-id> node oracle/run-accuracy.mjs --render`
 Expected: 5 lines; for the 4 rungs with an oracle story, `visual NN, style NN` are now numbers (not `—`); template stays `—` for visual/style. No crash; any per-rung render failure logs and degrades to `—` (not fatal).
 
 - [ ] **Step 2: Re-aggregate + rebuild (same commands as Task 8 Steps 1 & 3)**
@@ -1161,7 +1161,7 @@ Expected: both succeed.
 
 - [ ] **Step 3: Verify visual/style populated in the report**
 
-Run: `grep -E '^\| (atom|all-icons) \|' reports/heroui-20260603/report.md | head`
+Run: `grep -E '^\| (atom|all-icons) \|' reports/<trial-id>/report.md | head`
 Expected: visual + style columns show integers for atom and all-icons.
 
 - [ ] **Step 4: Run full suites**
@@ -1172,7 +1172,7 @@ Expected: all PASS.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add reports/heroui-20260603/trialset.json reports/heroui-20260603/report.md reports/heroui-20260603/dashboard.html trials/heroui-20260603/*/results.json
+git add reports/<trial-id>/trialset.json reports/<trial-id>/report.md reports/<trial-id>/dashboard.html trials/<trial-id>/*/results.json
 git commit -m "feat(workbench): populate visual+style accuracy vs HeroUI (P2)"
 ```
 
@@ -1228,10 +1228,10 @@ Expected: PASS (new + existing).
 
 - [ ] **Step 5: Rebuild the report and commit**
 
-Run: `FP_ALLOW_RESTRICTED_WRITE=1 node report/build-report.mjs reports/heroui-20260603/trialset.json 2026-06-05T00:00:00Z`
+Run: `FP_ALLOW_RESTRICTED_WRITE=1 node report/build-report.mjs reports/<trial-id>/trialset.json 2026-06-05T00:00:00Z`
 
 ```bash
-git add report/markdown.mjs report/markdown-trialset.test.mjs reports/heroui-20260603/report.md reports/heroui-20260603/dashboard.html
+git add report/markdown.mjs report/markdown-trialset.test.mjs reports/<trial-id>/report.md reports/<trial-id>/dashboard.html
 git commit -m "feat(workbench): report explains renormalised accuracy weights"
 ```
 
@@ -1265,7 +1265,7 @@ And add `axeOn(r)` to `render-harness.mjs` `openShots()` return (inject axe-core
 - [ ] **Step 3: Re-run the render pass + regenerate (Task 11 Steps 1–4), then commit**
 
 ```bash
-git add oracle/run-accuracy.mjs oracle/render-harness.mjs reports/heroui-20260603/* trials/heroui-20260603/*/results.json
+git add oracle/run-accuracy.mjs oracle/render-harness.mjs reports/<trial-id>/* trials/<trial-id>/*/results.json
 git commit -m "feat(workbench): a11y gate via axe in accuracy render pass"
 ```
 
@@ -1274,9 +1274,9 @@ git commit -m "feat(workbench): a11y gate via axe in accuracy render pass"
 ## Final verification
 
 - [ ] **Run every workbench suite:** `node --test 'oracle/*.test.mjs' 'report/*.test.mjs' 'analyze/*.test.mjs'` → all PASS.
-- [ ] **Accuracy is real:** `node -e "const t=require('./reports/heroui-20260603/trialset.json'); console.log(t.accuracyByRung.map(r=>r.rung+':'+r.composite).join(' '))"` → integers for the 5 component rungs.
-- [ ] **Dashboard renders:** screenshot `reports/heroui-20260603/dashboard.html` with Playwright; the Accuracy-by-rung bars are non-zero for scored rungs.
-- [ ] **Caveat present:** `grep -i 'designSystem' reports/heroui-20260603/analysis/01-accuracy-feasibility.md` still documents the target-vs-HeroUI divergence; add a one-line pointer in `report.md` accuracy note if missing.
+- [ ] **Accuracy is real:** `node -e "const t=require('./reports/<trial-id>/trialset.json'); console.log(t.accuracyByRung.map(r=>r.rung+':'+r.composite).join(' '))"` → integers for the 5 component rungs.
+- [ ] **Dashboard renders:** screenshot `reports/<trial-id>/dashboard.html` with Playwright; the Accuracy-by-rung bars are non-zero for scored rungs.
+- [ ] **Caveat present:** `grep -i 'designSystem' reports/<trial-id>/analysis/01-accuracy-feasibility.md` still documents the target-vs-HeroUI divergence; add a one-line pointer in `report.md` accuracy note if missing.
 
 ## Notes for the implementer
 

@@ -31,7 +31,7 @@ Config written by `/init-figma-compose`: `framework=react`, `cssSystem=tailwind-
 
 ## 3. Ladder → Figma node mapping (confirmed for V3, 2026-06-03)
 
-Discovery drilled the V3 component pages, the Icons page (`2217:823`), and the Templates & Examples canvas (`4672:32615`). Locked node mapping for trial `heroui-20260603`:
+Discovery drilled the V3 component pages, the Icons page (`2217:823`), and the Templates & Examples canvas (`4672:32615`). Locked node mapping for the workbench trial:
 
 | # | Rung | Complexity tier | V3 node | Source page | Icon axis |
 | --- | --- | --- | --- | --- | --- |
