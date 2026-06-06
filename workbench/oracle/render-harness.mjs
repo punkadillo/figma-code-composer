@@ -52,6 +52,9 @@ async function shoot(page, baseUrl, storyId) {
 }
 
 export async function openShots() {
+  if (!existsSync(TRIAL)) {
+    throw new Error(`[render-harness] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id> (the heroui-20260603 default no longer exists after cleanup).`);
+  }
   const target = await serve(TARGET_SB, 6111);
   const oracle = existsSync(ORACLE_SB) ? await serve(ORACLE_SB, 6112) : null;
   const browser = await chromium.launch();
