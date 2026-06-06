@@ -6,6 +6,8 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { buildResults } from './build-results.mjs';
 
+const MINIMAL_RUN = { runId: 'r1', command: '/figma-build x', scenario: { tier: 'moderate' }, startedAt: '2026-06-02T10:00:00Z', endedAt: '2026-06-02T10:00:05Z' };
+
 const here = dirname(fileURLToPath(import.meta.url));
 const trial = join(here, '..', 'fixtures', 'trial-mini');
 
@@ -31,4 +33,29 @@ test('buildResults throws on a multi-run trial dir (Plan 1 single-run guard)', (
     { runId: 'b', startedAt: '2026-06-02T10:00:01Z', endedAt: '2026-06-02T10:00:02Z' },
   ] }));
   assert.throws(() => buildResults(dir), /multi-run/);
+});
+
+test('buildResults threads reachabilityStatus from figma-manifest.json onto the run', () => {
+  const d = mkdtempSync(join(tmpdir(), 'br-reach-'));
+  writeFileSync(join(d, 'run-manifest.json'), JSON.stringify({ trialId: 't', runs: [MINIMAL_RUN] }));
+  writeFileSync(join(d, 'events.jsonl'), '');
+  writeFileSync(join(d, 'spans.jsonl'), '');
+  writeFileSync(join(d, 'figma-manifest.json'), JSON.stringify({ reachabilityStatus: 'ok' }));
+  const out = buildResults(d);
+  assert.equal(out.runs[0].reachabilityStatus, 'ok');
+  assert.deepEqual(out.runs[0].degradedMarkers, []);
+  assert.equal(out.runs[0].zeroByteFetcherOutput, false);
+});
+
+test('buildResults flags a degraded run (markers + zero-byte fetcher output) and null reachability', () => {
+  const d = mkdtempSync(join(tmpdir(), 'br-deg-'));
+  writeFileSync(join(d, 'run-manifest.json'), JSON.stringify({ trialId: 't', runs: [MINIMAL_RUN] }));
+  writeFileSync(join(d, 'events.jsonl'), '');
+  writeFileSync(join(d, 'spans.jsonl'), '');
+  writeFileSync(join(d, 'contract.json'), '{}');
+  writeFileSync(join(d, 'fetcher-output.txt'), ''); // 0 bytes
+  const out = buildResults(d);
+  assert.equal(out.runs[0].reachabilityStatus, null); // no figma-manifest.json
+  assert.ok(out.runs[0].degradedMarkers.includes('contract.json'));
+  assert.equal(out.runs[0].zeroByteFetcherOutput, true);
 });

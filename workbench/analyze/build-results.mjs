@@ -1,5 +1,5 @@
 // workbench/analyze/build-results.mjs
-import { readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, writeFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { extractApiRequestEvents, extractLlmSpans } from './otlp.mjs';
 import { loadResponseBodies } from './bodies.mjs';
@@ -20,6 +20,26 @@ function readCostsJsonl(dir) {
     for (const line of readJsonl(join(costsDir, f)))
       total += Number(line.total_tokens ?? line.totalTokens ?? 0);
   return total;
+}
+
+function readReachability(dir) {
+  let reachabilityStatus = null;
+  const fm = join(dir, 'figma-manifest.json');
+  if (existsSync(fm)) {
+    try { reachabilityStatus = JSON.parse(readFileSync(fm, 'utf8')).reachabilityStatus ?? null; }
+    catch { reachabilityStatus = null; }
+  }
+  const MARKERS = ['contract.json', 'mcp-probe.sh', 'mcp-call.sh'];
+  const degradedMarkers = [];
+  for (const base of [dir, join(dir, 'scratch')]) {
+    for (const m of MARKERS) if (existsSync(join(base, m))) degradedMarkers.push(m);
+  }
+  let zeroByteFetcherOutput = false;
+  for (const base of [dir, join(dir, 'scratch')]) {
+    const fo = join(base, 'fetcher-output.txt');
+    if (existsSync(fo) && statSync(fo).size === 0) { zeroByteFetcherOutput = true; break; }
+  }
+  return { reachabilityStatus, degradedMarkers, zeroByteFetcherOutput };
 }
 
 export function buildResults(trialDir) {
@@ -47,6 +67,7 @@ export function buildResults(trialDir) {
     agents: aggregateRun(events, spans, thinkingByAgent),
     fanIn: fanInBlocking(spans),
     accuracy: null,
+    ...readReachability(trialDir),
   }));
 
   const otelTotalTokens = runs.reduce((s, r) => s + r.agents.reduce((x, a) => x + a.tokens.total, 0), 0);
