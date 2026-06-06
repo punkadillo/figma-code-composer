@@ -23,6 +23,14 @@ graphify-out/
 # Generated config (created locally by /init)
 .figma-pipeline/config.json
 
-# workbench — raw trial telemetry & generated dashboards are not committed
-workbench/trials/
+# workbench — raw trial telemetry & generated dashboards are not committed,
+# but the per-trial TEXT run-config (steps, ladder, env script) IS tracked so the
+# run is reproducible + visible in the repo. Heavy data (target/, ref-heroui/,
+# bodies/, run dirs, node_modules) stays ignored via the broad glob below.
+workbench/trials/**
+!workbench/trials/
+!workbench/trials/*/
+!workbench/trials/*/STEPS.md
+!workbench/trials/*/ladder-nodes.json
+!workbench/trials/*/resume-trial.sh
 workbench/reports/*/dashboard.html

@@ -1,0 +1,30 @@
+{
+  "trialId": "heroui-20260606",
+  "fileKey": "qGjFwr9ZWpLk8xsgskwEHe",
+  "figmaFile": "HeroUI Figma Kit V3 (Community)",
+  "figmaUrlBase": "https://www.figma.com/design/qGjFwr9ZWpLk8xsgskwEHe/HeroUI-Figma-Kit-V3--Community-",
+  "iconsPage": "2217:823",
+  "templatesCanvas": "4672:32615",
+  "oracle": { "repo": "github.com/heroui-inc/heroui", "branch": "v3", "commit": "bf7e58f", "tokens": "packages/styles/themes/default" },
+  "notes": "Re-run validating the agent redesign (think-once buildPlan, MCP-subprocess ban, full-variable token fetch + 3-layer token-builder, intent-based layers, opportunistic Brevit). Node ids verified live 2026-06-06 against fileKey qGjFwr9ZWpLk8xsgskwEHe. targetTsx paths in rung-map.mjs are PREDICTED from the intent-based classifier and must be reconciled to actual build output before run-accuracy.",
+  "runs": [
+    { "runId": "icon-only",       "rung": "icon-only", "tier": "trivial",  "nodeId": "13354:830",   "name": "check icon",        "command": "figma-icons",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "tokens",          "rung": "tokens",    "tier": "moderate", "nodeId": "0:1",         "name": "design tokens",     "command": "figma-tokens", "oracle": "styles",         "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "atom",            "rung": "atom",      "tier": "trivial",  "nodeId": "5375:69211",  "name": "Button",            "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "chip",            "rung": "chip",      "tier": "trivial",  "nodeId": "5375:71211",  "name": "Chip",              "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "molecule-cold",   "rung": "molecule",  "tier": "moderate", "nodeId": "17293:26222", "name": "Input",             "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "switch",          "rung": "switch",    "tier": "moderate", "nodeId": "5375:71127",  "name": "Switch",            "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "organism",        "rung": "organism",  "tier": "complex",  "nodeId": "5375:72791",  "name": "Card",              "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "all-icons",       "rung": "all-icons", "tier": "complex",  "nodeId": "5375:72355",  "name": "Alert",             "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": true  },
+    { "runId": "tabs",            "rung": "tabs",      "tier": "complex",  "nodeId": "5375:79785",  "name": "Tabs",              "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "template",        "rung": "template",  "tier": "complex",  "nodeId": "4672:32646",  "name": "Dashboard demo",    "command": "figma-build",  "oracle": "storybook-demo", "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "extreme",         "rung": "extreme",   "tier": "extreme",  "nodeId": "5375:71626",  "name": "Calendar",          "command": "figma-build",  "oracle": "storybook",      "cache": "cold", "mode": "build",  "icon": false },
+    { "runId": "molecule-warm",   "rung": "molecule",  "tier": "moderate", "nodeId": "17293:26222", "name": "Input (warm)",      "command": "figma-build",  "oracle": "storybook",      "cache": "warm", "mode": "build",  "icon": false },
+    { "runId": "molecule-update", "rung": "molecule",  "tier": "moderate", "nodeId": "17293:26222", "name": "Input (update)",    "command": "figma-update", "oracle": "storybook",      "cache": "warm", "mode": "update", "icon": false }
+  ],
+  "comparisons": {
+    "iconFanIn":   { "withIconsRung": "all-icons", "controlRung": "organism" },
+    "coldWarm":    { "coldRunId": "molecule-cold", "warmRunId": "molecule-warm" },
+    "buildUpdate": { "buildRunId": "molecule-cold", "updateRunId": "molecule-update" }
+  }
+}
