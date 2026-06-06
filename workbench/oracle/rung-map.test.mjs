@@ -12,7 +12,13 @@ test('every scored rung has source paths and component name', () => {
   }
 });
 
-test('Form has source but no oracle story; Button has both', () => {
-  assert.equal(RUNG_MAP.template.hasOracleStory, false);
-  assert.equal(RUNG_MAP.atom.hasOracleStory, true);
+test('rungs are named by complexity tier (not atomic design)', () => {
+  for (const key of Object.keys(RUNG_MAP)) {
+    assert.ok(/^(trivial|moderate|complex|extreme)-/.test(key), `${key} is complexity-prefixed`);
+  }
+});
+
+test('the dashboard composition has source but no oracle story; button has both', () => {
+  assert.equal(RUNG_MAP['complex-dashboard'].hasOracleStory, false);
+  assert.equal(RUNG_MAP['trivial-button'].hasOracleStory, true);
 });

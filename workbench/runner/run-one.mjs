@@ -7,7 +7,7 @@
 // run-manifest-builder.mjs (window→manifest) and collector/receiver.mjs.
 //
 // Usage: node workbench/runner/run-one.mjs <trialDir> <runId> [port]
-//   e.g. node workbench/runner/run-one.mjs workbench/trials/heroui-20260603 atom
+//   e.g. node workbench/runner/run-one.mjs workbench/trials/heroui-20260606 atom
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';

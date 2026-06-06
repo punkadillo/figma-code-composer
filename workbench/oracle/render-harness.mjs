@@ -8,7 +8,7 @@ import { join, extname } from 'node:path';
 import { chromium } from 'playwright';            // resolved from project-root node_modules
 import { STYLE_PROPS } from './score-style.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260603';
+const TRIAL = process.env.TRIAL || 'trials/heroui-20260606';
 export const CLIP = { x: 0, y: 0, width: 360, height: 240 };
 const TARGET_SB = join(TRIAL, 'target/storybook-static');
 const ORACLE_SB = join(TRIAL, 'ref-heroui/packages/storybook/storybook-static');
@@ -53,7 +53,7 @@ async function shoot(page, baseUrl, storyId) {
 
 export async function openShots() {
   if (!existsSync(TRIAL)) {
-    throw new Error(`[render-harness] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id> (the heroui-20260603 default no longer exists after cleanup).`);
+    throw new Error(`[render-harness] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id>.`);
   }
   const target = await serve(TARGET_SB, 6111);
   const oracle = existsSync(ORACLE_SB) ? await serve(ORACLE_SB, 6112) : null;

@@ -15,7 +15,7 @@ import { decodePng } from './png.mjs';
 import { RUNG_MAP, RUNG_TO_RUNID, scoredRungs } from './rung-map.mjs';
 import { isScorableTrial } from '../runner/run-manifest-builder.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260603';
+const TRIAL = process.env.TRIAL || 'trials/heroui-20260606';
 const WEIGHTS = JSON.parse(readFileSync(new URL('./weights.json', import.meta.url), 'utf8'));
 
 const readResults = (runId) => {
@@ -34,7 +34,7 @@ function runGateFor(gates) {
 
 export async function runAccuracy({ render = false, shots = null } = {}) {
   if (!existsSync(TRIAL)) {
-    throw new Error(`[accuracy] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id> before scoring (the heroui-20260603 default no longer exists after cleanup).`);
+    throw new Error(`[accuracy] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id> before scoring.`);
   }
   for (const r of scoredRungs()) {
     const runId = RUNG_TO_RUNID[r.rung];

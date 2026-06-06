@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { buildRunManifest } from './run-manifest-builder.mjs';
 
 const cfg = {
-  trialId: 'heroui-20260603',
+  trialId: 'heroui-20260606',
   runs: [
     { runId: 'atom', rung: 'atom', tier: 'trivial', nodeId: '5375:69211', name: 'Button', command: 'figma-build', cache: 'cold', mode: 'build', icon: false },
     { runId: 'all-icons', rung: 'all-icons', tier: 'complex', nodeId: '5375:72355', name: 'Alert', command: 'figma-build', cache: 'cold', mode: 'build', icon: true },
@@ -13,7 +13,7 @@ const cfg = {
 
 test('buildRunManifest produces a single-run manifest for the matched runId', () => {
   const m = buildRunManifest(cfg, 'atom', '2026-06-03T10:00:00Z', '2026-06-03T10:02:30Z');
-  assert.equal(m.trialId, 'heroui-20260603');
+  assert.equal(m.trialId, 'heroui-20260606');
   assert.equal(m.runs.length, 1);
   const r = m.runs[0];
   assert.equal(r.runId, 'atom');
