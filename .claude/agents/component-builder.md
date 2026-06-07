@@ -50,7 +50,7 @@ so), ref style, quote style, and `"use client"` discipline — match it, don't i
 
 ## Emission discipline — comment economy
 
-Minimal, **single-line** comments only (**hard cap ≤80 chars**, leader→EOL excl. indentation) — no block/multi-line/JSDoc-paragraph comments, no banners or section dividers, no comment that restates the code or echoes a Figma node name. Emit one only for non-obvious intent; prefer self-documenting names. Cuts output tokens every build. Required contract markers (`@deprecated` + `// removed in <runId>`, `"use client"`/license header) stay, one line each. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+Minimal, **single-line** inline comments (**hard cap ≤80 chars**, leader→EOL excl. indentation) — no narrative block/banner comments, no comment that restates the code or echoes a Figma node name. **Concise `/** … */` JSDoc on exported components/props is the exception — allowed and encouraged** (the quality docs/dx + propTypeCompleteness metrics reward it); keep each line tight, document intent + `@default`, don't restate the type, and don't JSDoc internal helpers. Emit inline comments only for non-obvious intent; prefer self-documenting names. Required contract markers (`@deprecated` + `// removed in <runId>`, `"use client"`/license header) stay, one line each. Full rule: `protocols/figma-manifest.md` § Emission discipline.
 
 ## Write scope
 

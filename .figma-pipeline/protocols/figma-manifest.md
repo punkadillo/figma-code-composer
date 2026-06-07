@@ -208,10 +208,11 @@ component-builder emits an `import { Button } from "<resolved import path>"` and
 
 Applies to **every generated file** — components, stories, tests, tokens, icons, configs. Comments are output tokens on every build, so the bar is high:
 
-- **Single-line, hard cap ≤ 80 characters.** Measured from the comment leader (`//`, `/*`, `#`) to end-of-line, **excluding leading indentation** (uniform budget at any nesting depth). No block (`/* … */` spanning lines) or multi-line / paragraph-JSDoc comments, no banner or section-divider comments, no comment that restates the code or echoes a Figma node name. If a thought exceeds 80 chars, shorten it, fold it into a self-documenting name, or drop it — **never wrap to a second line.** Verify with `grep -nE '(//|/\*|#).{79,}'` over emitted files.
+- **Inline/body comments: single-line, hard cap ≤ 80 characters.** Measured from the comment leader (`//`, `/*`, `#`) to end-of-line, **excluding leading indentation** (uniform budget at any nesting depth). No narrative `/* … */` blocks, no banner or section-divider comments, no comment that restates the code or echoes a Figma node name. If a thought exceeds 80 chars, shorten it, fold it into a self-documenting name, or drop it — **never wrap to a second line.** Verify with `grep -nE '(//|#).{79,}'` over emitted files.
 - **Emit only for non-obvious intent** the code itself can't carry (a workaround, a spec quirk). Prefer a self-documenting name over a comment; when in doubt, omit it.
-- **Token reduction first, DX second** — fewer generated comments cut output cost on every build and leave cleaner files to read.
-- **Required contract markers stay** (they're contract, not commentary, and must each be one line): the update-flow `@deprecated` + `// removed in <runId>` markers, the `"use client"` / license header, and any flag the manifest contract mandates.
+- **API doc-comments are the exception — allowed and encouraged.** `/** … */` JSDoc on an **exported component and its props** is the public-API contract (it's what the quality `docs`/`dx` dimensions and `propTypeCompleteness` reward — banning it would contradict them). Keep each line tight: document intent + `@default`, not prose; don't restate the type. Do NOT JSDoc internal/private helpers — those follow the inline rule above.
+- **Token reduction first, DX second** — fewer *narrative* comments cut output cost on every build; concise API docs are the kept value, not the waste.
+- **Required contract markers stay** (one line each): the update-flow `@deprecated` + `// removed in <runId>` markers, the `"use client"` / license header, and any flag the manifest contract mandates.
 
 ## Slicing (what each specialist receives)
 

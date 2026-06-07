@@ -31,7 +31,7 @@ happened once).
 
 ## Emission discipline — comment economy
 
-Minimal, **single-line** comments only (**hard cap ≤80 chars**, leader→EOL excl. indentation) in stories and `.mdx` docs — no block/multi-line/JSDoc-paragraph comments, no banners or section dividers, no comment that restates the story or echoes a Figma node name. Emit one only for non-obvious intent; prefer self-documenting story/arg names. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+Minimal, **single-line** inline comments (**hard cap ≤80 chars**, leader→EOL excl. indentation) in story code — no narrative block/banner comments, no comment that restates the story or echoes a Figma node name. Emit one only for non-obvious intent; prefer self-documenting story/arg names. (Storybook `argTypes` descriptions + `.mdx` prose are documentation, not code comments — write them as needed.) Full rule: `protocols/figma-manifest.md` § Emission discipline.
 
 ## Write scope
 
