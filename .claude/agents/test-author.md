@@ -29,6 +29,10 @@ omits. If a field you need is absent, derive it and note that in your return `no
 override a field that IS present — a present field is authoritative (the whole point of think-once is that
 this reasoning happened once).
 
+## Emission discipline — comment economy
+
+Minimal, **single-line** comments only — no block/multi-line comments, no banners or section dividers, no comment that restates an assertion. Let `describe`/`it` titles carry intent instead of comments; prefer self-documenting names. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+
 ## Write scope
 
 - Unit/integration tests — co-located with each component (or under `tests.unit.outputDir` when not `co-located`). Only when `tests.unit.enabled`.

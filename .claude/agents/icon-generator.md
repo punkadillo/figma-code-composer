@@ -27,6 +27,10 @@ you need is absent, derive it and note that in your return `notes`. NEVER silent
 IS present — a present field is authoritative (the whole point of think-once is that this reasoning
 happened once).
 
+## Emission discipline — comment economy
+
+Minimal, **single-line** comments only in icon components and the barrel — no block/multi-line comments, no banners, no comment that restates the SVG or echoes a Figma node name. Icon files are mostly path data; ship them comment-free. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+
 ## Write scope
 
 ONLY `config.icons.outputDir/**` + the icon barrel (`config.icons.outputDir/<config.icons.barrelFile>`). Any other write → abort.
