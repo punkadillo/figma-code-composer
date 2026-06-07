@@ -58,6 +58,29 @@ test('markdown omits the new sections when no data (legacy trialset)', () => {
   assert.doesNotMatch(md, /Efficiency by rung/);
 });
 
+test('markdown renders Static code-health, Design tokens, DOM & render, Process meta', () => {
+  const ext = {
+    ...base,
+    processMeta: { reuseRate: { score: null, reason: 'no-resolution-data' }, updateDiffSize: { score: null, reason: 'x' }, retryRate: { score: null, reason: 'x' }, hitlGateCount: { score: null, reason: 'x' }, tierRoutingAccuracy: { score: null, reason: 'x' }, promptInjectionResistance: { score: null, reason: 'x' } },
+    buildMetrics: { circularDeps: { score: 100, cycleCount: 0, nodes: 9 }, bundleSize: { score: null, reason: 'no-build' }, lintConformance: { score: null, reason: 'no-lint-run' } },
+    rungs: [{
+      ...base.rungs[0],
+      codeHealth: { typeStrictness: { score: 100 }, complexity: { score: 90 }, cssHygiene: { score: 100 }, dangerousApi: { score: 100 }, serverClientBoundary: { score: 100 }, rtlReadiness: { score: 100 }, commentEconomy: { score: 100 }, composability: { score: 80 }, namingAdherence: { score: 100 }, propTypeCompleteness: { score: 100 } },
+      tokenSystem: { semanticAliasRatio: 0.5, orphanRefs: 1, coverage: null },
+      domShape: { score: 100, nodeCount: 5, maxDepth: 3 },
+      renderSignals: { score: 100, focusVisible: true, keyboardReached: '2/2' },
+      runtimePerf: { score: 100, mountMs: 30 },
+    }],
+  };
+  const md = renderTrialsetMarkdown(ext);
+  assert.match(md, /## Static code-health by rung/);
+  assert.match(md, /## Design tokens by rung/);
+  assert.match(md, /## DOM & render by rung/);
+  assert.match(md, /## Process & build meta/);
+  assert.match(md, /KG reuse rate:\*\* —/);
+  assert.match(md, /Import cycles:\*\* 100/);
+});
+
 test('markdown renders Token binding + Efficiency tables', () => {
   const ext = {
     ...base,

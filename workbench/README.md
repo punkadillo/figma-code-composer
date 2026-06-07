@@ -28,6 +28,12 @@ panel per track and the markdown report mirrors them.
 | **Token binding** | static source | `oracle/score-token-binding.mjs` | literal-freedom — hardcoded hex/rgb/px vs tokens (binding rule 4) |
 | **Efficiency** | OTEL (derived) | `analyze/efficiency.mjs` | latency, cache-hit ratio, tool-calls, ttft, cost/tokens-per-accuracy-point |
 | **OpenTelemetry report** | OTEL stream | `analyze/otel-report.mjs` | per-agent cost / tokens / ttft + cross-check |
+| **Static code-health** | static source | `oracle/metrics/source-static.mjs` | types · complexity · CSS hygiene · dangerous APIs · `"use client"` · RTL · comment economy · composability · naming · prop-types |
+| **Design tokens** | token CSS + source | `oracle/metrics/design-tokens.mjs` | semantic-alias ratio · orphan refs · coverage |
+| **DOM & render** | render harness | `metrics/dom-shape.mjs` · `score-render-signals.mjs` · `score-runtime-perf.mjs` | nesting/bloat · focus-visible + keyboard · mount-time |
+| **Process & build meta** | telemetry / source | `analyze/process-meta.mjs` · `analyze/build-metrics.mjs` | reuse-rate · update-diff · retry · HITL · tier-routing · injection-resistance · import-cycles |
+
+**Capability-gated** (compute when the tool/data is supplied, else `null` + reason): real line coverage & mutation score (`metrics/test-quality.mjs`), bundle size & lint (`analyze/build-metrics.mjs`), INP / re-renders / memory (`score-runtime-perf.mjs`), determinism (needs two runs). Nothing is faked.
 
 Token/Cost/OTEL are derived from the OTEL agent data present in every trial.
 Accessibility and Core Web Vitals require the render pass; Stateless & Headless is

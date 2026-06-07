@@ -221,7 +221,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 56,
+          "ms": 76,
           "score": 100,
           "rating": "good"
         },
@@ -242,6 +242,106 @@
         "boundRefs": 0,
         "samples": []
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 21,
+          "score": 59
+        },
+        "dependencyFootprint": {
+          "totalImports": 4,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 15,
+          "overLength": 0,
+          "blockComments": 10,
+          "score": 0
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "Alert",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 9,
+        "maxDepth": 6
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": null,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "0/0"
+      },
+      "runtimePerf": {
+        "score": 93,
+        "source": "playwright",
+        "mountMs": 76,
+        "mount": 93,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "Button",
+        "icons"
+      ],
       "label": "complex-alert",
       "efficiency": {
         "latencyMs": 2892380,
@@ -474,7 +574,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 52,
+          "ms": 72,
           "score": 100,
           "rating": "good"
         },
@@ -497,6 +597,104 @@
           "116px"
         ]
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 36,
+          "score": 13
+        },
+        "dependencyFootprint": {
+          "totalImports": 2,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 9,
+          "overLength": 0,
+          "blockComments": 9,
+          "score": 10
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "Card",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 9,
+        "maxDepth": 6
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "1/1"
+      },
+      "runtimePerf": {
+        "score": 94,
+        "source": "playwright",
+        "mountMs": 72,
+        "mount": 94,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn"
+      ],
       "label": "complex-card",
       "efficiency": {
         "latencyMs": 2545903,
@@ -706,7 +904,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 64,
+          "ms": 72,
           "score": 100,
           "rating": "good"
         },
@@ -730,6 +928,113 @@
           "48px"
         ]
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 2,
+          "score": 100
+        },
+        "dependencyFootprint": {
+          "totalImports": 11,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": false,
+          "unnecessary": true,
+          "score": 60
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 16,
+          "overLength": 0,
+          "blockComments": 2,
+          "score": 80
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "DashboardDemo",
+          "pascalCase": true,
+          "matchesExpected": false,
+          "score": 80
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 0,
+        "nodeCount": 287,
+        "maxDepth": 11
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "29/29"
+      },
+      "runtimePerf": {
+        "score": 94,
+        "source": "playwright",
+        "mountMs": 72,
+        "mount": 94,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "Sidebar",
+        "Sidebar",
+        "HeaderNav",
+        "ContentHeader",
+        "Card",
+        "Button",
+        "Chip",
+        "Input",
+        "Avatar"
+      ],
       "label": "complex-dashboard",
       "efficiency": {
         "latencyMs": 8947980,
@@ -962,7 +1267,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 48,
+          "ms": 72,
           "score": 100,
           "rating": "good"
         },
@@ -989,6 +1294,106 @@
           "80px"
         ]
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 96,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 1
+        },
+        "complexity": {
+          "branches": 73,
+          "score": 0
+        },
+        "dependencyFootprint": {
+          "totalImports": 4,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 44,
+          "overLength": 2,
+          "blockComments": 11,
+          "score": 0
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "Tabs",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 15,
+        "maxDepth": 7
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "6/6"
+      },
+      "runtimePerf": {
+        "score": 94,
+        "source": "playwright",
+        "mountMs": 72,
+        "mount": 94,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "icons",
+        "Tab"
+      ],
       "label": "complex-tabs",
       "efficiency": {
         "latencyMs": 3615023,
@@ -1221,7 +1626,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 64,
+          "ms": 68,
           "score": 100,
           "rating": "good"
         },
@@ -1242,6 +1647,109 @@
         "boundRefs": 0,
         "samples": []
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 64,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 9
+        },
+        "complexity": {
+          "branches": 105,
+          "score": 0
+        },
+        "dependencyFootprint": {
+          "totalImports": 7,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 32,
+          "overLength": 0,
+          "blockComments": 1,
+          "score": 90
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": false,
+          "classNamePass": true,
+          "score": 65
+        },
+        "namingAdherence": {
+          "exportName": "Calendar",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 0,
+        "nodeCount": 113,
+        "maxDepth": 9
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "44/44"
+      },
+      "runtimePerf": {
+        "score": 95,
+        "source": "playwright",
+        "mountMs": 68,
+        "mount": 95,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "CalendarHeader",
+        "CalendarGrid",
+        "CalendarMonthYearPicker",
+        "CalendarCell",
+        "calendar-utils"
+      ],
       "label": "extreme-calendar",
       "efficiency": {
         "latencyMs": 31224328,
@@ -1474,7 +1982,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 60,
+          "ms": 64,
           "score": 100,
           "rating": "good"
         },
@@ -1497,6 +2005,105 @@
           "6px"
         ]
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 92,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 2
+        },
+        "complexity": {
+          "branches": 27,
+          "score": 41
+        },
+        "dependencyFootprint": {
+          "totalImports": 3,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": true,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 35,
+          "overLength": 1,
+          "blockComments": 6,
+          "score": 30
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "MagnifierIcon",
+          "pascalCase": true,
+          "matchesExpected": false,
+          "score": 80
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 4,
+        "maxDepth": 3
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "1/1"
+      },
+      "runtimePerf": {
+        "score": 96,
+        "source": "playwright",
+        "mountMs": 64,
+        "mount": 96,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "icons"
+      ],
       "label": "moderate-input (cold)",
       "efficiency": {
         "latencyMs": 2378431,
@@ -1574,6 +2181,12 @@
       "headless": null,
       "cwv": null,
       "tokenBinding": null,
+      "codeHealth": null,
+      "tokenSystem": null,
+      "domShape": null,
+      "renderSignals": null,
+      "runtimePerf": null,
+      "importEdges": null,
       "label": "moderate-input (update)",
       "efficiency": {
         "latencyMs": 838110,
@@ -1651,6 +2264,12 @@
       "headless": null,
       "cwv": null,
       "tokenBinding": null,
+      "codeHealth": null,
+      "tokenSystem": null,
+      "domShape": null,
+      "renderSignals": null,
+      "runtimePerf": null,
+      "importEdges": null,
       "label": "moderate-input (warm)",
       "efficiency": {
         "latencyMs": 4313220,
@@ -1906,6 +2525,105 @@
           "16px"
         ]
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 14,
+          "score": 81
+        },
+        "dependencyFootprint": {
+          "totalImports": 3,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": false,
+          "needsClient": true,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 9,
+          "overLength": 0,
+          "blockComments": 10,
+          "score": 0
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": false,
+          "classNamePass": true,
+          "score": 65
+        },
+        "namingAdherence": {
+          "exportName": "Switch",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 5,
+        "maxDepth": 4
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": 100,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "1/1"
+      },
+      "runtimePerf": {
+        "score": 100,
+        "source": "playwright",
+        "mountMs": 41,
+        "mount": 100,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn",
+        "_SwitchControl"
+      ],
       "label": "moderate-switch",
       "efficiency": {
         "latencyMs": 2231946,
@@ -1983,6 +2701,12 @@
       "headless": null,
       "cwv": null,
       "tokenBinding": null,
+      "codeHealth": null,
+      "tokenSystem": null,
+      "domShape": null,
+      "renderSignals": null,
+      "runtimePerf": null,
+      "importEdges": null,
       "label": "tokens",
       "efficiency": {
         "latencyMs": 5371186,
@@ -2215,7 +2939,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 160,
+          "ms": 172,
           "score": 100,
           "rating": "good"
         },
@@ -2225,7 +2949,7 @@
           "rating": "good"
         },
         "tbt": {
-          "ms": 14,
+          "ms": 23,
           "score": 100,
           "rating": "good"
         }
@@ -2236,6 +2960,104 @@
         "boundRefs": 0,
         "samples": []
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 13,
+          "score": 84
+        },
+        "dependencyFootprint": {
+          "totalImports": 2,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": false,
+          "needsClient": false,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 5,
+          "overLength": 0,
+          "blockComments": 6,
+          "score": 40
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "Button",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 1,
+        "maxDepth": 1
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": null,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "0/0"
+      },
+      "runtimePerf": {
+        "score": 65,
+        "source": "playwright",
+        "mountMs": 172,
+        "mount": 65,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn"
+      ],
       "label": "trivial-button",
       "efficiency": {
         "latencyMs": 3342967,
@@ -2468,7 +3290,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 52,
+          "ms": 64,
           "score": 100,
           "rating": "good"
         },
@@ -2489,6 +3311,104 @@
         "boundRefs": 0,
         "samples": []
       },
+      "codeHealth": {
+        "typeStrictness": {
+          "score": 100,
+          "anys": 0,
+          "ignores": 0,
+          "assertions": 0
+        },
+        "complexity": {
+          "branches": 8,
+          "score": 100
+        },
+        "dependencyFootprint": {
+          "totalImports": 2,
+          "externalCount": 0,
+          "score": 100
+        },
+        "cssHygiene": {
+          "important": 0,
+          "inlineStyle": 0,
+          "score": 100
+        },
+        "dangerousApi": {
+          "dangerouslySetInnerHTML": 0,
+          "evalUse": 0,
+          "score": 100
+        },
+        "serverClientBoundary": {
+          "hasUseClient": false,
+          "needsClient": false,
+          "unnecessary": false,
+          "score": 100
+        },
+        "rtlReadiness": {
+          "logical": 0,
+          "physical": 0,
+          "score": 100
+        },
+        "commentEconomy": {
+          "lineComments": 4,
+          "overLength": 0,
+          "blockComments": 6,
+          "score": 40
+        },
+        "composability": {
+          "forwardRef": true,
+          "restSpread": true,
+          "classNamePass": true,
+          "score": 100
+        },
+        "namingAdherence": {
+          "exportName": "Chip",
+          "pascalCase": true,
+          "matchesExpected": true,
+          "score": 100
+        },
+        "propTypeCompleteness": {
+          "hasPropsType": true,
+          "jsdoc": true,
+          "implicitAny": false,
+          "score": 100
+        }
+      },
+      "tokenSystem": {
+        "emittedCount": 145,
+        "neededCount": null,
+        "coverage": null,
+        "semanticAliasRatio": 0.64,
+        "semanticScore": 64,
+        "orphanRefs": 0,
+        "orphanScore": 100
+      },
+      "domShape": {
+        "score": 100,
+        "nodeCount": 1,
+        "maxDepth": 1
+      },
+      "renderSignals": {
+        "score": 100,
+        "source": "playwright",
+        "focusVisible": null,
+        "reducedMotion": null,
+        "keyboard": 100,
+        "interaction": 100,
+        "keyboardReached": "0/0"
+      },
+      "runtimePerf": {
+        "score": 96,
+        "source": "playwright",
+        "mountMs": 64,
+        "mount": 96,
+        "inpMs": null,
+        "inp": null,
+        "reRenders": null,
+        "memoryMB": null
+      },
+      "importEdges": [
+        "cn"
+      ],
       "label": "trivial-chip",
       "efficiency": {
         "latencyMs": 1344665,
@@ -2566,6 +3486,12 @@
       "headless": null,
       "cwv": null,
       "tokenBinding": null,
+      "codeHealth": null,
+      "tokenSystem": null,
+      "domShape": null,
+      "renderSignals": null,
+      "runtimePerf": null,
+      "importEdges": null,
       "label": "trivial-icon",
       "efficiency": {
         "latencyMs": 613,
@@ -3466,5 +4392,47 @@
       "costPerAccuracyPoint": null,
       "tokensPerAccuracyPoint": null
     }
-  ]
+  ],
+  "processMeta": {
+    "reuseRate": {
+      "score": null,
+      "reason": "no-resolution-data"
+    },
+    "updateDiffSize": {
+      "score": null,
+      "reason": "no-update-diff-data"
+    },
+    "retryRate": {
+      "score": null,
+      "reason": "no-retry-data"
+    },
+    "hitlGateCount": {
+      "score": null,
+      "reason": "no-hitl-data"
+    },
+    "tierRoutingAccuracy": {
+      "score": null,
+      "reason": "no-ideal-tier-data"
+    },
+    "promptInjectionResistance": {
+      "score": null,
+      "reason": "no-injection-data"
+    }
+  },
+  "buildMetrics": {
+    "circularDeps": {
+      "score": 100,
+      "cycleCount": 0,
+      "cycles": [],
+      "nodes": 9
+    },
+    "bundleSize": {
+      "score": null,
+      "reason": "no-build"
+    },
+    "lintConformance": {
+      "score": null,
+      "reason": "no-lint-run"
+    }
+  }
 }

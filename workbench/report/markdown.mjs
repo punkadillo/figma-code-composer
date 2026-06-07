@@ -252,5 +252,80 @@ export function renderTrialsetMarkdown(ts) {
     L.push('> All derived from telemetry already captured (`analyze/efficiency.mjs`). `cache-hit` = `cacheRead / total` tokens; `$/acc-pt` & `tok/acc-pt` normalise cost/tokens by the accuracy composite (— when the rung is unscored). `latency` is wall-clock; `ttft` is request-weighted.');
     L.push('');
   }
+
+  const sc = (m) => (m && m.score != null ? n(m.score) : '—');
+  const chMean = (ch) => {
+    if (!ch) return null;
+    const xs = Object.values(ch).map((m) => m && m.score).filter((s) => s != null);
+    return xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null;
+  };
+
+  // Static code health (category B/C/G/H)
+  if (ts.rungs.some((r) => r.codeHealth)) {
+    L.push('## Static code-health by rung');
+    L.push('');
+    L.push('| rung | health | types | complexity | css | dangerous | srv/client | rtl | comments | compose | naming | propTypes |');
+    L.push('| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
+    for (const r of ts.rungs) {
+      const c = r.codeHealth;
+      if (!c) { L.push(`| ${lbl(r)} | — | — | — | — | — | — | — | — | — | — | — |`); continue; }
+      L.push(`| ${lbl(r)} | ${chMean(c) ?? '—'} | ${sc(c.typeStrictness)} | ${sc(c.complexity)} | ${sc(c.cssHygiene)} | ${sc(c.dangerousApi)} | ${sc(c.serverClientBoundary)} | ${sc(c.rtlReadiness)} | ${sc(c.commentEconomy)} | ${sc(c.composability)} | ${sc(c.namingAdherence)} | ${sc(c.propTypeCompleteness)} |`);
+    }
+    L.push('');
+    L.push('> Static source scan (`oracle/metrics/source-static.mjs`): type strictness · cyclomatic-ish complexity · CSS hygiene · dangerous APIs · unnecessary `"use client"` · RTL logical-properties · comment economy (the 80-char rule) · composability · naming · prop-type/JSDoc completeness. `health` is the mean of available sub-scores.');
+    L.push('');
+  }
+
+  // Design tokens (category A)
+  if (ts.rungs.some((r) => r.tokenSystem)) {
+    L.push('## Design tokens by rung');
+    L.push('');
+    L.push('| rung | semantic-alias | orphan refs | coverage |');
+    L.push('| --- | ---: | ---: | ---: |');
+    for (const r of ts.rungs) {
+      const t = r.tokenSystem;
+      if (!t) { L.push(`| ${lbl(r)} | — | — | — |`); continue; }
+      L.push(`| ${lbl(r)} | ${Math.round((t.semanticAliasRatio ?? 0) * 100)}% | ${n(t.orphanRefs)} | ${t.coverage == null ? '—' : n(t.coverage)} |`);
+    }
+    L.push('');
+    L.push('> `oracle/metrics/design-tokens.mjs`: semantic-alias = share of tokens that alias another via `var()`; orphan refs = `var(--x)` used but not defined; coverage (emitted ÷ Figma-needed) is `—` when the manifest needed-count is unavailable.');
+    L.push('');
+  }
+
+  // DOM shape + render signals + runtime perf (categories B/C/D)
+  if (ts.rungs.some((r) => r.domShape || r.renderSignals || r.runtimePerf)) {
+    L.push('## DOM & render by rung');
+    L.push('');
+    L.push('| rung | dom | nodes | depth | render | focus | keyboard | mount (ms) | perf |');
+    L.push('| --- | ---: | ---: | ---: | ---: | :--: | ---: | ---: | ---: |');
+    for (const r of ts.rungs) {
+      const d = r.domShape, s = r.renderSignals, p = r.runtimePerf;
+      if (!d && !s && !p) { L.push(`| ${lbl(r)} | — | — | — | — | — | — | — | — |`); continue; }
+      const focus = s && s.focusVisible != null ? (s.focusVisible ? '✓' : '✗') : '—';
+      L.push(`| ${lbl(r)} | ${sc(d)} | ${d ? n(d.nodeCount) : '—'} | ${d ? n(d.maxDepth) : '—'} | ${sc(s)} | ${focus} | ${s?.keyboardReached ?? '—'} | ${p?.mountMs ?? '—'} | ${sc(p)} |`);
+    }
+    L.push('');
+    L.push('> DOM = nesting/bloat health (`metrics/dom-shape.mjs`). render = focus-visible + keyboard reachability + interaction-ok (`score-render-signals.mjs`). perf = mount-time band (`score-runtime-perf.mjs`); INP / re-renders / memory are capability-gated.');
+    L.push('');
+  }
+
+  // Process & build meta (categories E/F/G) — trial-level
+  if (ts.processMeta || ts.buildMetrics) {
+    L.push('## Process & build meta');
+    L.push('');
+    const g = (m) => (m == null ? '—' : m.score != null ? `${m.score}` : `— (${m.reason || 'n/a'})`);
+    const pm = ts.processMeta || {}, bm = ts.buildMetrics || {};
+    L.push(`- **KG reuse rate:** ${g(pm.reuseRate)}`);
+    L.push(`- **Update diff-size:** ${g(pm.updateDiffSize)}`);
+    L.push(`- **Retry/error rate:** ${g(pm.retryRate)}`);
+    L.push(`- **HITL gate count:** ${g(pm.hitlGateCount)}`);
+    L.push(`- **Tier-routing accuracy:** ${g(pm.tierRoutingAccuracy)}`);
+    L.push(`- **Prompt-injection resistance:** ${g(pm.promptInjectionResistance)}`);
+    L.push(`- **Import cycles:** ${g(bm.circularDeps)}${bm.circularDeps ? ` (${bm.circularDeps.cycleCount} cycles / ${bm.circularDeps.nodes} nodes)` : ''}`);
+    L.push(`- **Bundle size:** ${g(bm.bundleSize)} · **Lint:** ${g(bm.lintConformance)} _(capability-gated — need a build / eslint run)_`);
+    L.push('');
+    L.push('> `—` with a reason = the signal was not captured in this trial (e.g. determinism needs two runs; reuse-rate needs KG `resolution` data). The scorers compute as soon as that data is present.');
+    L.push('');
+  }
   return L.join('\n');
 }

@@ -52,6 +52,27 @@ test('dashboard shows a pending note when a new metric is unscored', () => {
   assert.match(html, /Pending — re-score/);
 });
 
+test('dashboard renders Static code-health, Design tokens, DOM & render, Process meta panels', () => {
+  const ext = {
+    ...ts,
+    processMeta: { reuseRate: { score: null, reason: 'no-resolution-data' }, updateDiffSize: { score: null }, retryRate: { score: null }, hitlGateCount: { score: null }, tierRoutingAccuracy: { score: null }, promptInjectionResistance: { score: null } },
+    buildMetrics: { circularDeps: { score: 100, cycleCount: 0, nodes: 9 }, bundleSize: { score: null }, lintConformance: { score: null } },
+    rungs: [{
+      ...ts.rungs[0],
+      codeHealth: { typeStrictness: { score: 100 }, complexity: { score: 90 }, cssHygiene: { score: 100 }, dangerousApi: { score: 100 }, serverClientBoundary: { score: 100 }, rtlReadiness: { score: 100 }, commentEconomy: { score: 100 }, composability: { score: 80 }, namingAdherence: { score: 100 }, propTypeCompleteness: { score: 100 } },
+      tokenSystem: { semanticAliasRatio: 0.5, orphanRefs: 1, coverage: null },
+      domShape: { score: 100, nodeCount: 5, maxDepth: 3 },
+      renderSignals: { score: 100, focusVisible: true, keyboardReached: '2/2' },
+      runtimePerf: { score: 100, mountMs: 30 },
+    }],
+  };
+  const html = renderTrialsetDashboard(ext);
+  assert.match(html, /Static code-health by rung/);
+  assert.match(html, /Design tokens by rung/);
+  assert.match(html, /DOM &amp; render by rung/);
+  assert.match(html, /Process &amp; build meta/);
+});
+
 test('dashboard renders Token binding + Efficiency panels with data', () => {
   const ext = {
     ...ts,

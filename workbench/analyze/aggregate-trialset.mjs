@@ -3,6 +3,8 @@ import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { buildRollup } from './aggregate.mjs';
 import { rungTokenConsumption, rungCost, tokensByRung, costByRung, buildOtelReport } from './otel-report.mjs';
 import { rungEfficiency, efficiencyByRung } from './efficiency.mjs';
+import { processMeta } from './process-meta.mjs';
+import { circularDeps, bundleSize, lintConformance } from './build-metrics.mjs';
 
 const runTokens = (run) => run.agents.reduce((s, a) => s + a.tokens.total, 0);
 const blockedFor = (rungs, rungName) => {
@@ -33,6 +35,12 @@ export function aggregateTrialset({ trialId, runs, comparisons = {} }) {
       headless: run.headless ?? null,
       cwv: run.cwv ?? null,
       tokenBinding: run.tokenBinding ?? null,
+      codeHealth: run.codeHealth ?? null,
+      tokenSystem: run.tokenSystem ?? null,
+      domShape: run.domShape ?? null,
+      renderSignals: run.renderSignals ?? null,
+      runtimePerf: run.runtimePerf ?? null,
+      importEdges: run.importEdges ?? null,
     };
   });
 
@@ -71,6 +79,13 @@ export function aggregateTrialset({ trialId, runs, comparisons = {} }) {
   // per accuracy point). Attached per rung and surfaced as a ladder.
   for (const r of rungs) r.efficiency = rungEfficiency(r);
   out.efficiencyByRung = efficiencyByRung(rungs);
+
+  // Process & build meta (trial-level). circularDeps from the rungs' import edges;
+  // bundle/lint are capability-gated (no build/lint run wired) → null.
+  out.processMeta = processMeta(rungs);
+  const graph = {};
+  for (const r of rungs) if (r.importEdges) graph[r.rung] = r.importEdges;
+  out.buildMetrics = { circularDeps: circularDeps(graph), bundleSize: bundleSize(null), lintConformance: lintConformance(null) };
 
   if (comparisons.iconFanIn) {
     const { withIconsRung, controlRung } = comparisons.iconFanIn;

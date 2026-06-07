@@ -102,6 +102,31 @@ test('aggregateTrialset carries tokenBinding + derives efficiency (latency/cache
   assert.equal(ts.efficiencyByRung[0].rung, 'complex-card');
 });
 
+test('aggregateTrialset carries codeHealth/tokenSystem/dom/render/perf + trial meta', () => {
+  const ts = aggregateTrialset({ trialId: 'heroui', runs: [{
+    trialId: 'heroui',
+    runs: [{ runId: 'r1', rung: 'trivial-button', tier: 'trivial', scenario: { tier: 'trivial' },
+      wallMs: 1000, agents: [agent('component-builder', 100, 0.01)], fanIn: [], accuracy: { composite: 80 },
+      codeHealth: { typeStrictness: { score: 100 }, complexity: { score: 90 } },
+      tokenSystem: { semanticAliasRatio: 0.5, orphanRefs: 0, coverage: null, semanticScore: 50, orphanScore: 100 },
+      domShape: { score: 100, nodeCount: 5, maxDepth: 3 },
+      renderSignals: { score: 100, focusVisible: true, keyboardReached: '2/2' },
+      runtimePerf: { score: 100, mountMs: 30 },
+      importEdges: ['Icon'] }],
+  }] });
+  const r = ts.rungs[0];
+  assert.equal(r.codeHealth.typeStrictness.score, 100);
+  assert.equal(r.tokenSystem.semanticAliasRatio, 0.5);
+  assert.equal(r.domShape.nodeCount, 5);
+  assert.equal(r.renderSignals.focusVisible, true);
+  assert.equal(r.runtimePerf.mountMs, 30);
+  // trial-level meta present (mostly null-with-reason for a data-less trial)
+  assert.ok('reuseRate' in ts.processMeta);
+  assert.equal(ts.processMeta.reuseRate.score, null);
+  assert.equal(ts.buildMetrics.circularDeps.score, 100); // no cycle: Icon not a rung node
+  assert.equal(ts.buildMetrics.bundleSize.score, null);  // gated
+});
+
 test('aggregateTrialset leaves tokenBinding null on a legacy run', () => {
   const ts = aggregateTrialset({ trialId: 'heroui', runs: [
     runRes('r1', 'trivial-button', 'trivial', [agent('component-builder', 1000, 0.02)]),

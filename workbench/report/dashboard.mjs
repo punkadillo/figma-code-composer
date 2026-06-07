@@ -284,6 +284,53 @@ export function renderTrialsetDashboard(ts) {
         { align: ['l', 'l', 'r', 'r', 'r', 'r', 'r', 'r'] })
     : '';
 
+  // Static code health (B/C/G/H)
+  const sc = (m) => (m && m.score != null ? m.score : '—');
+  const chMean = (ch) => {
+    const xs = Object.values(ch).map((m) => m && m.score).filter((s) => s != null);
+    return xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : '—';
+  };
+  const chRows = rungs.filter((r) => r.codeHealth).map((r) => {
+    const c = r.codeHealth;
+    return [r.label ?? r.rung, chMean(c), sc(c.typeStrictness), sc(c.complexity), sc(c.cssHygiene), sc(c.dangerousApi), sc(c.serverClientBoundary), sc(c.rtlReadiness), sc(c.commentEconomy), sc(c.composability), sc(c.namingAdherence), sc(c.propTypeCompleteness)];
+  });
+  const chTable = chRows.length
+    ? htmlTable(['rung', 'health', 'types', 'complexity', 'css', 'dangerous', 'srv/client', 'rtl', 'comments', 'compose', 'naming', 'propTypes'], chRows,
+        { align: ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+
+  // Design tokens (A)
+  const dtRows = rungs.filter((r) => r.tokenSystem).map((r) => {
+    const t = r.tokenSystem;
+    return [r.label ?? r.rung, `${Math.round((t.semanticAliasRatio ?? 0) * 100)}%`, t.orphanRefs, t.coverage == null ? '—' : t.coverage];
+  });
+  const dtTable = dtRows.length
+    ? htmlTable(['rung', 'semantic-alias', 'orphan refs', 'coverage'], dtRows, { align: ['l', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+
+  // DOM + render signals + runtime perf (B/C/D)
+  const drRows = rungs.filter((r) => r.domShape || r.renderSignals || r.runtimePerf).map((r) => {
+    const d = r.domShape, s = r.renderSignals, p = r.runtimePerf;
+    const focus = s && s.focusVisible != null ? (s.focusVisible ? '✓' : '✗') : '—';
+    return [r.label ?? r.rung, sc(d), d ? d.nodeCount : '—', d ? d.maxDepth : '—', sc(s), focus, s?.keyboardReached ?? '—', p?.mountMs ?? '—', sc(p)];
+  });
+  const drTable = drRows.length
+    ? htmlTable(['rung', 'dom', 'nodes', 'depth', 'render', 'focus', 'keyboard', 'mount (ms)', 'perf'], drRows,
+        { align: ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs --render');
+
+  // Process & build meta (E/F/G) — trial-level
+  const g = (m) => (m == null ? '—' : m.score != null ? `${m.score}` : `— (${m.reason || 'n/a'})`);
+  const pm = ts.processMeta || {}, bm = ts.buildMetrics || {};
+  const pmRows = [
+    ['KG reuse rate', g(pm.reuseRate)], ['Update diff-size', g(pm.updateDiffSize)], ['Retry/error rate', g(pm.retryRate)],
+    ['HITL gate count', g(pm.hitlGateCount)], ['Tier-routing accuracy', g(pm.tierRoutingAccuracy)],
+    ['Prompt-injection resistance', g(pm.promptInjectionResistance)],
+    ['Import cycles', g(bm.circularDeps) + (bm.circularDeps ? ` (${bm.circularDeps.cycleCount}/${bm.circularDeps.nodes})` : '')],
+    ['Bundle size (gated)', g(bm.bundleSize)], ['Lint (gated)', g(bm.lintConformance)],
+  ];
+  const pmTable = (ts.processMeta || ts.buildMetrics) ? htmlTable(['metric', 'value'], pmRows, { align: ['l', 'r'] }) : '';
+
   // OpenTelemetry report — per-agent cost/ttft + per-rung cost.
   const otel = ts.otelReport;
   const otelTable = otel
@@ -357,6 +404,18 @@ export function renderTrialsetDashboard(ts) {
 
   <section><div class="panel"><h2>OpenTelemetry report</h2>
     <p class="note">Per-agent cost, tokens and request-weighted TTFT from the OTEL stream (<code>events.jsonl</code> + <code>spans.jsonl</code>), metered by Claude Code. Cost-dominant agent: <code>${esc(otel?.costDominantAgent ?? '—')}</code>.</p>${otelTable}</div></section>
+
+  <section><div class="panel"><h2>Static code-health by rung</h2>
+    <p class="note">Source scan (<code>oracle/metrics/source-static.mjs</code>): type strictness · complexity · CSS hygiene · dangerous APIs · unnecessary <code>"use client"</code> · RTL logical-properties · comment economy (80-char rule) · composability · naming · prop-type/JSDoc. <code>health</code> = mean of sub-scores.</p>${chTable}</div></section>
+
+  <section><div class="panel"><h2>Design tokens by rung</h2>
+    <p class="note">Semantic-alias share (tokens aliasing via <code>var()</code>), orphan <code>var(--x)</code> refs, and coverage vs Figma (— when needed-count unavailable) — <code>oracle/metrics/design-tokens.mjs</code>.</p>${dtTable}</div></section>
+
+  <section><div class="panel"><h2>DOM &amp; render by rung</h2>
+    <p class="note">DOM nesting/bloat health, focus-visible + keyboard reachability + interaction-ok, and mount-time band. INP / re-renders / memory are capability-gated.</p>${drTable}</div></section>
+
+  <section><div class="panel"><h2>Process &amp; build meta</h2>
+    <p class="note">Trial-level. <code>—</code> with a reason = signal not captured in this trial (e.g. determinism needs two runs; reuse-rate needs KG <code>resolution</code> data); the scorers compute once that data exists. Bundle/lint need a build / eslint run.</p>${pmTable}</div></section>
 
   <section><div class="panel"><h2>Tokens per agent (all rungs)</h2>
     <p class="note">Total tokens attributed to each agent, summed across every rung.</p>${tokenBars}</div></section>

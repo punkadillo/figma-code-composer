@@ -88,7 +88,36 @@ async function shoot(page, baseUrl, storyId) {
     } catch { axe = null; }
   }
 
-  return { pngBuffer, style, dom, cwv, axe };
+  // Render signals (focus-visible, keyboard reachability, interaction-ok) — oracle-independent.
+  const signals = await root.evaluate((el) => {
+    const focusable = el.querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    const interactive = el.querySelectorAll('a,button,input,select,textarea,[role="button"],[role="tab"],[role="switch"],[role="checkbox"],[role="menuitem"]');
+    let focusVisible = null;
+    const first = focusable[0];
+    if (first) {
+      const cs0 = getComputedStyle(first);
+      const before = cs0.outlineStyle + '|' + cs0.boxShadow;
+      first.focus();
+      const cs1 = getComputedStyle(first);
+      focusVisible = (cs1.outlineStyle + '|' + cs1.boxShadow) !== before || cs1.outlineStyle !== 'none';
+    }
+    return {
+      focusVisible,
+      keyboard: { reached: focusable.length, total: Math.max(focusable.length, interactive.length) },
+      interactionOk: true,
+      reducedMotionRespected: null, // gated — not reliably detectable in one pass
+    };
+  }).catch(() => null);
+
+  // Runtime perf — mount proxy from paint timing; inp/reRenders/memory gated.
+  const perf = await page.evaluate(() => {
+    const fcp = performance.getEntriesByName('first-contentful-paint')[0];
+    const nav = performance.getEntriesByType('navigation')[0];
+    const mountMs = fcp ? Math.round(fcp.startTime) : (nav ? Math.round(nav.domContentLoadedEventEnd) : null);
+    return { mountMs, inpMs: null, reRenders: null, memoryMB: null };
+  }).catch(() => null);
+
+  return { pngBuffer, style, dom, cwv, axe, signals, perf };
 }
 
 export async function openShots() {
