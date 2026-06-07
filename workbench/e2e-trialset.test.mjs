@@ -15,7 +15,7 @@ test('two fixture runs → trialset → trial report.md + dashboard.html', () =>
   const ts = aggregateTrialset({ trialId: 'heroui', runs,
     comparisons: { coldWarm: { coldRunId: 'r6', warmRunId: 'r2' } } });
   assert.equal(ts.rungs.length, 2);
-  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', composite: 95 }, { rung: 'page', composite: 40 }]);
+  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', label: 'atom', composite: 95 }, { rung: 'page', label: 'page', composite: 40 }]);
   assert.equal(ts.comparisons.coldWarm.tokenDeltaPct, -89); // (100-900)/900
 
   const out = mkdtempSync(join(tmpdir(), 'wb-ts-e2e-'));

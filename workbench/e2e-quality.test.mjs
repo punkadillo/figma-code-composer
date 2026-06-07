@@ -13,7 +13,7 @@ const fx = join(here, 'fixtures', 'trialset-quality');
 test('runs with quality → trialset → report shows both scorecards', () => {
   const runs = ['run-atom.json', 'run-page.json'].map((f) => JSON.parse(readFileSync(join(fx, f), 'utf8')));
   const ts = aggregateTrialset({ trialId: 'heroui', runs });
-  assert.deepEqual(ts.qualityByRung, [{ rung: 'atom', composite: 82 }, { rung: 'page', composite: 35 }]);
+  assert.deepEqual(ts.qualityByRung, [{ rung: 'atom', label: 'atom', composite: 82 }, { rung: 'page', label: 'page', composite: 35 }]);
 
   const out = mkdtempSync(join(tmpdir(), 'wb-q-e2e-'));
   const p = join(out, 'trialset.json');

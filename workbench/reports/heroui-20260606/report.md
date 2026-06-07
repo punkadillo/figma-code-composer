@@ -1,24 +1,24 @@
 # Workbench Trial Report — heroui-20260606
 
-> Generated: 2026-06-07T00:00:00.000Z · Rungs: 13
+> Generated: 2026-06-07T21:11:36.697Z · Rungs: 13
 
 ## Accuracy by ladder rung
 
 | rung | tier | composite | visual | style | struct·src | struct·dom | build gate |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | :--: |
-| trivial-icon | trivial | — | — | — | — | — | — |
+| complex-alert | complex | 56 | 48 | 75 | 21 | 8 | ✓ |
+| complex-card | complex | 47 | 27 | 50 | 22 | 39 | ✓ |
+| complex-dashboard | complex | 45 | — | — | 4 | — | ✓ |
+| complex-tabs | complex | 49 | 7 | 83 | 12 | 31 | ✓ |
+| extreme-calendar | extreme | 45 | 0 | 83 | 3 | 24 | ✓ |
+| moderate-input (cold) | moderate | 30 | 2 | 33 | 12 | 23 | ✓ |
+| moderate-input (update) | moderate | — | — | — | — | — | — |
+| moderate-input (warm) | moderate | — | — | — | — | — | — |
+| moderate-switch | moderate | 46 | 0 | 75 | 26 | 43 | ✓ |
 | tokens | moderate | — | — | — | — | — | — |
 | trivial-button | trivial | 42 | 0 | 75 | 29 | 22 | ✓ |
 | trivial-chip | trivial | 47 | 0 | 75 | 61 | 45 | ✓ |
-| moderate-input | moderate | 30 | 2 | 33 | 12 | 23 | ✓ |
-| moderate-switch | moderate | 46 | 0 | 75 | 26 | 43 | ✓ |
-| complex-card | complex | 47 | 27 | 50 | 22 | 39 | ✓ |
-| complex-alert | complex | 56 | 48 | 75 | 21 | 8 | ✓ |
-| complex-tabs | complex | 49 | 7 | 83 | 12 | 31 | ✓ |
-| complex-dashboard | complex | 45 | — | — | 4 | — | ✓ |
-| extreme-calendar | extreme | 45 | 0 | 83 | 3 | 24 | ✓ |
-| moderate-input | moderate | — | — | — | — | — | — |
-| moderate-input | moderate | — | — | — | — | — | — |
+| trivial-icon | trivial | — | — | — | — | — | — |
 
 > Accuracy sub-scores are computed live: **visual** = pixel-diff of the component rendered in the target Storybook vs the HeroUI oracle Storybook (fixed clip); **style** = `getComputedStyle` match over a fixed prop set; **struct·src** = source-tree similarity and **struct·dom** = rendered-DOM similarity (the composite uses dom when available, else src). A cell reads `—` when that sub-score was not computed (no HeroUI story for the rung, or rendering unavailable); its weight is then **renormalised** across the remaining sub-scores, so the composite reflects only what was measured (see `availability` in `results.json`). The target is `designSystem: none` (plain Tailwind) vs the HeroUI design system, so **visual/style read low by design** — they measure divergence from HeroUI's look, not code quality; `struct·dom` and the cross-rung trend are the meaningful signals. The **build gate** column is deterministic; a11y is not in the gate set (axe unavailable). "(capped)" marks a build-fail-capped composite.
 
@@ -26,39 +26,119 @@
 
 | rung | composite | optimizedCode | dx | docs | testDepth | storybook |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| trivial-icon | — | — | — | — | — | — |
+| complex-alert | 65 | 56 | 67 | 7 | 89 | 92 |
+| complex-card | 64 | 39 | 74 | 13 | 92 | 95 |
+| complex-dashboard | 61 | 66 | 65 | 13 | 87 | 51 |
+| complex-tabs | 64 | 36 | 77 | 7 | 96 | 94 |
+| extreme-calendar | 67 | 41 | 86 | 7 | 96 | 94 |
+| moderate-input (cold) | 63 | 39 | 78 | 7 | 94 | 90 |
+| moderate-input (update) | — | — | — | — | — | — |
+| moderate-input (warm) | — | — | — | — | — | — |
+| moderate-switch | 64 | 57 | 63 | 7 | 94 | 87 |
 | tokens | — | — | — | — | — | — |
 | trivial-button | 64 | 57 | 67 | 5 | 87 | 89 |
 | trivial-chip | 65 | 63 | 70 | 5 | 87 | 84 |
-| moderate-input | 63 | 39 | 78 | 7 | 94 | 90 |
-| moderate-switch | 64 | 57 | 63 | 7 | 94 | 87 |
-| complex-card | 64 | 39 | 74 | 13 | 92 | 95 |
-| complex-alert | 65 | 56 | 67 | 7 | 89 | 92 |
-| complex-tabs | 64 | 36 | 77 | 7 | 96 | 94 |
-| complex-dashboard | 61 | 66 | 65 | 13 | 87 | 51 |
-| extreme-calendar | 67 | 41 | 86 | 7 | 96 | 94 |
-| moderate-input | — | — | — | — | — | — |
-| moderate-input | — | — | — | — | — | — |
+| trivial-icon | — | — | — | — | — | — |
 
 > Quality = source-based judge, **3-vote median panel** per dimension (15 judge agents across the 5 scored rungs) over `target` + `ref-heroui` against `oracle/rubric.md`, weighted by `oracle/quality-weights.json`. `icon-only`/`page` are out of scope (no full component). Dimensions are the per-dimension median of the panel; the deterministic metric-blend layer is not yet applied.
+
+## Accessibility by rung (axe-core)
+
+| rung | score | violations | nodes | top issues |
+| --- | ---: | ---: | ---: | --- |
+| complex-alert | 100 | 0 | 0 | — |
+| complex-card | 100 | 0 | 0 | — |
+| complex-dashboard | 100 | 0 | 0 | — |
+| complex-tabs | 100 | 0 | 0 | — |
+| extreme-calendar | 100 | 0 | 0 | — |
+| moderate-input (cold) | 100 | 0 | 0 | — |
+| moderate-input (update) | — | — | — | — |
+| moderate-input (warm) | — | — | — | — |
+| moderate-switch | 100 | 0 | 0 | — |
+| tokens | — | — | — | — |
+| trivial-button | 100 | 0 | 0 | — |
+| trivial-chip | 100 | 0 | 0 | — |
+| trivial-icon | — | — | — | — |
+
+> axe-core WCAG audit over the rendered story root. Score starts at 100; each violation subtracts a per-impact penalty × min(nodes, cap) (`oracle/a11y-weights.json`). `—` = not rendered/scored.
+
+## Stateless & Headless by rung
+
+| rung | score | controlled | value-stateless | hook-extracted | forwardRef | effect-disc |
+| --- | ---: | :--: | :--: | :--: | :--: | :--: |
+| complex-alert | 55 | ✗ | ✓ | ✗ | ✓ | ✓ |
+| complex-card | 55 | ✗ | ✓ | ✗ | ✓ | ✓ |
+| complex-dashboard | 55 | ✗ | ✓ | ✗ | ✓ | ✓ |
+| complex-tabs | 40 | ✓ | ✗ | ✗ | ✓ | ✗ |
+| extreme-calendar | 55 | ✓ | ✗ | ✗ | ✓ | ✓ |
+| moderate-input (cold) | 80 | ✓ | ✓ | ✗ | ✓ | ✓ |
+| moderate-input (update) | — | — | — | — | — | — |
+| moderate-input (warm) | — | — | — | — | — | — |
+| moderate-switch | 80 | ✓ | ✓ | ✗ | ✓ | ✓ |
+| tokens | — | — | — | — | — | — |
+| trivial-button | 55 | ✗ | ✓ | ✗ | ✓ | ✓ |
+| trivial-chip | 55 | ✗ | ✓ | ✗ | ✓ | ✓ |
+| trivial-icon | — | — | — | — | — | — |
+
+> Static source analysis (`oracle/metrics/architecture.mjs`): rewards controlled (prop-driven) APIs, no internal value state, extracted/headless logic, `forwardRef`, and side-effect discipline (`oracle/headless-weights.json`).
+
+## Token binding by rung
+
+| rung | score | literals | var(--) refs | sample literals |
+| --- | ---: | ---: | ---: | --- |
+| complex-alert | 100 | 0 | 0 | — |
+| complex-card | 84 | 2 | 3 | 116px |
+| complex-dashboard | 84 | 2 | 0 | 16px, 48px |
+| complex-tabs | 44 | 7 | 0 | 2px, #f5f5f5, 16px, 226px, 80px |
+| extreme-calendar | 100 | 0 | 0 | — |
+| moderate-input (cold) | 84 | 2 | 2 | 6px |
+| moderate-input (update) | — | — | — | — |
+| moderate-input (warm) | — | — | — | — |
+| moderate-switch | 92 | 1 | 0 | 16px |
+| tokens | — | — | — | — |
+| trivial-button | 100 | 0 | 0 | — |
+| trivial-chip | 100 | 0 | 0 | — |
+| trivial-icon | — | — | — | — |
+
+> Literal-freedom (`oracle/score-token-binding.mjs`): 100 when no hardcoded design values (hex / `rgb()`·`hsl()` / arbitrary Tailwind values / raw px·rem) are inlined; each literal deducts. Directly tracks binding rule 4 — styled values should bind to tokens, not inline.
+
+## Core Web Vitals by rung
+
+| rung | score | LCP (ms) | CLS | TBT (ms) |
+| --- | ---: | ---: | ---: | ---: |
+| complex-alert | 100 | 56 | 0 | 0 |
+| complex-card | 100 | 52 | 0 | 0 |
+| complex-dashboard | 100 | 64 | 0 | 0 |
+| complex-tabs | 100 | 48 | 0 | 0 |
+| extreme-calendar | 100 | 64 | 0 | 0 |
+| moderate-input (cold) | 100 | 60 | 0 | 0 |
+| moderate-input (update) | — | — | — | — |
+| moderate-input (warm) | — | — | — | — |
+| moderate-switch | 100 | 0 | 0 | 0 |
+| tokens | — | — | — | — |
+| trivial-button | 100 | 160 | 0 | 14 |
+| trivial-chip | 100 | 52 | 0 | 0 |
+| trivial-icon | — | — | — | — |
+
+> Captured in the render harness via `PerformanceObserver`. Scored against Google good/needs-improvement/poor bands (`oracle/cwv-weights.json`): LCP 0.4, CLS 0.3, TBT 0.3.
 
 ## Build gates by rung (deterministic)
 
 | rung | tsc | build | unit tests | gate |
 | --- | :--: | :--: | ---: | :--: |
-| trivial-icon | — | — | — | — |
+| complex-alert | ✓ | ✓ | 22/22 | ✓ |
+| complex-card | ✓ | ✓ | 59/59 | ✓ |
+| complex-dashboard | ✓ | ✓ | 14/14 | ✓ |
+| complex-tabs | ✓ | ✓ | 40/40 | ✓ |
+| extreme-calendar | ✓ | ✓ | 130/130 | ✓ |
+| moderate-input (cold) | ✓ | ✓ | 26/26 | ✓ |
+| moderate-input (update) | — | — | — | — |
+| moderate-input (warm) | — | — | — | — |
+| moderate-switch | ✓ | ✓ | 15/15 | ✓ |
 | tokens | — | — | — | — |
 | trivial-button | ✓ | ✓ | 26/26 | ✓ |
 | trivial-chip | ✓ | ✓ | 21/21 | ✓ |
-| moderate-input | ✓ | ✓ | 26/26 | ✓ |
-| moderate-switch | ✓ | ✓ | 15/15 | ✓ |
-| complex-card | ✓ | ✓ | 59/59 | ✓ |
-| complex-alert | ✓ | ✓ | 22/22 | ✓ |
-| complex-tabs | ✓ | ✓ | 40/40 | ✓ |
-| complex-dashboard | ✓ | ✓ | 14/14 | ✓ |
-| extreme-calendar | ✓ | ✓ | 130/130 | ✓ |
-| moderate-input | — | — | — | — |
-| moderate-input | — | — | — | — |
+| trivial-icon | — | — | — | — |
 
 > The build-gate is the source-derivable slice of accuracy. Visual (pixel-diff) and style (computed-style) scoring require live rendering and are not included here — see `analysis/01-accuracy-feasibility.md`.
 
@@ -66,19 +146,19 @@
 
 | rung | tier | requests | total tokens | output | cacheRead | cacheCreate | model time (ms) | cost (USD) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| trivial-icon | trivial | 33 | 863,776 | 11,669 | 786,741 | 65,279 | 218,195 | 0.4799 |
+| complex-alert | complex | 60 | 1,851,206 | 39,582 | 1,628,412 | 180,671 | 618,461 | 1.7063 |
+| complex-card | complex | 65 | 2,651,209 | 52,711 | 2,327,711 | 261,340 | 776,601 | 3.0498 |
+| complex-dashboard | complex | 115 | 4,755,778 | 78,038 | 4,169,330 | 483,928 | 1,267,845 | 5.2541 |
+| complex-tabs | complex | 70 | 2,687,211 | 54,195 | 2,303,346 | 301,930 | 773,696 | 3.6641 |
+| extreme-calendar | extreme | 150 | 7,514,924 | 118,206 | 6,629,644 | 713,051 | 1,706,533 | 8.3542 |
+| moderate-input (cold) | moderate | 59 | 1,854,861 | 35,710 | 1,645,419 | 172,110 | 563,080 | 1.6796 |
+| moderate-input (update) | moderate | 10 | 292,379 | 11,192 | 212,612 | 67,733 | 163,536 | 0.4882 |
+| moderate-input (warm) | moderate | 74 | 2,077,667 | 37,128 | 1,852,695 | 185,633 | 608,442 | 1.7168 |
+| moderate-switch | moderate | 59 | 2,011,494 | 38,532 | 1,807,428 | 162,064 | 659,384 | 1.7384 |
 | tokens | moderate | 45 | 2,698,071 | 30,256 | 2,408,440 | 246,777 | 438,763 | 1.8344 |
 | trivial-button | trivial | 62 | 2,639,200 | 37,260 | 2,374,335 | 227,188 | 487,717 | 1.7249 |
 | trivial-chip | trivial | 28 | 1,080,183 | 32,286 | 882,126 | 154,089 | 451,103 | 1.5703 |
-| moderate-input | moderate | 59 | 1,854,861 | 35,710 | 1,645,419 | 172,110 | 563,080 | 1.6796 |
-| moderate-switch | moderate | 59 | 2,011,494 | 38,532 | 1,807,428 | 162,064 | 659,384 | 1.7384 |
-| complex-card | complex | 65 | 2,651,209 | 52,711 | 2,327,711 | 261,340 | 776,601 | 3.0498 |
-| complex-alert | complex | 60 | 1,851,206 | 39,582 | 1,628,412 | 180,671 | 618,461 | 1.7063 |
-| complex-tabs | complex | 70 | 2,687,211 | 54,195 | 2,303,346 | 301,930 | 773,696 | 3.6641 |
-| complex-dashboard | complex | 115 | 4,755,778 | 78,038 | 4,169,330 | 483,928 | 1,267,845 | 5.2541 |
-| extreme-calendar | extreme | 150 | 7,514,924 | 118,206 | 6,629,644 | 713,051 | 1,706,533 | 8.3542 |
-| moderate-input | moderate | 74 | 2,077,667 | 37,128 | 1,852,695 | 185,633 | 608,442 | 1.7168 |
-| moderate-input | moderate | 10 | 292,379 | 11,192 | 212,612 | 67,733 | 163,536 | 0.4882 |
+| trivial-icon | trivial | 33 | 863,776 | 11,669 | 786,741 | 65,279 | 218,195 | 0.4799 |
 | **total** | — | — | **32,977,959** | — | — | — | — | **33.2609** |
 
 > Tokens are OTEL-reported per run, summed across that run's agents. `cacheRead` typically dominates `total` (prompt-cache hits are billed cheap but counted). `model time` is summed request duration, not wall-clock.
@@ -92,10 +172,10 @@
 
 - **Token-dominant agent:** custom
 - **Time-dominant agent:** custom
-  - tier `trivial`: custom
-  - tier `moderate`: custom
   - tier `complex`: custom
   - tier `extreme`: custom
+  - tier `moderate`: custom
+  - tier `trivial`: custom
 
 ## Cross-check (OTEL vs costs.jsonl)
 
@@ -103,34 +183,51 @@
 - costs.jsonl total tokens: 32,977,959
 - delta: 0%
 
-## NEW measurables (heroui-20260606 baseline)
+## OpenTelemetry report
 
-Source: `workbench/trials/heroui-20260606/measurables.json` (computed by `workbench/oracle/tokens-measurables.mjs`).
+- **Total cost:** $33.2610 · **Total tokens:** 32,977,959 · **Requests:** 830
+- **Cost-dominant agent:** custom
 
-### `tokens` rung
-| signal | value | verdict |
-| --- | --- | :--: |
-| `semantic.css` non-empty | 90 tokens | ✓ |
-| semantic aliases primitives | 90/90 refs `var(--…)` | ✓ |
-| token count (primitives) | **91** vs oracle ~87 | ✓ close |
-| total tokens (prim+sem+comp) | 185 (91 + 90 + 4) | — |
-| light + dark modes emitted | **light only — no dark mode** | ✗ |
+| agent | requests | total tokens | output | cost (USD) | ttft avg (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| custom | 830 | 32,977,959 | 576,765 | 33.2609 | 0 |
 
-### Stateful `"use client"` directive
-| component | stateful | `"use client"` | verdict |
-| --- | :--: | :--: | :--: |
-| moderate-input | yes | ✓ | ✓ |
-| moderate-switch | yes (`useState`) | ✗ | **✗ missing** |
-| (also present: Card, Tabs, Alert ✓) | | | |
+### Cost to build by rung
 
-### Compound / discriminated APIs (not prop-bags)
-- **complex-card** → ✓ `Card + CardHeader + CardFooter` (composable sub-components)
-- **complex-tabs** → ✓ `Tabs + Tab` (compound)
+| rung | tier | cost (USD) | tokens |
+| --- | --- | ---: | ---: |
+| complex-alert | complex | 1.7063 | 1,851,206 |
+| complex-card | complex | 3.0498 | 2,651,209 |
+| complex-dashboard | complex | 5.2541 | 4,755,778 |
+| complex-tabs | complex | 3.6641 | 2,687,211 |
+| extreme-calendar | extreme | 8.3542 | 7,514,924 |
+| moderate-input (cold) | moderate | 1.6796 | 1,854,861 |
+| moderate-input (update) | moderate | 0.4882 | 292,379 |
+| moderate-input (warm) | moderate | 1.7168 | 2,077,667 |
+| moderate-switch | moderate | 1.7384 | 2,011,494 |
+| tokens | moderate | 1.8344 | 2,698,071 |
+| trivial-button | trivial | 1.7249 | 2,639,200 |
+| trivial-chip | trivial | 1.5703 | 1,080,183 |
+| trivial-icon | trivial | 0.4799 | 863,776 |
 
-### Think-once token cost
-- **complex-dashboard vs complex-alert baseline:** 4,755,778 vs 1,851,206 → **2.57× (+157%)**
-- **cold → warm input cache:** 1,854,861 → 2,077,667 → **+12%** (warm cost *more* — cache did not reduce tokens)
-- **build → update input:** 1,854,861 → 292,379 → **−84%** (update is dramatically cheaper)
+> OTEL `costUsd`/token usage rolled per agent and per rung from `events.jsonl` (metered by Claude Code). `ttft avg` is request-weighted from `spans.jsonl`. The cross-check above reconciles OTEL totals against the coordinator `costs.jsonl` ledger.
 
-### Tokens-per-agent baseline (per rung, OTEL collapsed each run to a single agent bucket → = per-run total)
-trivial-icon 0.86M · tokens 2.70M · trivial-button 2.64M · trivial-chip 1.08M · moderate-input-cold 1.85M · moderate-switch 2.01M · complex-card 2.65M · complex-alert 1.85M · complex-tabs 2.69M · complex-dashboard 4.76M · extreme-calendar 7.51M · input-warm 2.08M · input-update 0.29M
+## Efficiency by rung
+
+| rung | tier | latency (ms) | cache-hit | tool-calls | ttft (ms) | $/acc-pt | tok/acc-pt |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| complex-alert | complex | 2,892,380 | 88% | 0 | 0 | 0.0305 | 33,057 |
+| complex-card | complex | 2,545,903 | 88% | 0 | 0 | 0.0649 | 56,409 |
+| complex-dashboard | complex | 8,947,980 | 88% | 0 | 0 | 0.1168 | 105,684 |
+| complex-tabs | complex | 3,615,023 | 86% | 0 | 0 | 0.0748 | 54,841 |
+| extreme-calendar | extreme | 31,224,328 | 88% | 0 | 0 | 0.1856 | 166,998 |
+| moderate-input (cold) | moderate | 2,378,431 | 89% | 0 | 0 | 0.0560 | 61,829 |
+| moderate-input (update) | moderate | 838,110 | 73% | 0 | 0 | — | — |
+| moderate-input (warm) | moderate | 4,313,220 | 89% | 0 | 0 | — | — |
+| moderate-switch | moderate | 2,231,946 | 90% | 0 | 0 | 0.0378 | 43,728 |
+| tokens | moderate | 5,371,186 | 89% | 0 | 0 | — | — |
+| trivial-button | trivial | 3,342,967 | 90% | 0 | 0 | 0.0411 | 62,838 |
+| trivial-chip | trivial | 1,344,665 | 82% | 0 | 0 | 0.0334 | 22,983 |
+| trivial-icon | trivial | 613 | 91% | 0 | 0 | — | — |
+
+> All derived from telemetry already captured (`analyze/efficiency.mjs`). `cache-hit` = `cacheRead / total` tokens; `$/acc-pt` & `tok/acc-pt` normalise cost/tokens by the accuracy composite (— when the rung is unscored). `latency` is wall-clock; `ttft` is request-weighted.

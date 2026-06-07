@@ -21,7 +21,7 @@ test('aggregateTrialset builds per-rung rows + accuracyByRung', () => {
   });
   assert.equal(ts.trialId, 'heroui');
   assert.equal(ts.rungs.length, 2);
-  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', composite: 95 }, { rung: 'page', composite: 40 }]);
+  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', label: 'atom', composite: 95 }, { rung: 'page', label: 'page', composite: 40 }]);
   assert.equal(ts.rollup.dominance.tokens, 'component-builder');
 });
 

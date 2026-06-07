@@ -1,0 +1,10 @@
+{
+  "signals": {
+    "controlledProps": 25,
+    "statelessValue": 25,
+    "hookExtraction": 20,
+    "forwardRef": 15,
+    "sideEffectDiscipline": 15
+  },
+  "maxEffectsForFull": 1
+}

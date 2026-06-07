@@ -3,902 +3,17 @@
   "generatedAt": null,
   "rungs": [
     {
-      "rung": "trivial-icon",
-      "tier": "trivial",
-      "runId": "trivial-icon",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 33,
-          "tokens": {
-            "input": 87,
-            "output": 11669,
-            "thinkingEst": 0,
-            "cacheRead": 786741,
-            "cacheCreation": 65279,
-            "total": 863776
-          },
-          "timeMs": {
-            "sumDuration": 218195,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 0.47991755
-        }
-      ],
-      "fanIn": [],
-      "accuracy": null,
-      "gates": null
-    },
-    {
-      "rung": "tokens",
-      "tier": "moderate",
-      "runId": "tokens",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 45,
-          "tokens": {
-            "input": 12598,
-            "output": 30256,
-            "thinkingEst": 0,
-            "cacheRead": 2408440,
-            "cacheCreation": 246777,
-            "total": 2698071
-          },
-          "timeMs": {
-            "sumDuration": 438763,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 1.83437705
-        }
-      ],
-      "fanIn": [],
-      "accuracy": null,
-      "gates": null
-    },
-    {
-      "rung": "trivial-button",
-      "tier": "trivial",
-      "runId": "trivial-button",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 62,
-          "tokens": {
-            "input": 417,
-            "output": 37260,
-            "thinkingEst": 0,
-            "cacheRead": 2374335,
-            "cacheCreation": 227188,
-            "total": 2639200
-          },
-          "timeMs": {
-            "sumDuration": 487717,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 1.7248612999999997
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 42,
-        "cappedAt": null,
-        "visual": {
-          "diffPct": 99.9,
-          "score": 0
-        },
-        "style": {
-          "matchRate": 75,
-          "properties": {
-            "color": true,
-            "background-color": true,
-            "padding": true,
-            "margin": true,
-            "gap": false,
-            "font-size": true,
-            "font-weight": true,
-            "font-family": false,
-            "line-height": true,
-            "border-radius": true,
-            "border-width": true,
-            "border-color": false
-          }
-        },
-        "structural": {
-          "score": 22,
-          "tree": 13,
-          "prop": 36
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0.35000000000000003,
-          "style": 0.30000000000000004,
-          "structural": 0.20000000000000004,
-          "gates": 0.15000000000000002
-        },
-        "structuralSource": {
-          "score": 29,
-          "tree": 25,
-          "prop": 36
-        },
-        "structuralDom": {
-          "score": 22,
-          "tree": 13,
-          "prop": 36
-        },
-        "availability": {
-          "visual": true,
-          "style": true,
-          "structural": true,
-          "gates": true
-        }
-      },
-      "quality": {
-        "composite": 64,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 57,
-            "metric": 41,
-            "judge": {
-              "score": 72,
-              "rationales": [
-                "Clean forwardRef, static object maps, no dead code. Side effect (console.warn) runs in render body rather than via useEffect; static variant/size maps recreated per render but are trivially cheap.",
-                "Clean forwardRef, no dead code, good Tailwind class maps. Missing isLoading/fullWidth vs oracle. Inline warn in render body (not useMemo/useEffect) is a minor foot-gun. No unneeded re-renders.",
-                "Clean forwardRef, good cn usage, no dead code. Missing: no loading/spinner state, isLoading prop absent vs oracle. Variant/size maps defined inline each render (no useMemo), minor but real cost."
-              ]
-            }
-          },
-          "dx": {
-            "score": 67,
-            "metric": 50,
-            "judge": {
-              "score": 74,
-              "rationales": [
-                "Full JSDoc on every prop, extends ButtonHTMLAttributes, sensible defaults, ref-forwarding, displayName set, prop names match HeroUI oracle. Composable and discoverable API.",
-                "Props well-typed with JSDoc, sensible defaults, extends ButtonHTMLAttributes. Missing fullWidth, isLoading, and ButtonGroup context from oracle. startContent/endContent API matches HeroUI but is not the actual prop pattern the oracle uses.",
-                "Typed props, sensible defaults, JSDoc on each prop. Misses fullWidth, isLoading, and ButtonGroup context that oracle exposes. API is narrower than HeroUI v3 surface; isDisabled vs disabled naming diverges from oracle."
-              ]
-            }
-          },
-          "docs": {
-            "score": 5,
-            "metric": 0,
-            "judge": {
-              "score": 8,
-              "rationales": [
-                "No .md/.mdx documentation file exists in the generated directory. JSDoc comments in source are minimal inline cues, not a prop table or usage example doc.",
-                "No .md/.mdx docs file exists in the generated directory. Inline JSDoc comments are present but that is not a standalone docs artifact per rubric.",
-                "No .md/.mdx documentation file exists in the generated directory. JSDoc on props provides minimal inline guidance but no standalone prop table, usage examples, or purpose doc."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 87,
-            "metric": 100,
-            "judge": {
-              "score": 74,
-              "rationales": [
-                "Covers default, all 7 variants, all 3 sizes, onClick fire, disabled (attribute + click suppression), startContent/endContent, ref forwarding, className merge, isIconOnly a11y warn/no-warn, icon-only sizing, HTML attribute passthrough. No focus/keyboard nav or loading tests (component lacks loading prop).",
-                "Covers defaults, disabled (attribute + click guard), all variants/sizes, ref forwarding, className merge, startContent/endContent, icon-only a11y warning, and HTML attribute pass-through. Missing loading state, boundary/empty children, and full ARIA role assertions.",
-                "Covers default render, all variants/sizes, click/disabled interaction, ref forwarding, className merge, a11y icon-only warn, attribute passthrough, and default classes. Missing: loading state (absent), boundary/empty children, and role/aria assertions beyond warn check."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 89,
-            "metric": 100,
-            "judge": {
-              "score": 78,
-              "rationales": [
-                "Stories for Default, all Variants, all Sizes, IconOnly, Disabled, WithStartAndEndContent; argTypes fully wired; Figma link and a11y param set; play interactions on 3 stories. No loading/error state story but component doesn't expose those props.",
-                "Stories for Default, Variants, Sizes, IconOnly, Disabled, and WithStartAndEndContent with play functions on key stories. ArgTypes wired with controls. Missing Loading story, all-sizes-disabled, and ButtonGroup compositions. autodocs tag present.",
-                "Six stories covering Default, Variants, Sizes, IconOnly, Disabled, WithStartAndEndContent. Controls/argTypes wired. Play functions on interactive stories. Missing: loading state story, fullWidth, and a combined size×variant matrix that would round out coverage."
-              ]
-            }
-          }
-        },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
-        }
-      },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 26,
-          "total": 26
-        }
-      }
-    },
-    {
-      "rung": "trivial-chip",
-      "tier": "trivial",
-      "runId": "trivial-chip",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 28,
-          "tokens": {
-            "input": 11682,
-            "output": 32286,
-            "thinkingEst": 0,
-            "cacheRead": 882126,
-            "cacheCreation": 154089,
-            "total": 1080183
-          },
-          "timeMs": {
-            "sumDuration": 451103,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 1.5703438500000004
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 47,
-        "cappedAt": null,
-        "visual": {
-          "diffPct": 100,
-          "score": 0
-        },
-        "style": {
-          "matchRate": 75,
-          "properties": {
-            "color": true,
-            "background-color": true,
-            "padding": true,
-            "margin": true,
-            "gap": false,
-            "font-size": true,
-            "font-weight": true,
-            "font-family": false,
-            "line-height": true,
-            "border-radius": true,
-            "border-width": true,
-            "border-color": false
-          }
-        },
-        "structural": {
-          "score": 45,
-          "tree": 33,
-          "prop": 63
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0.35000000000000003,
-          "style": 0.30000000000000004,
-          "structural": 0.20000000000000004,
-          "gates": 0.15000000000000002
-        },
-        "structuralSource": {
-          "score": 61,
-          "tree": 60,
-          "prop": 63
-        },
-        "structuralDom": {
-          "score": 45,
-          "tree": 33,
-          "prop": 63
-        },
-        "availability": {
-          "visual": true,
-          "style": true,
-          "structural": true,
-          "gates": true
-        }
-      },
-      "quality": {
-        "composite": 65,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 63,
-            "metric": 54,
-            "judge": {
-              "score": 72,
-              "rationales": [
-                "Clean forwardRef, good cn usage, static lookup tables avoid dynamic class issues. tertiary and soft share identical styles (possible design gap). No memo needed for a pure display component. Minor: inline baseClasses split could be one cn call.",
-                "Clean forwardRef, lookup tables for classes, no dead code. Missing useMemo on colorClasses/sizeClasses (re-created every render). tertiary and soft are identical — wasted branches. Otherwise readable and idiomatic.",
-                "Clean forwardRef, lookup tables avoid dynamic class construction, no dead code. Missing useMemo for colorClasses/sizeClasses (recreated every render). soft/tertiary map identically—redundant. Solid but not optimal."
-              ]
-            }
-          },
-          "dx": {
-            "score": 70,
-            "metric": 50,
-            "judge": {
-              "score": 78,
-              "rationales": [
-                "All props typed, JSDoc on each prop, sensible defaults, spreads HTMLAttributes. Missing: no onClose/dismissible callback, no disabled prop, API diverges from HeroUI oracle's compound pattern (ChipRoot+ChipLabel). Usable but narrower than reference.",
-                "Good JSDoc on props, typed interfaces, sensible defaults. But variant names (primary/secondary/tertiary/soft) diverge from HeroUI oracle (solid/bordered/light/flat/faded/dot), reducing discoverability for HeroUI users. No disabled prop.",
-                "Well-typed props, sensible defaults, JSDoc on each prop, ref-forwarded, spreads HTML attrs. Variant names (primary/secondary/tertiary/soft) deviate from HeroUI v3 oracle (solid/bordered/light/flat/dot). Misleading API for consumers familiar with the real library."
-              ]
-            }
-          },
-          "docs": {
-            "score": 5,
-            "metric": 0,
-            "judge": {
-              "score": 8,
-              "rationales": [
-                "No .md or .mdx documentation file present in the generated directory. JSDoc comments in source are present but there is no standalone prop table, usage example doc, or README.",
-                "No .md or .mdx documentation file exists in the generated directory. JSDoc in the TSX is present but a proper doc file with prop table and usage examples is absent.",
-                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc comments are present in the component but do not constitute standalone documentation."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 87,
-            "metric": 100,
-            "judge": {
-              "score": 74,
-              "rationales": [
-                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, both slots together, ref forwarding, className merge, a11y span/role check, and HTML attr passthrough. Missing: empty children edge case, aria-label on chip root assertion.",
-                "Covers defaults, all variants, all colors, all sizes, startContent/endContent slots, ref forwarding, className merging, and a basic a11y span check. Missing: disabled state, empty children, aria-label passthrough assertion on chip itself, role tests beyond span tagName.",
-                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, ref forwarding, className merging, a11y span-role check, and HTML attr passthrough. Missing: disabled state (not modeled), empty children, boundary/overflow edge cases. Solid mid-range coverage."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 84,
-            "metric": 100,
-            "judge": {
-              "score": 68,
-              "rationales": [
-                "Default, Variants, Colors, Sizes, and WithStartAndEndContent stories present; controls wired via argTypes; Figma design link and a11y param set. Missing stories for color×variant cross-matrix and no disabled/loading state. One play-test in WithStartAndEndContent.",
-                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. Controls wired via argTypes. Missing: disabled/dot variant stories, cross-variant×color matrix, no play-function assertions except on one story. A few meaningful states absent.",
-                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. ArgTypes wired with controls. Figma link present. One play-test included. Missing: per-color-per-variant matrix, no disabled/empty state stories, only one play assertion."
-              ]
-            }
-          }
-        },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
-        }
-      },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 21,
-          "total": 21
-        }
-      }
-    },
-    {
-      "rung": "moderate-input",
-      "tier": "moderate",
-      "runId": "moderate-input-cold",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 59,
-          "tokens": {
-            "input": 1622,
-            "output": 35710,
-            "thinkingEst": 0,
-            "cacheRead": 1645419,
-            "cacheCreation": 172110,
-            "total": 1854861
-          },
-          "timeMs": {
-            "sumDuration": 563080,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 1.6795541999999999
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 30,
-        "cappedAt": null,
-        "visual": {
-          "diffPct": 98,
-          "score": 2
-        },
-        "style": {
-          "matchRate": 33,
-          "properties": {
-            "color": false,
-            "background-color": false,
-            "padding": false,
-            "margin": true,
-            "gap": true,
-            "font-size": false,
-            "font-weight": true,
-            "font-family": false,
-            "line-height": false,
-            "border-radius": false,
-            "border-width": true,
-            "border-color": false
-          }
-        },
-        "structural": {
-          "score": 23,
-          "tree": 25,
-          "prop": 20
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0.35000000000000003,
-          "style": 0.30000000000000004,
-          "structural": 0.20000000000000004,
-          "gates": 0.15000000000000002
-        },
-        "structuralSource": {
-          "score": 12,
-          "tree": 7,
-          "prop": 20
-        },
-        "structuralDom": {
-          "score": 23,
-          "tree": 25,
-          "prop": 20
-        },
-        "availability": {
-          "visual": true,
-          "style": true,
-          "structural": true,
-          "gates": true
-        }
-      },
-      "quality": {
-        "composite": 63,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 39,
-            "metric": 0,
-            "judge": {
-              "score": 78,
-              "rationales": [
-                "Clean forwardRef with merged refs, useCallback guards, no dead code. Minor issue: mergedRef recreates on every render when ref is an object (missing stable identity). Number stepper is a thoughtful addition but adds conditional complexity not in oracle.",
-                "forwardRef, useCallback, useId used correctly. mergedRef callback is clean. Dead-code risk: CaretsExpandVertical viewBox-crop trick is clever but relies on SVG props pass-through — fragile, undocumented assumption. No cva/tv but cn is consistent per house style. Minor: ref dep in useCallback could change on every render.",
-                "Clean forwardRef + useId + useCallback usage. Manual ref merging instead of useImperativeHandle is slightly awkward; stepUp/stepDown dispatches a native Event not a React SyntheticEvent, which may miss some controlled-input cases. No dead code; memoization is reasonable but handleStep deps array is empty while it closes over nothing mutable — acceptable. Overall readable but not tight."
-              ]
-            }
-          },
-          "dx": {
-            "score": 78,
-            "metric": 70,
-            "judge": {
-              "score": 82,
-              "rationales": [
-                "Typed InputProps extends InputHTMLAttributes, sensible defaults, good JSDoc, forwardRef, displayName set. Missing errorMessage/helperText slots and no compound-component pattern (oracle uses context + slots). leadingIcon-only (no trailing) limits composability.",
-                "InputProps extends InputHTMLAttributes giving full native passthrough. Prop names (variant, label, leadingIcon) are intuitive. Dev-mode a11y warning is excellent DX. Missing: no errorMessage/helperText slot, no trailingIcon, no size prop — limiting vs HeroUI TextFieldContext pattern. Types are clean and JSDoc is thorough.",
-                "Extends InputHTMLAttributes fully, typed props with JSDoc, sensible defaults, MagnifierIcon convenience export, and accessible-name dev warning are all good DX. Missing: no error/helperText/required/clearable slots; variant naming ('primary'/'secondary') is bespoke and diverges from HeroUI's context-driven variant pattern, reducing composability."
-              ]
-            }
-          },
-          "docs": {
-            "score": 7,
-            "metric": 0,
-            "judge": {
-              "score": 12,
-              "rationales": [
-                "No .md or .mdx documentation file present in the component directory. JSDoc comments in the source are good but do not substitute for a standalone docs file with prop table and usage examples.",
-                "No .md or .mdx documentation file exists in the Input directory. All documentation is inline JSDoc only. Rubric requires a separate docs file with prop table and usage examples to score above 49.",
-                "No .md or .mdx documentation file exists in the generated directory. JSDoc on props is present in source but there is no standalone docs artifact — score is near floor per rubric."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 94,
-            "metric": 100,
-            "judge": {
-              "score": 88,
-              "rationales": [
-                "Covers render, ref forwarding, label association, auto-id, a11y warning paths (all 4 cases), variants, leadingIcon slot, disabled state (text + number), stepper interaction (click up/down + onChange), tabIndex, all native types, controlled/uncontrolled. Only gap: no boundary tests (min/max) or error state.",
-                "Covers: render smoke, ref forwarding, label association (3 cases), a11y warn (4 variants), variant class assertions, leadingIcon slot (3 cases), disabled + disabled stepper, number stepper interactions (increment, decrement, tabIndex), type preservation (email/url/search/password), onChange, controlled value. Near-complete boundary coverage.",
-                "Covers smoke render, forwardRef, label association (3 cases), a11y warn suppression (3 paths), variant class assertions, leadingIcon slot (3 cases), disabled state, number stepper interaction (increment/decrement/tabIndex), type union preservation (email/url/search/password), controlled value, and onChange. Missing: boundary (min/max/step), empty-string value edge, and aria-required/aria-invalid attribute pass-through."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 90,
-            "metric": 100,
-            "judge": {
-              "score": 80,
-              "rationales": [
-                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled — all with play functions and userEvent interactions. argTypes wired with controls. Missing: error/invalid state story, ReadOnly story, and no story for leadingIcon with number type.",
-                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled. Each has a play function with userEvent assertions. argTypes fully wired with controls. Figma URL and a11y params set. Missing: error/invalid state story, no ReadOnly story, no size variant (component has none). Otherwise solid.",
-                "7 stories (Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled) with argTypes wired for variant/type/label/placeholder/disabled, play functions with userEvent interactions, a11y and Figma design params. Missing stories: error/invalid state, required field, all input types gallery, and controlled vs uncontrolled toggle. Solid but not exhaustive."
-              ]
-            }
-          }
-        },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
-        }
-      },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 26,
-          "total": 26
-        }
-      }
-    },
-    {
-      "rung": "moderate-switch",
-      "tier": "moderate",
-      "runId": "moderate-switch",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 59,
-          "tokens": {
-            "input": 3470,
-            "output": 38532,
-            "thinkingEst": 0,
-            "cacheRead": 1807428,
-            "cacheCreation": 162064,
-            "total": 2011494
-          },
-          "timeMs": {
-            "sumDuration": 659384,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 1.7383584
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 46,
-        "cappedAt": null,
-        "visual": {
-          "diffPct": 99.7,
-          "score": 0
-        },
-        "style": {
-          "matchRate": 75,
-          "properties": {
-            "color": true,
-            "background-color": true,
-            "padding": true,
-            "margin": true,
-            "gap": false,
-            "font-size": true,
-            "font-weight": true,
-            "font-family": false,
-            "line-height": true,
-            "border-radius": true,
-            "border-width": true,
-            "border-color": false
-          }
-        },
-        "structural": {
-          "score": 43,
-          "tree": 71,
-          "prop": 0
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0.35000000000000003,
-          "style": 0.30000000000000004,
-          "structural": 0.20000000000000004,
-          "gates": 0.15000000000000002
-        },
-        "structuralSource": {
-          "score": 26,
-          "tree": 43,
-          "prop": 0
-        },
-        "structuralDom": {
-          "score": 43,
-          "tree": 71,
-          "prop": 0
-        },
-        "availability": {
-          "visual": true,
-          "style": true,
-          "structural": true,
-          "gates": true
-        }
-      },
-      "quality": {
-        "composite": 64,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 57,
-            "metric": 42,
-            "judge": {
-              "score": 72,
-              "rationales": [
-                "Clean forwardRef, no prop-mirroring into state, correct controlled/uncontrolled split. Missing useCallback on handleChange; textClasses is a needless variable for a static string. No compound/context pattern diverges from HeroUI oracle but is idiomatic React.",
-                "Clean controlled/uncontrolled pattern, no dead code, good use of forwardRef. Missing useMemo for derived classes; textClasses recalculated every render. Deps on _SwitchControl adds indirection not in ref design.",
-                "Clean controlled/uncontrolled handling, no dead code. Missing useMemo on stable handlers; relies on private _SwitchControl sub-component not in oracle's compound API. Readable but structurally diverges from ref's context+slots pattern."
-              ]
-            }
-          },
-          "dx": {
-            "score": 63,
-            "metric": 50,
-            "judge": {
-              "score": 68,
-              "rationales": [
-                "Well-typed props with JSDoc, HeroUI-aligned names (isSelected/isDisabled/onValueChange), sensible defaults. API is monolithic vs oracle's composable SwitchRoot/Control/Thumb compound pattern, limiting consumer customizability.",
-                "Props are well-typed with JSDoc, HeroUI-style naming (isSelected, isDisabled, onValueChange). Missing compound sub-components (Control, Thumb, Icon, Content) present in ref oracle, limiting composability significantly.",
-                "Props well-named and typed (isSelected, onValueChange, isDisabled match HeroUI conventions). API is monolithic rather than the compound pattern (Root/Control/Thumb/Icon/Content) the oracle exposes, reducing composability for consumers."
-              ]
-            }
-          },
-          "docs": {
-            "score": 7,
-            "metric": 0,
-            "judge": {
-              "score": 12,
-              "rationales": [
-                "No .md/.mdx docs file in the generated directory. Only inline JSDoc on the props interface. No prop table, no usage example doc, no purpose statement as a standalone document.",
-                "No .md or .mdx docs file in the generated directory. JSDoc comments on props are present in source but there is no standalone documentation artifact.",
-                "No .md/.mdx docs file in the generated directory. JSDoc comments on props provide minimal inline docs only; no standalone prop table, usage example, or purpose statement in a dedicated doc file."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 94,
-            "metric": 100,
-            "judge": {
-              "score": 88,
-              "rationales": [
-                "Covers default, defaultSelected true/false, uncontrolled toggle+callback, controlled mode, label children, label click, disabled (input.disabled + no callback), keyboard Space, aria-describedby/aria-label forwarding, and ref forwarding. Strong a11y assertions.",
-                "Covers default render, uncontrolled toggle, controlled mode, disabled (click blocked), keyboard Space, aria-label/describedby forwarding, ref forwarding, and label-click. Missing loading/error states but a11y role assertions are solid.",
-                "Covers default render, defaultSelected true/false, controlled/uncontrolled toggle, disabled click, keyboard Space, aria-describedby/aria-label forwarding, ref forwarding, and label-click. Missing loading/error states and size-variant assertions."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 87,
-            "metric": 100,
-            "judge": {
-              "score": 74,
-              "rationales": [
-                "5 stories: Default, Selected, WithLabel (play function tests toggle), Disabled, Sizes. ArgTypes wired with controls. Missing a Controlled story showing isSelected+onValueChange pair. Otherwise solid variant coverage.",
-                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired, a11y enabled, and a play function on WithLabel. Missing controlled story and no story for each size in isolation; no loading/error variant story.",
-                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired and a play function on WithLabel. Missing controlled story and per-size individual stories; no compound-slot stories since the API differs from the oracle."
-              ]
-            }
-          }
-        },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
-        }
-      },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 15,
-          "total": 15
-        }
-      }
-    },
-    {
-      "rung": "complex-card",
-      "tier": "complex",
-      "runId": "complex-card",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 65,
-          "tokens": {
-            "input": 9447,
-            "output": 52711,
-            "thinkingEst": 0,
-            "cacheRead": 2327711,
-            "cacheCreation": 261340,
-            "total": 2651209
-          },
-          "timeMs": {
-            "sumDuration": 776601,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 3.0498358999999993
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 47,
-        "cappedAt": null,
-        "visual": {
-          "diffPct": 73.3,
-          "score": 27
-        },
-        "style": {
-          "matchRate": 50,
-          "properties": {
-            "color": true,
-            "background-color": false,
-            "padding": false,
-            "margin": true,
-            "gap": false,
-            "font-size": true,
-            "font-weight": true,
-            "font-family": false,
-            "line-height": true,
-            "border-radius": false,
-            "border-width": true,
-            "border-color": false
-          }
-        },
-        "structural": {
-          "score": 39,
-          "tree": 55,
-          "prop": 17
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0.35000000000000003,
-          "style": 0.30000000000000004,
-          "structural": 0.20000000000000004,
-          "gates": 0.15000000000000002
-        },
-        "structuralSource": {
-          "score": 22,
-          "tree": 26,
-          "prop": 17
-        },
-        "structuralDom": {
-          "score": 39,
-          "tree": 55,
-          "prop": 17
-        },
-        "availability": {
-          "visual": true,
-          "style": true,
-          "structural": true,
-          "gates": true
-        }
-      },
-      "quality": {
-        "composite": 64,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 39,
-            "metric": 0,
-            "judge": {
-              "score": 78,
-              "rationales": [
-                "Clean forwardRef, good helper booleans, no dead code. Slight redundancy: 3 near-identical inner content wrappers across full/row/column branches; could be extracted. No needless re-renders; no memoization needed at this scale.",
-                "Clean forwardRef, pure layout helpers, no dead code. Minor: renderCover as inline fn not memoized; CardHeader/CardFooter missing 'use client'. No useMemo/useCallback overuse. Solid but not optimal.",
-                "Idiomatic forwardRef, clean helper fns, good cn usage. Four layout branches with repeated inner-wrapper markup is slightly redundant; a single renderBody helper would DRY it. No unnecessary re-renders; no memo needed at this scale."
-              ]
-            }
-          },
-          "dx": {
-            "score": 74,
-            "metric": 50,
-            "judge": {
-              "score": 84,
-              "rationales": [
-                "Well-typed discriminated union on CardFooter, clear JSDoc on every prop, sensible defaults. Minor gap: CardFooter lacks forwardRef/ref forwarding and no className escape hatch. CardHeader heading semantics deferred to consumers (noted in docs).",
-                "Discriminated union on CardFooter is excellent. JSDoc on every prop, sensible defaults, full type exports via index.ts. cover/coverSrc dual API adds slight complexity. CardFooter lacks forwardRef (acceptable for discriminated union).",
-                "Discriminated union on CardFooter is excellent DX; layout enum is clear; JSDoc on every prop. Minor gaps: CardFooter lacks forwardRef/ref, title prop on CardHeader avoids semantic heading (mentioned but not guided), basic vs basic-img distinction is subtle."
-              ]
-            }
-          },
-          "docs": {
-            "score": 13,
-            "metric": 0,
-            "judge": {
-              "score": 22,
-              "rationales": [
-                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc on props is present but there is no standalone prop table, usage guide, or example doc — docs score is low per rubric.",
-                "No .md/.mdx docs file exists in the generated dir. JSDoc inline comments provide some guidance but there is no prop table, standalone usage example, or component-level documentation file.",
-                "No .md/.mdx docs file exists anywhere in the generated dir. Inline JSDoc on props is present but the rubric awards 90-100 for a dedicated doc with prop table and usage example; absence of that file lands this in the 0-49 band."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 92,
-            "metric": 100,
-            "judge": {
-              "score": 84,
-              "rationales": [
-                "Covers all 6 layouts, close button fire/no-fire, icon slot presence, coverAlt default, ref forwarding, className merge, compound composition, and all 4 CardFooter type discriminants including external link attrs. Missing: a11y role assertions and keyboard-focus behaviour tests.",
-                "Excellent breadth: ref, spreading, isClosable edge cases, parameterized layout matrix, all 4 footer discriminants, isolations tests. Missing: explicit aria-hidden assertions, keyboard nav, focus-visible checks.",
-                "Covers all 6 layout variants, closable/onClose, icon slot, coverSrc per-layout, ref forwarding, className merging, compound usage, and all 4 CardFooter discriminant branches with boundary isolation tests. Missing: a11y/role assertions on the card container itself and keyboard navigation of the close button."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 95,
-            "metric": 100,
-            "judge": {
-              "score": 90,
-              "rationales": [
-                "One story per layout variant (6), plus Closable, Blurred, WithIcon. All four CardFooter types and CardHeader states have their own stories with play functions and argTypes wired. Controls mapped for every prop; a11y addon enabled; Figma design URL linked.",
-                "9 Card stories covering all 6 layouts plus closable/blurred/icon; 4 CardHeader + 8 CardFooter stories. All have play functions with assertions, argTypes wired, Figma links, a11y:error param set.",
-                "9 stories across Card + all layout variants + Closable + Blurred + WithIcon; CardHeader has 4 stories; CardFooter covers all 4 types with play tests. Controls/argTypes fully wired; Figma + a11y params set. Slight gap: no story for custom cover slot or empty/no-children edge case."
-              ]
-            }
-          }
-        },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
-        }
-      },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 59,
-          "total": 59
-        }
-      }
-    },
-    {
       "rung": "complex-alert",
       "tier": "complex",
       "runId": "complex-alert",
       "icon": true,
+      "scenario": {
+        "icon": true,
+        "tier": "complex",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 2892380,
       "agents": [
         {
           "agent": "custom",
@@ -1058,6 +173,574 @@
           "passed": 22,
           "total": 22
         }
+      },
+      "tokenConsumption": {
+        "input": 2541,
+        "output": 39582,
+        "thinkingEst": 0,
+        "cacheRead": 1628412,
+        "cacheCreation": 180671,
+        "total": 1851206,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 1851206
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.7063,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.7063
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 6
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": false,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 56,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 100,
+        "literals": 0,
+        "boundRefs": 0,
+        "samples": []
+      },
+      "label": "complex-alert",
+      "efficiency": {
+        "latencyMs": 2892380,
+        "cacheHitRatio": 0.88,
+        "toolUses": 0,
+        "requests": 60,
+        "ttftAvgMs": 0,
+        "cost": 1.7063,
+        "tokens": 1851206,
+        "costPerAccuracyPoint": 0.0305,
+        "tokensPerAccuracyPoint": 33057
+      }
+    },
+    {
+      "rung": "complex-card",
+      "tier": "complex",
+      "runId": "complex-card",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "complex",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 2545903,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 65,
+          "tokens": {
+            "input": 9447,
+            "output": 52711,
+            "thinkingEst": 0,
+            "cacheRead": 2327711,
+            "cacheCreation": 261340,
+            "total": 2651209
+          },
+          "timeMs": {
+            "sumDuration": 776601,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 3.0498358999999993
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 47,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 73.3,
+          "score": 27
+        },
+        "style": {
+          "matchRate": 50,
+          "properties": {
+            "color": true,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 39,
+          "tree": 55,
+          "prop": 17
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 22,
+          "tree": 26,
+          "prop": 17
+        },
+        "structuralDom": {
+          "score": 39,
+          "tree": 55,
+          "prop": 17
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 39,
+            "metric": 0,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef, good helper booleans, no dead code. Slight redundancy: 3 near-identical inner content wrappers across full/row/column branches; could be extracted. No needless re-renders; no memoization needed at this scale.",
+                "Clean forwardRef, pure layout helpers, no dead code. Minor: renderCover as inline fn not memoized; CardHeader/CardFooter missing 'use client'. No useMemo/useCallback overuse. Solid but not optimal.",
+                "Idiomatic forwardRef, clean helper fns, good cn usage. Four layout branches with repeated inner-wrapper markup is slightly redundant; a single renderBody helper would DRY it. No unnecessary re-renders; no memo needed at this scale."
+              ]
+            }
+          },
+          "dx": {
+            "score": 74,
+            "metric": 50,
+            "judge": {
+              "score": 84,
+              "rationales": [
+                "Well-typed discriminated union on CardFooter, clear JSDoc on every prop, sensible defaults. Minor gap: CardFooter lacks forwardRef/ref forwarding and no className escape hatch. CardHeader heading semantics deferred to consumers (noted in docs).",
+                "Discriminated union on CardFooter is excellent. JSDoc on every prop, sensible defaults, full type exports via index.ts. cover/coverSrc dual API adds slight complexity. CardFooter lacks forwardRef (acceptable for discriminated union).",
+                "Discriminated union on CardFooter is excellent DX; layout enum is clear; JSDoc on every prop. Minor gaps: CardFooter lacks forwardRef/ref, title prop on CardHeader avoids semantic heading (mentioned but not guided), basic vs basic-img distinction is subtle."
+              ]
+            }
+          },
+          "docs": {
+            "score": 13,
+            "metric": 0,
+            "judge": {
+              "score": 22,
+              "rationales": [
+                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc on props is present but there is no standalone prop table, usage guide, or example doc — docs score is low per rubric.",
+                "No .md/.mdx docs file exists in the generated dir. JSDoc inline comments provide some guidance but there is no prop table, standalone usage example, or component-level documentation file.",
+                "No .md/.mdx docs file exists anywhere in the generated dir. Inline JSDoc on props is present but the rubric awards 90-100 for a dedicated doc with prop table and usage example; absence of that file lands this in the 0-49 band."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 92,
+            "metric": 100,
+            "judge": {
+              "score": 84,
+              "rationales": [
+                "Covers all 6 layouts, close button fire/no-fire, icon slot presence, coverAlt default, ref forwarding, className merge, compound composition, and all 4 CardFooter type discriminants including external link attrs. Missing: a11y role assertions and keyboard-focus behaviour tests.",
+                "Excellent breadth: ref, spreading, isClosable edge cases, parameterized layout matrix, all 4 footer discriminants, isolations tests. Missing: explicit aria-hidden assertions, keyboard nav, focus-visible checks.",
+                "Covers all 6 layout variants, closable/onClose, icon slot, coverSrc per-layout, ref forwarding, className merging, compound usage, and all 4 CardFooter discriminant branches with boundary isolation tests. Missing: a11y/role assertions on the card container itself and keyboard navigation of the close button."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 95,
+            "metric": 100,
+            "judge": {
+              "score": 90,
+              "rationales": [
+                "One story per layout variant (6), plus Closable, Blurred, WithIcon. All four CardFooter types and CardHeader states have their own stories with play functions and argTypes wired. Controls mapped for every prop; a11y addon enabled; Figma design URL linked.",
+                "9 Card stories covering all 6 layouts plus closable/blurred/icon; 4 CardHeader + 8 CardFooter stories. All have play functions with assertions, argTypes wired, Figma links, a11y:error param set.",
+                "9 stories across Card + all layout variants + Closable + Blurred + WithIcon; CardHeader has 4 stories; CardFooter covers all 4 types with play tests. Controls/argTypes fully wired; Figma + a11y params set. Slight gap: no story for custom cover slot or empty/no-children edge case."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 59,
+          "total": 59
+        }
+      },
+      "tokenConsumption": {
+        "input": 9447,
+        "output": 52711,
+        "thinkingEst": 0,
+        "cacheRead": 2327711,
+        "cacheCreation": 261340,
+        "total": 2651209,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2651209
+          }
+        ]
+      },
+      "cost": {
+        "usd": 3.0498,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 3.0498
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 2
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": false,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 52,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 84,
+        "literals": 2,
+        "boundRefs": 3,
+        "samples": [
+          "116px"
+        ]
+      },
+      "label": "complex-card",
+      "efficiency": {
+        "latencyMs": 2545903,
+        "cacheHitRatio": 0.878,
+        "toolUses": 0,
+        "requests": 65,
+        "ttftAvgMs": 0,
+        "cost": 3.0498,
+        "tokens": 2651209,
+        "costPerAccuracyPoint": 0.0649,
+        "tokensPerAccuracyPoint": 56409
+      }
+    },
+    {
+      "rung": "complex-dashboard",
+      "tier": "complex",
+      "runId": "complex-dashboard",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "complex",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 8947980,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 115,
+          "tokens": {
+            "input": 24482,
+            "output": 78038,
+            "thinkingEst": 0,
+            "cacheRead": 4169330,
+            "cacheCreation": 483928,
+            "total": 4755778
+          },
+          "timeMs": {
+            "sumDuration": 1267845,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 5.254069600000002
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 45,
+        "cappedAt": null,
+        "visual": null,
+        "style": null,
+        "structural": {
+          "score": 4,
+          "tree": 6,
+          "prop": 0
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0,
+          "style": 0,
+          "structural": 0.5714285714285715,
+          "gates": 0.4285714285714286
+        },
+        "structuralSource": {
+          "score": 4,
+          "tree": 6,
+          "prop": 0
+        },
+        "structuralDom": null,
+        "availability": {
+          "visual": false,
+          "style": false,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 61,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 66,
+            "metric": 54,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef, idiomatic JSX, no dead code. Inline SVG glyphs are fine for a demo. CubeIcon and AssetsIcon share identical paths (copy-paste). No memoization issues for static data.",
+                "Idiomatic forwardRef, cn merging, clean data separation. Glyphs defined as module-level FCs (stable refs). CubeIcon and AssetsIcon share identical paths—dead/duplicate code. No memoization needed at demo scale. navGroups/sceneCards as module constants is correct.",
+                "Clean composition, no dead code, forwardRef correct. Inline SVG glyph components are not memoized (recreated each render). Static data arrays are module-level constants (good). CubeIcon and AssetsIcon share identical paths — minor duplication."
+              ]
+            }
+          },
+          "dx": {
+            "score": 65,
+            "metric": 50,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Props type is just HTMLAttributes<HTMLElement> — very thin API for a composition demo. Composition clarity is good: each sub-section clearly labeled. But no slot overrides or data props to customise nav/cards without forking.",
+                "Props are minimal but appropriate for a demo (HTMLAttributes passthrough + className). Composition clarity is high—child components accept render-prop slots clearly. Loses points for no prop to inject custom navGroups/sceneCards, making the demo non-customisable at the composition level.",
+                "Props type is just HTMLAttributes<HTMLElement> — minimal surface, correct for a demo screen. Composition clarity is high: each section component is clearly named and slotted. No customization hooks for nav/cards limits reuse but fits a demo. JSDoc is present and clear."
+              ]
+            }
+          },
+          "docs": {
+            "score": 13,
+            "metric": 0,
+            "judge": {
+              "score": 22,
+              "rationales": [
+                "No .md/.mdx doc file in the generated dir. JSDoc on the component is present and accurate but no prop table, no usage example, no dedicated docs artifact.",
+                "No .md/.mdx doc file present. JSDoc on the component is solid (explains layout, child components, data intent) but there is no prop table, no usage example outside the component itself, and no standalone documentation artifact.",
+                "No .md or .mdx doc file exists. JSDoc on the component is present but thin — describes layout, not props or usage patterns. No prop table, no standalone usage example outside code."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers landmark roles, aria-current, all 12 cards, filter chips, search, ref forwarding, className merge. Missing: loading/error/empty states, keyboard nav, a11y role assertions beyond implicit landmarks.",
+                "Covers landmark roles, aria-current selection, search input, filter chips, all 12 card titles, ref forwarding, className merge, and avatar fallback. Misses: disabled/loading/error states (n/a for a demo), but no empty-state branch, no keyboard-navigation, no a11y-axe scan. Good breadth for a composition demo.",
+                "12 unit tests covering landmark roles, aria-current, search input, ref forwarding, className merge, all 12 card titles, filter chips, and user avatar. Missing: empty-state, loading/error states (n/a for demo), boundary assertions beyond count, and explicit a11y role checks on card grid semantics."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 51,
+            "metric": 50,
+            "judge": {
+              "score": 52,
+              "rationales": [
+                "Two stories (Default with play assertions, WithCustomClass). Play test checks key landmarks and active nav. Missing stories: dark mode, mobile/narrow viewport, loading skeleton state. Only one meaningful variant story.",
+                "Two stories (Default full-dashboard with play assertions, WithCustomClass). Play function checks key landmarks and aria-current. Missing: narrow-viewport/mobile story, dark-mode variant, no controls wired to meaningful args (only className). Title nesting 'Components/components/DashboardDemo' is malformed (double prefix).",
+                "Only 2 stories: Default (full dashboard) and WithCustomClass (trivial className override). No story for responsive/narrow viewport, no story demoing varied nav selections, no controls wired beyond className. play() assertions are solid but coverage of meaningful states is thin."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 14,
+          "total": 14
+        }
+      },
+      "tokenConsumption": {
+        "input": 24482,
+        "output": 78038,
+        "thinkingEst": 0,
+        "cacheRead": 4169330,
+        "cacheCreation": 483928,
+        "total": 4755778,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 4755778
+          }
+        ]
+      },
+      "cost": {
+        "usd": 5.2541,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 5.2541
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 21
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": false,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 64,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 84,
+        "literals": 2,
+        "boundRefs": 0,
+        "samples": [
+          "16px",
+          "48px"
+        ]
+      },
+      "label": "complex-dashboard",
+      "efficiency": {
+        "latencyMs": 8947980,
+        "cacheHitRatio": 0.877,
+        "toolUses": 0,
+        "requests": 115,
+        "ttftAvgMs": 0,
+        "cost": 5.2541,
+        "tokens": 4755778,
+        "costPerAccuracyPoint": 0.1168,
+        "tokensPerAccuracyPoint": 105684
       }
     },
     {
@@ -1065,6 +748,13 @@
       "tier": "complex",
       "runId": "complex-tabs",
       "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "complex",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 3615023,
       "agents": [
         {
           "agent": "custom",
@@ -1224,149 +914,92 @@
           "passed": 40,
           "total": 40
         }
-      }
-    },
-    {
-      "rung": "complex-dashboard",
-      "tier": "complex",
-      "runId": "complex-dashboard",
-      "icon": false,
-      "agents": [
-        {
-          "agent": "custom",
-          "model": "claude-sonnet-4-6",
-          "requests": 115,
-          "tokens": {
-            "input": 24482,
-            "output": 78038,
-            "thinkingEst": 0,
-            "cacheRead": 4169330,
-            "cacheCreation": 483928,
-            "total": 4755778
-          },
-          "timeMs": {
-            "sumDuration": 1267845,
-            "wallSpan": 0,
-            "ttftAvg": 0
-          },
-          "toolUses": 0,
-          "costUsd": 5.254069600000002
-        }
-      ],
-      "fanIn": [],
-      "accuracy": {
-        "composite": 45,
-        "cappedAt": null,
-        "visual": null,
-        "style": null,
-        "structural": {
-          "score": 4,
-          "tree": 6,
-          "prop": 0
-        },
-        "gates": {
-          "typecheck": true,
-          "build": true,
-          "tests": true
-        },
-        "weights": {
-          "visual": 0,
-          "style": 0,
-          "structural": 0.5714285714285715,
-          "gates": 0.4285714285714286
-        },
-        "structuralSource": {
-          "score": 4,
-          "tree": 6,
-          "prop": 0
-        },
-        "structuralDom": null,
-        "availability": {
-          "visual": false,
-          "style": false,
-          "structural": true,
-          "gates": true
-        }
       },
-      "quality": {
-        "composite": 61,
-        "dimensions": {
-          "optimizedCode": {
-            "score": 66,
-            "metric": 54,
-            "judge": {
-              "score": 78,
-              "rationales": [
-                "Clean forwardRef, idiomatic JSX, no dead code. Inline SVG glyphs are fine for a demo. CubeIcon and AssetsIcon share identical paths (copy-paste). No memoization issues for static data.",
-                "Idiomatic forwardRef, cn merging, clean data separation. Glyphs defined as module-level FCs (stable refs). CubeIcon and AssetsIcon share identical paths—dead/duplicate code. No memoization needed at demo scale. navGroups/sceneCards as module constants is correct.",
-                "Clean composition, no dead code, forwardRef correct. Inline SVG glyph components are not memoized (recreated each render). Static data arrays are module-level constants (good). CubeIcon and AssetsIcon share identical paths — minor duplication."
-              ]
-            }
-          },
-          "dx": {
-            "score": 65,
-            "metric": 50,
-            "judge": {
-              "score": 72,
-              "rationales": [
-                "Props type is just HTMLAttributes<HTMLElement> — very thin API for a composition demo. Composition clarity is good: each sub-section clearly labeled. But no slot overrides or data props to customise nav/cards without forking.",
-                "Props are minimal but appropriate for a demo (HTMLAttributes passthrough + className). Composition clarity is high—child components accept render-prop slots clearly. Loses points for no prop to inject custom navGroups/sceneCards, making the demo non-customisable at the composition level.",
-                "Props type is just HTMLAttributes<HTMLElement> — minimal surface, correct for a demo screen. Composition clarity is high: each section component is clearly named and slotted. No customization hooks for nav/cards limits reuse but fits a demo. JSDoc is present and clear."
-              ]
-            }
-          },
-          "docs": {
-            "score": 13,
-            "metric": 0,
-            "judge": {
-              "score": 22,
-              "rationales": [
-                "No .md/.mdx doc file in the generated dir. JSDoc on the component is present and accurate but no prop table, no usage example, no dedicated docs artifact.",
-                "No .md/.mdx doc file present. JSDoc on the component is solid (explains layout, child components, data intent) but there is no prop table, no usage example outside the component itself, and no standalone documentation artifact.",
-                "No .md or .mdx doc file exists. JSDoc on the component is present but thin — describes layout, not props or usage patterns. No prop table, no standalone usage example outside code."
-              ]
-            }
-          },
-          "testDepth": {
-            "score": 87,
-            "metric": 100,
-            "judge": {
-              "score": 74,
-              "rationales": [
-                "Covers landmark roles, aria-current, all 12 cards, filter chips, search, ref forwarding, className merge. Missing: loading/error/empty states, keyboard nav, a11y role assertions beyond implicit landmarks.",
-                "Covers landmark roles, aria-current selection, search input, filter chips, all 12 card titles, ref forwarding, className merge, and avatar fallback. Misses: disabled/loading/error states (n/a for a demo), but no empty-state branch, no keyboard-navigation, no a11y-axe scan. Good breadth for a composition demo.",
-                "12 unit tests covering landmark roles, aria-current, search input, ref forwarding, className merge, all 12 card titles, filter chips, and user avatar. Missing: empty-state, loading/error states (n/a for demo), boundary assertions beyond count, and explicit a11y role checks on card grid semantics."
-              ]
-            }
-          },
-          "storybook": {
-            "score": 51,
-            "metric": 50,
-            "judge": {
-              "score": 52,
-              "rationales": [
-                "Two stories (Default with play assertions, WithCustomClass). Play test checks key landmarks and active nav. Missing stories: dark mode, mobile/narrow viewport, loading skeleton state. Only one meaningful variant story.",
-                "Two stories (Default full-dashboard with play assertions, WithCustomClass). Play function checks key landmarks and aria-current. Missing: narrow-viewport/mobile story, dark-mode variant, no controls wired to meaningful args (only className). Title nesting 'Components/components/DashboardDemo' is malformed (double prefix).",
-                "Only 2 stories: Default (full dashboard) and WithCustomClass (trivial className override). No story for responsive/narrow viewport, no story demoing varied nav selections, no controls wired beyond className. play() assertions are solid but coverage of meaningful states is thin."
-              ]
-            }
+      "tokenConsumption": {
+        "input": 27740,
+        "output": 54195,
+        "thinkingEst": 0,
+        "cacheRead": 2303346,
+        "cacheCreation": 301930,
+        "total": 2687211,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2687211
           }
+        ]
+      },
+      "cost": {
+        "usd": 3.6641,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 3.6641
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 16
+      },
+      "headless": {
+        "score": 40,
+        "signals": {
+          "controlledProps": true,
+          "statelessValue": false,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": false
         },
-        "weights": {
-          "optimizedCode": 0.25,
-          "dx": 0.2,
-          "docs": 0.15,
-          "testDepth": 0.25,
-          "storybook": 0.15
+        "stateCount": 3,
+        "effectCount": 2
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 48,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
         }
       },
-      "gates": {
-        "tsc": true,
-        "build": true,
-        "tests": {
-          "passed": 14,
-          "total": 14
-        }
+      "tokenBinding": {
+        "score": 44,
+        "literals": 7,
+        "boundRefs": 0,
+        "samples": [
+          "2px",
+          "#f5f5f5",
+          "16px",
+          "226px",
+          "80px"
+        ]
+      },
+      "label": "complex-tabs",
+      "efficiency": {
+        "latencyMs": 3615023,
+        "cacheHitRatio": 0.857,
+        "toolUses": 0,
+        "requests": 70,
+        "ttftAvgMs": 0,
+        "cost": 3.6641,
+        "tokens": 2687211,
+        "costPerAccuracyPoint": 0.0748,
+        "tokensPerAccuracyPoint": 54841
       }
     },
     {
@@ -1374,6 +1007,13 @@
       "tier": "extreme",
       "runId": "extreme-calendar",
       "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "extreme",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 31224328,
       "agents": [
         {
           "agent": "custom",
@@ -1533,44 +1173,355 @@
           "passed": 130,
           "total": 130
         }
+      },
+      "tokenConsumption": {
+        "input": 54023,
+        "output": 118206,
+        "thinkingEst": 0,
+        "cacheRead": 6629644,
+        "cacheCreation": 713051,
+        "total": 7514924,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 7514924
+          }
+        ]
+      },
+      "cost": {
+        "usd": 8.3542,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 8.3542
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 22
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": true,
+          "statelessValue": false,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 5,
+        "effectCount": 1
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 64,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 100,
+        "literals": 0,
+        "boundRefs": 0,
+        "samples": []
+      },
+      "label": "extreme-calendar",
+      "efficiency": {
+        "latencyMs": 31224328,
+        "cacheHitRatio": 0.882,
+        "toolUses": 0,
+        "requests": 150,
+        "ttftAvgMs": 0,
+        "cost": 8.3542,
+        "tokens": 7514924,
+        "costPerAccuracyPoint": 0.1856,
+        "tokensPerAccuracyPoint": 166998
       }
     },
     {
       "rung": "moderate-input",
       "tier": "moderate",
-      "runId": "moderate-input-warm",
+      "runId": "moderate-input-cold",
       "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "moderate",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 2378431,
       "agents": [
         {
           "agent": "custom",
           "model": "claude-sonnet-4-6",
-          "requests": 74,
+          "requests": 59,
           "tokens": {
-            "input": 2211,
-            "output": 37128,
+            "input": 1622,
+            "output": 35710,
             "thinkingEst": 0,
-            "cacheRead": 1852695,
-            "cacheCreation": 185633,
-            "total": 2077667
+            "cacheRead": 1645419,
+            "cacheCreation": 172110,
+            "total": 1854861
           },
           "timeMs": {
-            "sumDuration": 608442,
+            "sumDuration": 563080,
             "wallSpan": 0,
             "ttftAvg": 0
           },
           "toolUses": 0,
-          "costUsd": 1.7167698500000002
+          "costUsd": 1.6795541999999999
         }
       ],
       "fanIn": [],
-      "accuracy": null,
-      "gates": null
+      "accuracy": {
+        "composite": 30,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 98,
+          "score": 2
+        },
+        "style": {
+          "matchRate": 33,
+          "properties": {
+            "color": false,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": true,
+            "font-size": false,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": false,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 23,
+          "tree": 25,
+          "prop": 20
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 12,
+          "tree": 7,
+          "prop": 20
+        },
+        "structuralDom": {
+          "score": 23,
+          "tree": 25,
+          "prop": 20
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 63,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 39,
+            "metric": 0,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef with merged refs, useCallback guards, no dead code. Minor issue: mergedRef recreates on every render when ref is an object (missing stable identity). Number stepper is a thoughtful addition but adds conditional complexity not in oracle.",
+                "forwardRef, useCallback, useId used correctly. mergedRef callback is clean. Dead-code risk: CaretsExpandVertical viewBox-crop trick is clever but relies on SVG props pass-through — fragile, undocumented assumption. No cva/tv but cn is consistent per house style. Minor: ref dep in useCallback could change on every render.",
+                "Clean forwardRef + useId + useCallback usage. Manual ref merging instead of useImperativeHandle is slightly awkward; stepUp/stepDown dispatches a native Event not a React SyntheticEvent, which may miss some controlled-input cases. No dead code; memoization is reasonable but handleStep deps array is empty while it closes over nothing mutable — acceptable. Overall readable but not tight."
+              ]
+            }
+          },
+          "dx": {
+            "score": 78,
+            "metric": 70,
+            "judge": {
+              "score": 82,
+              "rationales": [
+                "Typed InputProps extends InputHTMLAttributes, sensible defaults, good JSDoc, forwardRef, displayName set. Missing errorMessage/helperText slots and no compound-component pattern (oracle uses context + slots). leadingIcon-only (no trailing) limits composability.",
+                "InputProps extends InputHTMLAttributes giving full native passthrough. Prop names (variant, label, leadingIcon) are intuitive. Dev-mode a11y warning is excellent DX. Missing: no errorMessage/helperText slot, no trailingIcon, no size prop — limiting vs HeroUI TextFieldContext pattern. Types are clean and JSDoc is thorough.",
+                "Extends InputHTMLAttributes fully, typed props with JSDoc, sensible defaults, MagnifierIcon convenience export, and accessible-name dev warning are all good DX. Missing: no error/helperText/required/clearable slots; variant naming ('primary'/'secondary') is bespoke and diverges from HeroUI's context-driven variant pattern, reducing composability."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md or .mdx documentation file present in the component directory. JSDoc comments in the source are good but do not substitute for a standalone docs file with prop table and usage examples.",
+                "No .md or .mdx documentation file exists in the Input directory. All documentation is inline JSDoc only. Rubric requires a separate docs file with prop table and usage examples to score above 49.",
+                "No .md or .mdx documentation file exists in the generated directory. JSDoc on props is present in source but there is no standalone docs artifact — score is near floor per rubric."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Covers render, ref forwarding, label association, auto-id, a11y warning paths (all 4 cases), variants, leadingIcon slot, disabled state (text + number), stepper interaction (click up/down + onChange), tabIndex, all native types, controlled/uncontrolled. Only gap: no boundary tests (min/max) or error state.",
+                "Covers: render smoke, ref forwarding, label association (3 cases), a11y warn (4 variants), variant class assertions, leadingIcon slot (3 cases), disabled + disabled stepper, number stepper interactions (increment, decrement, tabIndex), type preservation (email/url/search/password), onChange, controlled value. Near-complete boundary coverage.",
+                "Covers smoke render, forwardRef, label association (3 cases), a11y warn suppression (3 paths), variant class assertions, leadingIcon slot (3 cases), disabled state, number stepper interaction (increment/decrement/tabIndex), type union preservation (email/url/search/password), controlled value, and onChange. Missing: boundary (min/max/step), empty-string value edge, and aria-required/aria-invalid attribute pass-through."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 90,
+            "metric": 100,
+            "judge": {
+              "score": 80,
+              "rationales": [
+                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled — all with play functions and userEvent interactions. argTypes wired with controls. Missing: error/invalid state story, ReadOnly story, and no story for leadingIcon with number type.",
+                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled. Each has a play function with userEvent assertions. argTypes fully wired with controls. Figma URL and a11y params set. Missing: error/invalid state story, no ReadOnly story, no size variant (component has none). Otherwise solid.",
+                "7 stories (Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled) with argTypes wired for variant/type/label/placeholder/disabled, play functions with userEvent interactions, a11y and Figma design params. Missing stories: error/invalid state, required field, all input types gallery, and controlled vs uncontrolled toggle. Solid but not exhaustive."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 26,
+          "total": 26
+        }
+      },
+      "tokenConsumption": {
+        "input": 1622,
+        "output": 35710,
+        "thinkingEst": 0,
+        "cacheRead": 1645419,
+        "cacheCreation": 172110,
+        "total": 1854861,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 1854861
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.6796,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.6796
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 6
+      },
+      "headless": {
+        "score": 80,
+        "signals": {
+          "controlledProps": true,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 60,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 84,
+        "literals": 2,
+        "boundRefs": 2,
+        "samples": [
+          "6px"
+        ]
+      },
+      "label": "moderate-input (cold)",
+      "efficiency": {
+        "latencyMs": 2378431,
+        "cacheHitRatio": 0.887,
+        "toolUses": 0,
+        "requests": 59,
+        "ttftAvgMs": 0,
+        "cost": 1.6796,
+        "tokens": 1854861,
+        "costPerAccuracyPoint": 0.056,
+        "tokensPerAccuracyPoint": 61829
+      }
     },
     {
       "rung": "moderate-input",
       "tier": "moderate",
       "runId": "moderate-input-update",
       "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "moderate",
+        "cache": "warm",
+        "mode": "update"
+      },
+      "wallMs": 838110,
       "agents": [
         {
           "agent": "custom",
@@ -1595,7 +1546,1038 @@
       ],
       "fanIn": [],
       "accuracy": null,
-      "gates": null
+      "gates": null,
+      "tokenConsumption": {
+        "input": 842,
+        "output": 11192,
+        "thinkingEst": 0,
+        "cacheRead": 212612,
+        "cacheCreation": 67733,
+        "total": 292379,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 292379
+          }
+        ]
+      },
+      "cost": {
+        "usd": 0.4882,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 0.4882
+          }
+        ]
+      },
+      "a11y": null,
+      "headless": null,
+      "cwv": null,
+      "tokenBinding": null,
+      "label": "moderate-input (update)",
+      "efficiency": {
+        "latencyMs": 838110,
+        "cacheHitRatio": 0.727,
+        "toolUses": 0,
+        "requests": 10,
+        "ttftAvgMs": 0,
+        "cost": 0.4882,
+        "tokens": 292379,
+        "costPerAccuracyPoint": null,
+        "tokensPerAccuracyPoint": null
+      }
+    },
+    {
+      "rung": "moderate-input",
+      "tier": "moderate",
+      "runId": "moderate-input-warm",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "moderate",
+        "cache": "warm",
+        "mode": "build"
+      },
+      "wallMs": 4313220,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 74,
+          "tokens": {
+            "input": 2211,
+            "output": 37128,
+            "thinkingEst": 0,
+            "cacheRead": 1852695,
+            "cacheCreation": 185633,
+            "total": 2077667
+          },
+          "timeMs": {
+            "sumDuration": 608442,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7167698500000002
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null,
+      "tokenConsumption": {
+        "input": 2211,
+        "output": 37128,
+        "thinkingEst": 0,
+        "cacheRead": 1852695,
+        "cacheCreation": 185633,
+        "total": 2077667,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2077667
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.7168,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.7168
+          }
+        ]
+      },
+      "a11y": null,
+      "headless": null,
+      "cwv": null,
+      "tokenBinding": null,
+      "label": "moderate-input (warm)",
+      "efficiency": {
+        "latencyMs": 4313220,
+        "cacheHitRatio": 0.892,
+        "toolUses": 0,
+        "requests": 74,
+        "ttftAvgMs": 0,
+        "cost": 1.7168,
+        "tokens": 2077667,
+        "costPerAccuracyPoint": null,
+        "tokensPerAccuracyPoint": null
+      }
+    },
+    {
+      "rung": "moderate-switch",
+      "tier": "moderate",
+      "runId": "moderate-switch",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "moderate",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 2231946,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 59,
+          "tokens": {
+            "input": 3470,
+            "output": 38532,
+            "thinkingEst": 0,
+            "cacheRead": 1807428,
+            "cacheCreation": 162064,
+            "total": 2011494
+          },
+          "timeMs": {
+            "sumDuration": 659384,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7383584
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 46,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 99.7,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 43,
+          "tree": 71,
+          "prop": 0
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 26,
+          "tree": 43,
+          "prop": 0
+        },
+        "structuralDom": {
+          "score": 43,
+          "tree": 71,
+          "prop": 0
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 57,
+            "metric": 42,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, no prop-mirroring into state, correct controlled/uncontrolled split. Missing useCallback on handleChange; textClasses is a needless variable for a static string. No compound/context pattern diverges from HeroUI oracle but is idiomatic React.",
+                "Clean controlled/uncontrolled pattern, no dead code, good use of forwardRef. Missing useMemo for derived classes; textClasses recalculated every render. Deps on _SwitchControl adds indirection not in ref design.",
+                "Clean controlled/uncontrolled handling, no dead code. Missing useMemo on stable handlers; relies on private _SwitchControl sub-component not in oracle's compound API. Readable but structurally diverges from ref's context+slots pattern."
+              ]
+            }
+          },
+          "dx": {
+            "score": 63,
+            "metric": 50,
+            "judge": {
+              "score": 68,
+              "rationales": [
+                "Well-typed props with JSDoc, HeroUI-aligned names (isSelected/isDisabled/onValueChange), sensible defaults. API is monolithic vs oracle's composable SwitchRoot/Control/Thumb compound pattern, limiting consumer customizability.",
+                "Props are well-typed with JSDoc, HeroUI-style naming (isSelected, isDisabled, onValueChange). Missing compound sub-components (Control, Thumb, Icon, Content) present in ref oracle, limiting composability significantly.",
+                "Props well-named and typed (isSelected, onValueChange, isDisabled match HeroUI conventions). API is monolithic rather than the compound pattern (Root/Control/Thumb/Icon/Content) the oracle exposes, reducing composability for consumers."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md/.mdx docs file in the generated directory. Only inline JSDoc on the props interface. No prop table, no usage example doc, no purpose statement as a standalone document.",
+                "No .md or .mdx docs file in the generated directory. JSDoc comments on props are present in source but there is no standalone documentation artifact.",
+                "No .md/.mdx docs file in the generated directory. JSDoc comments on props provide minimal inline docs only; no standalone prop table, usage example, or purpose statement in a dedicated doc file."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Covers default, defaultSelected true/false, uncontrolled toggle+callback, controlled mode, label children, label click, disabled (input.disabled + no callback), keyboard Space, aria-describedby/aria-label forwarding, and ref forwarding. Strong a11y assertions.",
+                "Covers default render, uncontrolled toggle, controlled mode, disabled (click blocked), keyboard Space, aria-label/describedby forwarding, ref forwarding, and label-click. Missing loading/error states but a11y role assertions are solid.",
+                "Covers default render, defaultSelected true/false, controlled/uncontrolled toggle, disabled click, keyboard Space, aria-describedby/aria-label forwarding, ref forwarding, and label-click. Missing loading/error states and size-variant assertions."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "5 stories: Default, Selected, WithLabel (play function tests toggle), Disabled, Sizes. ArgTypes wired with controls. Missing a Controlled story showing isSelected+onValueChange pair. Otherwise solid variant coverage.",
+                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired, a11y enabled, and a play function on WithLabel. Missing controlled story and no story for each size in isolation; no loading/error variant story.",
+                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired and a play function on WithLabel. Missing controlled story and per-size individual stories; no compound-slot stories since the API differs from the oracle."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 15,
+          "total": 15
+        }
+      },
+      "tokenConsumption": {
+        "input": 3470,
+        "output": 38532,
+        "thinkingEst": 0,
+        "cacheRead": 1807428,
+        "cacheCreation": 162064,
+        "total": 2011494,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2011494
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.7384,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.7384
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 15
+      },
+      "headless": {
+        "score": 80,
+        "signals": {
+          "controlledProps": true,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 1,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 92,
+        "literals": 1,
+        "boundRefs": 0,
+        "samples": [
+          "16px"
+        ]
+      },
+      "label": "moderate-switch",
+      "efficiency": {
+        "latencyMs": 2231946,
+        "cacheHitRatio": 0.899,
+        "toolUses": 0,
+        "requests": 59,
+        "ttftAvgMs": 0,
+        "cost": 1.7384,
+        "tokens": 2011494,
+        "costPerAccuracyPoint": 0.0378,
+        "tokensPerAccuracyPoint": 43728
+      }
+    },
+    {
+      "rung": "tokens",
+      "tier": "moderate",
+      "runId": "tokens",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "moderate",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 5371186,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 45,
+          "tokens": {
+            "input": 12598,
+            "output": 30256,
+            "thinkingEst": 0,
+            "cacheRead": 2408440,
+            "cacheCreation": 246777,
+            "total": 2698071
+          },
+          "timeMs": {
+            "sumDuration": 438763,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.83437705
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null,
+      "tokenConsumption": {
+        "input": 12598,
+        "output": 30256,
+        "thinkingEst": 0,
+        "cacheRead": 2408440,
+        "cacheCreation": 246777,
+        "total": 2698071,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2698071
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.8344,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.8344
+          }
+        ]
+      },
+      "a11y": null,
+      "headless": null,
+      "cwv": null,
+      "tokenBinding": null,
+      "label": "tokens",
+      "efficiency": {
+        "latencyMs": 5371186,
+        "cacheHitRatio": 0.893,
+        "toolUses": 0,
+        "requests": 45,
+        "ttftAvgMs": 0,
+        "cost": 1.8344,
+        "tokens": 2698071,
+        "costPerAccuracyPoint": null,
+        "tokensPerAccuracyPoint": null
+      }
+    },
+    {
+      "rung": "trivial-button",
+      "tier": "trivial",
+      "runId": "trivial-button",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "trivial",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 3342967,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 62,
+          "tokens": {
+            "input": 417,
+            "output": 37260,
+            "thinkingEst": 0,
+            "cacheRead": 2374335,
+            "cacheCreation": 227188,
+            "total": 2639200
+          },
+          "timeMs": {
+            "sumDuration": 487717,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7248612999999997
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 42,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 99.9,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 22,
+          "tree": 13,
+          "prop": 36
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 29,
+          "tree": 25,
+          "prop": 36
+        },
+        "structuralDom": {
+          "score": 22,
+          "tree": 13,
+          "prop": 36
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 57,
+            "metric": 41,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, static object maps, no dead code. Side effect (console.warn) runs in render body rather than via useEffect; static variant/size maps recreated per render but are trivially cheap.",
+                "Clean forwardRef, no dead code, good Tailwind class maps. Missing isLoading/fullWidth vs oracle. Inline warn in render body (not useMemo/useEffect) is a minor foot-gun. No unneeded re-renders.",
+                "Clean forwardRef, good cn usage, no dead code. Missing: no loading/spinner state, isLoading prop absent vs oracle. Variant/size maps defined inline each render (no useMemo), minor but real cost."
+              ]
+            }
+          },
+          "dx": {
+            "score": 67,
+            "metric": 50,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Full JSDoc on every prop, extends ButtonHTMLAttributes, sensible defaults, ref-forwarding, displayName set, prop names match HeroUI oracle. Composable and discoverable API.",
+                "Props well-typed with JSDoc, sensible defaults, extends ButtonHTMLAttributes. Missing fullWidth, isLoading, and ButtonGroup context from oracle. startContent/endContent API matches HeroUI but is not the actual prop pattern the oracle uses.",
+                "Typed props, sensible defaults, JSDoc on each prop. Misses fullWidth, isLoading, and ButtonGroup context that oracle exposes. API is narrower than HeroUI v3 surface; isDisabled vs disabled naming diverges from oracle."
+              ]
+            }
+          },
+          "docs": {
+            "score": 5,
+            "metric": 0,
+            "judge": {
+              "score": 8,
+              "rationales": [
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc comments in source are minimal inline cues, not a prop table or usage example doc.",
+                "No .md/.mdx docs file exists in the generated directory. Inline JSDoc comments are present but that is not a standalone docs artifact per rubric.",
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc on props provides minimal inline guidance but no standalone prop table, usage examples, or purpose doc."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers default, all 7 variants, all 3 sizes, onClick fire, disabled (attribute + click suppression), startContent/endContent, ref forwarding, className merge, isIconOnly a11y warn/no-warn, icon-only sizing, HTML attribute passthrough. No focus/keyboard nav or loading tests (component lacks loading prop).",
+                "Covers defaults, disabled (attribute + click guard), all variants/sizes, ref forwarding, className merge, startContent/endContent, icon-only a11y warning, and HTML attribute pass-through. Missing loading state, boundary/empty children, and full ARIA role assertions.",
+                "Covers default render, all variants/sizes, click/disabled interaction, ref forwarding, className merge, a11y icon-only warn, attribute passthrough, and default classes. Missing: loading state (absent), boundary/empty children, and role/aria assertions beyond warn check."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 89,
+            "metric": 100,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Stories for Default, all Variants, all Sizes, IconOnly, Disabled, WithStartAndEndContent; argTypes fully wired; Figma link and a11y param set; play interactions on 3 stories. No loading/error state story but component doesn't expose those props.",
+                "Stories for Default, Variants, Sizes, IconOnly, Disabled, and WithStartAndEndContent with play functions on key stories. ArgTypes wired with controls. Missing Loading story, all-sizes-disabled, and ButtonGroup compositions. autodocs tag present.",
+                "Six stories covering Default, Variants, Sizes, IconOnly, Disabled, WithStartAndEndContent. Controls/argTypes wired. Play functions on interactive stories. Missing: loading state story, fullWidth, and a combined size×variant matrix that would round out coverage."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 26,
+          "total": 26
+        }
+      },
+      "tokenConsumption": {
+        "input": 417,
+        "output": 37260,
+        "thinkingEst": 0,
+        "cacheRead": 2374335,
+        "cacheCreation": 227188,
+        "total": 2639200,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 2639200
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.7249,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.7249
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 3
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": false,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 160,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 14,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 100,
+        "literals": 0,
+        "boundRefs": 0,
+        "samples": []
+      },
+      "label": "trivial-button",
+      "efficiency": {
+        "latencyMs": 3342967,
+        "cacheHitRatio": 0.9,
+        "toolUses": 0,
+        "requests": 62,
+        "ttftAvgMs": 0,
+        "cost": 1.7249,
+        "tokens": 2639200,
+        "costPerAccuracyPoint": 0.0411,
+        "tokensPerAccuracyPoint": 62838
+      }
+    },
+    {
+      "rung": "trivial-chip",
+      "tier": "trivial",
+      "runId": "trivial-chip",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "trivial",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 1344665,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 28,
+          "tokens": {
+            "input": 11682,
+            "output": 32286,
+            "thinkingEst": 0,
+            "cacheRead": 882126,
+            "cacheCreation": 154089,
+            "total": 1080183
+          },
+          "timeMs": {
+            "sumDuration": 451103,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.5703438500000004
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 47,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 100,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 45,
+          "tree": 33,
+          "prop": 63
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 61,
+          "tree": 60,
+          "prop": 63
+        },
+        "structuralDom": {
+          "score": 45,
+          "tree": 33,
+          "prop": 63
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 65,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 63,
+            "metric": 54,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, good cn usage, static lookup tables avoid dynamic class issues. tertiary and soft share identical styles (possible design gap). No memo needed for a pure display component. Minor: inline baseClasses split could be one cn call.",
+                "Clean forwardRef, lookup tables for classes, no dead code. Missing useMemo on colorClasses/sizeClasses (re-created every render). tertiary and soft are identical — wasted branches. Otherwise readable and idiomatic.",
+                "Clean forwardRef, lookup tables avoid dynamic class construction, no dead code. Missing useMemo for colorClasses/sizeClasses (recreated every render). soft/tertiary map identically—redundant. Solid but not optimal."
+              ]
+            }
+          },
+          "dx": {
+            "score": 70,
+            "metric": 50,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "All props typed, JSDoc on each prop, sensible defaults, spreads HTMLAttributes. Missing: no onClose/dismissible callback, no disabled prop, API diverges from HeroUI oracle's compound pattern (ChipRoot+ChipLabel). Usable but narrower than reference.",
+                "Good JSDoc on props, typed interfaces, sensible defaults. But variant names (primary/secondary/tertiary/soft) diverge from HeroUI oracle (solid/bordered/light/flat/faded/dot), reducing discoverability for HeroUI users. No disabled prop.",
+                "Well-typed props, sensible defaults, JSDoc on each prop, ref-forwarded, spreads HTML attrs. Variant names (primary/secondary/tertiary/soft) deviate from HeroUI v3 oracle (solid/bordered/light/flat/dot). Misleading API for consumers familiar with the real library."
+              ]
+            }
+          },
+          "docs": {
+            "score": 5,
+            "metric": 0,
+            "judge": {
+              "score": 8,
+              "rationales": [
+                "No .md or .mdx documentation file present in the generated directory. JSDoc comments in source are present but there is no standalone prop table, usage example doc, or README.",
+                "No .md or .mdx documentation file exists in the generated directory. JSDoc in the TSX is present but a proper doc file with prop table and usage examples is absent.",
+                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc comments are present in the component but do not constitute standalone documentation."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, both slots together, ref forwarding, className merge, a11y span/role check, and HTML attr passthrough. Missing: empty children edge case, aria-label on chip root assertion.",
+                "Covers defaults, all variants, all colors, all sizes, startContent/endContent slots, ref forwarding, className merging, and a basic a11y span check. Missing: disabled state, empty children, aria-label passthrough assertion on chip itself, role tests beyond span tagName.",
+                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, ref forwarding, className merging, a11y span-role check, and HTML attr passthrough. Missing: disabled state (not modeled), empty children, boundary/overflow edge cases. Solid mid-range coverage."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 84,
+            "metric": 100,
+            "judge": {
+              "score": 68,
+              "rationales": [
+                "Default, Variants, Colors, Sizes, and WithStartAndEndContent stories present; controls wired via argTypes; Figma design link and a11y param set. Missing stories for color×variant cross-matrix and no disabled/loading state. One play-test in WithStartAndEndContent.",
+                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. Controls wired via argTypes. Missing: disabled/dot variant stories, cross-variant×color matrix, no play-function assertions except on one story. A few meaningful states absent.",
+                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. ArgTypes wired with controls. Figma link present. One play-test included. Missing: per-color-per-variant matrix, no disabled/empty state stories, only one play assertion."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 21,
+          "total": 21
+        }
+      },
+      "tokenConsumption": {
+        "input": 11682,
+        "output": 32286,
+        "thinkingEst": 0,
+        "cacheRead": 882126,
+        "cacheCreation": 154089,
+        "total": 1080183,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 1080183
+          }
+        ]
+      },
+      "cost": {
+        "usd": 1.5703,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 1.5703
+          }
+        ]
+      },
+      "a11y": {
+        "score": 100,
+        "source": "axe",
+        "violations": [],
+        "violationCount": 0,
+        "nodeCount": 0,
+        "passCount": 1
+      },
+      "headless": {
+        "score": 55,
+        "signals": {
+          "controlledProps": false,
+          "statelessValue": true,
+          "hookExtraction": false,
+          "forwardRef": true,
+          "sideEffectDiscipline": true
+        },
+        "stateCount": 0,
+        "effectCount": 0
+      },
+      "cwv": {
+        "score": 100,
+        "source": "playwright",
+        "lcp": {
+          "ms": 52,
+          "score": 100,
+          "rating": "good"
+        },
+        "cls": {
+          "value": 0,
+          "score": 100,
+          "rating": "good"
+        },
+        "tbt": {
+          "ms": 0,
+          "score": 100,
+          "rating": "good"
+        }
+      },
+      "tokenBinding": {
+        "score": 100,
+        "literals": 0,
+        "boundRefs": 0,
+        "samples": []
+      },
+      "label": "trivial-chip",
+      "efficiency": {
+        "latencyMs": 1344665,
+        "cacheHitRatio": 0.817,
+        "toolUses": 0,
+        "requests": 28,
+        "ttftAvgMs": 0,
+        "cost": 1.5703,
+        "tokens": 1080183,
+        "costPerAccuracyPoint": 0.0334,
+        "tokensPerAccuracyPoint": 22983
+      }
+    },
+    {
+      "rung": "trivial-icon",
+      "tier": "trivial",
+      "runId": "trivial-icon",
+      "icon": false,
+      "scenario": {
+        "icon": false,
+        "tier": "trivial",
+        "cache": "cold",
+        "mode": "build"
+      },
+      "wallMs": 613,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 33,
+          "tokens": {
+            "input": 87,
+            "output": 11669,
+            "thinkingEst": 0,
+            "cacheRead": 786741,
+            "cacheCreation": 65279,
+            "total": 863776
+          },
+          "timeMs": {
+            "sumDuration": 218195,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 0.47991755
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null,
+      "tokenConsumption": {
+        "input": 87,
+        "output": 11669,
+        "thinkingEst": 0,
+        "cacheRead": 786741,
+        "cacheCreation": 65279,
+        "total": 863776,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "total": 863776
+          }
+        ]
+      },
+      "cost": {
+        "usd": 0.4799,
+        "byAgent": [
+          {
+            "agent": "custom",
+            "usd": 0.4799
+          }
+        ]
+      },
+      "a11y": null,
+      "headless": null,
+      "cwv": null,
+      "tokenBinding": null,
+      "label": "trivial-icon",
+      "efficiency": {
+        "latencyMs": 613,
+        "cacheHitRatio": 0.911,
+        "toolUses": 0,
+        "requests": 33,
+        "ttftAvgMs": 0,
+        "cost": 0.4799,
+        "tokens": 863776,
+        "costPerAccuracyPoint": null,
+        "tokensPerAccuracyPoint": null
+      }
     }
   ],
   "comparisons": {
@@ -1630,16 +2612,16 @@
       "tokens": "custom",
       "time": "custom",
       "byTier": {
-        "trivial": {
+        "complex": {
+          "tokens": "custom"
+        },
+        "extreme": {
           "tokens": "custom"
         },
         "moderate": {
           "tokens": "custom"
         },
-        "complex": {
-          "tokens": "custom"
-        },
-        "extreme": {
+        "trivial": {
           "tokens": "custom"
         }
       }
@@ -1652,110 +2634,837 @@
   },
   "accuracyByRung": [
     {
-      "rung": "trivial-icon",
+      "rung": "complex-alert",
+      "label": "complex-alert",
+      "composite": 56
+    },
+    {
+      "rung": "complex-card",
+      "label": "complex-card",
+      "composite": 47
+    },
+    {
+      "rung": "complex-dashboard",
+      "label": "complex-dashboard",
+      "composite": 45
+    },
+    {
+      "rung": "complex-tabs",
+      "label": "complex-tabs",
+      "composite": 49
+    },
+    {
+      "rung": "extreme-calendar",
+      "label": "extreme-calendar",
+      "composite": 45
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (cold)",
+      "composite": 30
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (update)",
       "composite": null
     },
     {
+      "rung": "moderate-input",
+      "label": "moderate-input (warm)",
+      "composite": null
+    },
+    {
+      "rung": "moderate-switch",
+      "label": "moderate-switch",
+      "composite": 46
+    },
+    {
       "rung": "tokens",
+      "label": "tokens",
       "composite": null
     },
     {
       "rung": "trivial-button",
+      "label": "trivial-button",
       "composite": 42
     },
     {
       "rung": "trivial-chip",
+      "label": "trivial-chip",
       "composite": 47
     },
     {
-      "rung": "moderate-input",
-      "composite": 30
-    },
-    {
-      "rung": "moderate-switch",
-      "composite": 46
-    },
-    {
-      "rung": "complex-card",
-      "composite": 47
-    },
-    {
-      "rung": "complex-alert",
-      "composite": 56
-    },
-    {
-      "rung": "complex-tabs",
-      "composite": 49
-    },
-    {
-      "rung": "complex-dashboard",
-      "composite": 45
-    },
-    {
-      "rung": "extreme-calendar",
-      "composite": 45
-    },
-    {
-      "rung": "moderate-input",
-      "composite": null
-    },
-    {
-      "rung": "moderate-input",
+      "rung": "trivial-icon",
+      "label": "trivial-icon",
       "composite": null
     }
   ],
   "qualityByRung": [
     {
-      "rung": "trivial-icon",
-      "composite": null
-    },
-    {
-      "rung": "tokens",
-      "composite": null
-    },
-    {
-      "rung": "trivial-button",
-      "composite": 64
-    },
-    {
-      "rung": "trivial-chip",
+      "rung": "complex-alert",
+      "label": "complex-alert",
       "composite": 65
-    },
-    {
-      "rung": "moderate-input",
-      "composite": 63
-    },
-    {
-      "rung": "moderate-switch",
-      "composite": 64
     },
     {
       "rung": "complex-card",
-      "composite": 64
-    },
-    {
-      "rung": "complex-alert",
-      "composite": 65
-    },
-    {
-      "rung": "complex-tabs",
+      "label": "complex-card",
       "composite": 64
     },
     {
       "rung": "complex-dashboard",
+      "label": "complex-dashboard",
       "composite": 61
     },
     {
+      "rung": "complex-tabs",
+      "label": "complex-tabs",
+      "composite": 64
+    },
+    {
       "rung": "extreme-calendar",
+      "label": "extreme-calendar",
       "composite": 67
     },
     {
       "rung": "moderate-input",
+      "label": "moderate-input (cold)",
+      "composite": 63
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (update)",
       "composite": null
     },
     {
       "rung": "moderate-input",
+      "label": "moderate-input (warm)",
       "composite": null
+    },
+    {
+      "rung": "moderate-switch",
+      "label": "moderate-switch",
+      "composite": 64
+    },
+    {
+      "rung": "tokens",
+      "label": "tokens",
+      "composite": null
+    },
+    {
+      "rung": "trivial-button",
+      "label": "trivial-button",
+      "composite": 64
+    },
+    {
+      "rung": "trivial-chip",
+      "label": "trivial-chip",
+      "composite": 65
+    },
+    {
+      "rung": "trivial-icon",
+      "label": "trivial-icon",
+      "composite": null
+    }
+  ],
+  "tokensByRung": [
+    {
+      "rung": "complex-alert",
+      "label": "complex-alert",
+      "tier": "complex",
+      "input": 2541,
+      "output": 39582,
+      "thinkingEst": 0,
+      "cacheRead": 1628412,
+      "cacheCreation": 180671,
+      "total": 1851206,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 1851206
+        }
+      ]
+    },
+    {
+      "rung": "complex-card",
+      "label": "complex-card",
+      "tier": "complex",
+      "input": 9447,
+      "output": 52711,
+      "thinkingEst": 0,
+      "cacheRead": 2327711,
+      "cacheCreation": 261340,
+      "total": 2651209,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2651209
+        }
+      ]
+    },
+    {
+      "rung": "complex-dashboard",
+      "label": "complex-dashboard",
+      "tier": "complex",
+      "input": 24482,
+      "output": 78038,
+      "thinkingEst": 0,
+      "cacheRead": 4169330,
+      "cacheCreation": 483928,
+      "total": 4755778,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 4755778
+        }
+      ]
+    },
+    {
+      "rung": "complex-tabs",
+      "label": "complex-tabs",
+      "tier": "complex",
+      "input": 27740,
+      "output": 54195,
+      "thinkingEst": 0,
+      "cacheRead": 2303346,
+      "cacheCreation": 301930,
+      "total": 2687211,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2687211
+        }
+      ]
+    },
+    {
+      "rung": "extreme-calendar",
+      "label": "extreme-calendar",
+      "tier": "extreme",
+      "input": 54023,
+      "output": 118206,
+      "thinkingEst": 0,
+      "cacheRead": 6629644,
+      "cacheCreation": 713051,
+      "total": 7514924,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 7514924
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (cold)",
+      "tier": "moderate",
+      "input": 1622,
+      "output": 35710,
+      "thinkingEst": 0,
+      "cacheRead": 1645419,
+      "cacheCreation": 172110,
+      "total": 1854861,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 1854861
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (update)",
+      "tier": "moderate",
+      "input": 842,
+      "output": 11192,
+      "thinkingEst": 0,
+      "cacheRead": 212612,
+      "cacheCreation": 67733,
+      "total": 292379,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 292379
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (warm)",
+      "tier": "moderate",
+      "input": 2211,
+      "output": 37128,
+      "thinkingEst": 0,
+      "cacheRead": 1852695,
+      "cacheCreation": 185633,
+      "total": 2077667,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2077667
+        }
+      ]
+    },
+    {
+      "rung": "moderate-switch",
+      "label": "moderate-switch",
+      "tier": "moderate",
+      "input": 3470,
+      "output": 38532,
+      "thinkingEst": 0,
+      "cacheRead": 1807428,
+      "cacheCreation": 162064,
+      "total": 2011494,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2011494
+        }
+      ]
+    },
+    {
+      "rung": "tokens",
+      "label": "tokens",
+      "tier": "moderate",
+      "input": 12598,
+      "output": 30256,
+      "thinkingEst": 0,
+      "cacheRead": 2408440,
+      "cacheCreation": 246777,
+      "total": 2698071,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2698071
+        }
+      ]
+    },
+    {
+      "rung": "trivial-button",
+      "label": "trivial-button",
+      "tier": "trivial",
+      "input": 417,
+      "output": 37260,
+      "thinkingEst": 0,
+      "cacheRead": 2374335,
+      "cacheCreation": 227188,
+      "total": 2639200,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 2639200
+        }
+      ]
+    },
+    {
+      "rung": "trivial-chip",
+      "label": "trivial-chip",
+      "tier": "trivial",
+      "input": 11682,
+      "output": 32286,
+      "thinkingEst": 0,
+      "cacheRead": 882126,
+      "cacheCreation": 154089,
+      "total": 1080183,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 1080183
+        }
+      ]
+    },
+    {
+      "rung": "trivial-icon",
+      "label": "trivial-icon",
+      "tier": "trivial",
+      "input": 87,
+      "output": 11669,
+      "thinkingEst": 0,
+      "cacheRead": 786741,
+      "cacheCreation": 65279,
+      "total": 863776,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "total": 863776
+        }
+      ]
+    }
+  ],
+  "costByRung": [
+    {
+      "rung": "complex-alert",
+      "label": "complex-alert",
+      "tier": "complex",
+      "usd": 1.7063,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.7063
+        }
+      ]
+    },
+    {
+      "rung": "complex-card",
+      "label": "complex-card",
+      "tier": "complex",
+      "usd": 3.0498,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 3.0498
+        }
+      ]
+    },
+    {
+      "rung": "complex-dashboard",
+      "label": "complex-dashboard",
+      "tier": "complex",
+      "usd": 5.2541,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 5.2541
+        }
+      ]
+    },
+    {
+      "rung": "complex-tabs",
+      "label": "complex-tabs",
+      "tier": "complex",
+      "usd": 3.6641,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 3.6641
+        }
+      ]
+    },
+    {
+      "rung": "extreme-calendar",
+      "label": "extreme-calendar",
+      "tier": "extreme",
+      "usd": 8.3542,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 8.3542
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (cold)",
+      "tier": "moderate",
+      "usd": 1.6796,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.6796
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (update)",
+      "tier": "moderate",
+      "usd": 0.4882,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 0.4882
+        }
+      ]
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (warm)",
+      "tier": "moderate",
+      "usd": 1.7168,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.7168
+        }
+      ]
+    },
+    {
+      "rung": "moderate-switch",
+      "label": "moderate-switch",
+      "tier": "moderate",
+      "usd": 1.7384,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.7384
+        }
+      ]
+    },
+    {
+      "rung": "tokens",
+      "label": "tokens",
+      "tier": "moderate",
+      "usd": 1.8344,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.8344
+        }
+      ]
+    },
+    {
+      "rung": "trivial-button",
+      "label": "trivial-button",
+      "tier": "trivial",
+      "usd": 1.7249,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.7249
+        }
+      ]
+    },
+    {
+      "rung": "trivial-chip",
+      "label": "trivial-chip",
+      "tier": "trivial",
+      "usd": 1.5703,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 1.5703
+        }
+      ]
+    },
+    {
+      "rung": "trivial-icon",
+      "label": "trivial-icon",
+      "tier": "trivial",
+      "usd": 0.4799,
+      "byAgent": [
+        {
+          "agent": "custom",
+          "usd": 0.4799
+        }
+      ]
+    }
+  ],
+  "otelReport": {
+    "perAgent": [
+      {
+        "agent": "custom",
+        "requests": 830,
+        "tokens": {
+          "input": 151162,
+          "output": 576765,
+          "thinkingEst": 0,
+          "cacheRead": 29028239,
+          "cacheCreation": 3221793,
+          "total": 32977959
+        },
+        "costUsd": 33.2609,
+        "timeMs": 8733356,
+        "ttftAvgMs": 0
+      }
+    ],
+    "perRung": [
+      {
+        "rung": "complex-alert",
+        "label": "complex-alert",
+        "tier": "complex",
+        "tokens": 1851206,
+        "costUsd": 1.7063,
+        "requests": 60
+      },
+      {
+        "rung": "complex-card",
+        "label": "complex-card",
+        "tier": "complex",
+        "tokens": 2651209,
+        "costUsd": 3.0498,
+        "requests": 65
+      },
+      {
+        "rung": "complex-dashboard",
+        "label": "complex-dashboard",
+        "tier": "complex",
+        "tokens": 4755778,
+        "costUsd": 5.2541,
+        "requests": 115
+      },
+      {
+        "rung": "complex-tabs",
+        "label": "complex-tabs",
+        "tier": "complex",
+        "tokens": 2687211,
+        "costUsd": 3.6641,
+        "requests": 70
+      },
+      {
+        "rung": "extreme-calendar",
+        "label": "extreme-calendar",
+        "tier": "extreme",
+        "tokens": 7514924,
+        "costUsd": 8.3542,
+        "requests": 150
+      },
+      {
+        "rung": "moderate-input",
+        "label": "moderate-input (cold)",
+        "tier": "moderate",
+        "tokens": 1854861,
+        "costUsd": 1.6796,
+        "requests": 59
+      },
+      {
+        "rung": "moderate-input",
+        "label": "moderate-input (update)",
+        "tier": "moderate",
+        "tokens": 292379,
+        "costUsd": 0.4882,
+        "requests": 10
+      },
+      {
+        "rung": "moderate-input",
+        "label": "moderate-input (warm)",
+        "tier": "moderate",
+        "tokens": 2077667,
+        "costUsd": 1.7168,
+        "requests": 74
+      },
+      {
+        "rung": "moderate-switch",
+        "label": "moderate-switch",
+        "tier": "moderate",
+        "tokens": 2011494,
+        "costUsd": 1.7384,
+        "requests": 59
+      },
+      {
+        "rung": "tokens",
+        "label": "tokens",
+        "tier": "moderate",
+        "tokens": 2698071,
+        "costUsd": 1.8344,
+        "requests": 45
+      },
+      {
+        "rung": "trivial-button",
+        "label": "trivial-button",
+        "tier": "trivial",
+        "tokens": 2639200,
+        "costUsd": 1.7249,
+        "requests": 62
+      },
+      {
+        "rung": "trivial-chip",
+        "label": "trivial-chip",
+        "tier": "trivial",
+        "tokens": 1080183,
+        "costUsd": 1.5703,
+        "requests": 28
+      },
+      {
+        "rung": "trivial-icon",
+        "label": "trivial-icon",
+        "tier": "trivial",
+        "tokens": 863776,
+        "costUsd": 0.4799,
+        "requests": 33
+      }
+    ],
+    "totals": {
+      "tokens": 32977959,
+      "costUsd": 33.261,
+      "requests": 830
+    },
+    "costDominantAgent": "custom",
+    "crossCheck": {
+      "otelTotalTokens": 32977959,
+      "costsJsonlTotalTokens": 32977959,
+      "deltaPct": 0
+    }
+  },
+  "efficiencyByRung": [
+    {
+      "rung": "complex-alert",
+      "label": "complex-alert",
+      "tier": "complex",
+      "latencyMs": 2892380,
+      "cacheHitRatio": 0.88,
+      "toolUses": 0,
+      "requests": 60,
+      "ttftAvgMs": 0,
+      "cost": 1.7063,
+      "tokens": 1851206,
+      "costPerAccuracyPoint": 0.0305,
+      "tokensPerAccuracyPoint": 33057
+    },
+    {
+      "rung": "complex-card",
+      "label": "complex-card",
+      "tier": "complex",
+      "latencyMs": 2545903,
+      "cacheHitRatio": 0.878,
+      "toolUses": 0,
+      "requests": 65,
+      "ttftAvgMs": 0,
+      "cost": 3.0498,
+      "tokens": 2651209,
+      "costPerAccuracyPoint": 0.0649,
+      "tokensPerAccuracyPoint": 56409
+    },
+    {
+      "rung": "complex-dashboard",
+      "label": "complex-dashboard",
+      "tier": "complex",
+      "latencyMs": 8947980,
+      "cacheHitRatio": 0.877,
+      "toolUses": 0,
+      "requests": 115,
+      "ttftAvgMs": 0,
+      "cost": 5.2541,
+      "tokens": 4755778,
+      "costPerAccuracyPoint": 0.1168,
+      "tokensPerAccuracyPoint": 105684
+    },
+    {
+      "rung": "complex-tabs",
+      "label": "complex-tabs",
+      "tier": "complex",
+      "latencyMs": 3615023,
+      "cacheHitRatio": 0.857,
+      "toolUses": 0,
+      "requests": 70,
+      "ttftAvgMs": 0,
+      "cost": 3.6641,
+      "tokens": 2687211,
+      "costPerAccuracyPoint": 0.0748,
+      "tokensPerAccuracyPoint": 54841
+    },
+    {
+      "rung": "extreme-calendar",
+      "label": "extreme-calendar",
+      "tier": "extreme",
+      "latencyMs": 31224328,
+      "cacheHitRatio": 0.882,
+      "toolUses": 0,
+      "requests": 150,
+      "ttftAvgMs": 0,
+      "cost": 8.3542,
+      "tokens": 7514924,
+      "costPerAccuracyPoint": 0.1856,
+      "tokensPerAccuracyPoint": 166998
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (cold)",
+      "tier": "moderate",
+      "latencyMs": 2378431,
+      "cacheHitRatio": 0.887,
+      "toolUses": 0,
+      "requests": 59,
+      "ttftAvgMs": 0,
+      "cost": 1.6796,
+      "tokens": 1854861,
+      "costPerAccuracyPoint": 0.056,
+      "tokensPerAccuracyPoint": 61829
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (update)",
+      "tier": "moderate",
+      "latencyMs": 838110,
+      "cacheHitRatio": 0.727,
+      "toolUses": 0,
+      "requests": 10,
+      "ttftAvgMs": 0,
+      "cost": 0.4882,
+      "tokens": 292379,
+      "costPerAccuracyPoint": null,
+      "tokensPerAccuracyPoint": null
+    },
+    {
+      "rung": "moderate-input",
+      "label": "moderate-input (warm)",
+      "tier": "moderate",
+      "latencyMs": 4313220,
+      "cacheHitRatio": 0.892,
+      "toolUses": 0,
+      "requests": 74,
+      "ttftAvgMs": 0,
+      "cost": 1.7168,
+      "tokens": 2077667,
+      "costPerAccuracyPoint": null,
+      "tokensPerAccuracyPoint": null
+    },
+    {
+      "rung": "moderate-switch",
+      "label": "moderate-switch",
+      "tier": "moderate",
+      "latencyMs": 2231946,
+      "cacheHitRatio": 0.899,
+      "toolUses": 0,
+      "requests": 59,
+      "ttftAvgMs": 0,
+      "cost": 1.7384,
+      "tokens": 2011494,
+      "costPerAccuracyPoint": 0.0378,
+      "tokensPerAccuracyPoint": 43728
+    },
+    {
+      "rung": "tokens",
+      "label": "tokens",
+      "tier": "moderate",
+      "latencyMs": 5371186,
+      "cacheHitRatio": 0.893,
+      "toolUses": 0,
+      "requests": 45,
+      "ttftAvgMs": 0,
+      "cost": 1.8344,
+      "tokens": 2698071,
+      "costPerAccuracyPoint": null,
+      "tokensPerAccuracyPoint": null
+    },
+    {
+      "rung": "trivial-button",
+      "label": "trivial-button",
+      "tier": "trivial",
+      "latencyMs": 3342967,
+      "cacheHitRatio": 0.9,
+      "toolUses": 0,
+      "requests": 62,
+      "ttftAvgMs": 0,
+      "cost": 1.7249,
+      "tokens": 2639200,
+      "costPerAccuracyPoint": 0.0411,
+      "tokensPerAccuracyPoint": 62838
+    },
+    {
+      "rung": "trivial-chip",
+      "label": "trivial-chip",
+      "tier": "trivial",
+      "latencyMs": 1344665,
+      "cacheHitRatio": 0.817,
+      "toolUses": 0,
+      "requests": 28,
+      "ttftAvgMs": 0,
+      "cost": 1.5703,
+      "tokens": 1080183,
+      "costPerAccuracyPoint": 0.0334,
+      "tokensPerAccuracyPoint": 22983
+    },
+    {
+      "rung": "trivial-icon",
+      "label": "trivial-icon",
+      "tier": "trivial",
+      "latencyMs": 613,
+      "cacheHitRatio": 0.911,
+      "toolUses": 0,
+      "requests": 33,
+      "ttftAvgMs": 0,
+      "cost": 0.4799,
+      "tokens": 863776,
+      "costPerAccuracyPoint": null,
+      "tokensPerAccuracyPoint": null
     }
   ]
 }

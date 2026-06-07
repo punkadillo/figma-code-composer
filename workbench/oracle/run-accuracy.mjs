@@ -12,6 +12,10 @@ import { assembleAccuracy } from './assemble-accuracy.mjs';
 import { scoreVisual } from './score-visual.mjs';
 import { scoreStyle } from './score-style.mjs';
 import { decodePng } from './png.mjs';
+import { architectureMetrics } from './metrics/architecture.mjs';
+import { scoreA11y } from './score-a11y.mjs';
+import { scoreCwv } from './score-cwv.mjs';
+import { scoreTokenBinding } from './score-token-binding.mjs';
 import { RUNG_MAP, RUNG_TO_RUNID, scoredRungs } from './rung-map.mjs';
 import { isScorableTrial } from '../runner/run-manifest-builder.mjs';
 
@@ -64,23 +68,39 @@ export async function runAccuracy({ render = false, shots = null } = {}) {
       console.error(`[accuracy] ${r.rung}: reachability unknown (legacy capture, no figma-manifest.json) — scoring anyway`);
     }
 
-    const gStruct = extractStructural(readFileSync(join(TRIAL, r.targetTsx), 'utf8'));
+    const targetSrc = readFileSync(join(TRIAL, r.targetTsx), 'utf8');
+    const gStruct = extractStructural(targetSrc);
     const oStruct = extractStructural(readFileSync(join(TRIAL, r.oracleTsx), 'utf8'));
     const structuralSource = scoreStructural(gStruct, oStruct);
     let structuralDom = null;
 
+    // Stateless & Headless + Token-binding rate — static source analysis, always available.
+    run.headless = architectureMetrics(targetSrc);
+    run.tokenBinding = scoreTokenBinding(targetSrc);
+
     const gates = await scoreGates({ runGate: runGateFor(run.gates), gates: ['typecheck', 'build', 'tests'] });
 
     let visual = null, style = null;
-    if (render && shots && r.hasOracleStory) {
+    if (render && shots && r.targetStoryId) {
+      let t = null;
       try {
-        const t = await shots.targetShot(r);
-        const o = await shots.oracleShot(r);
-        visual = scoreVisual(decodePng(t.pngBuffer), decodePng(o.pngBuffer));
-        style = scoreStyle(t.style, o.style);
-        structuralDom = scoreStructural({ tree: t.dom, props: gStruct.props }, { tree: o.dom, props: oStruct.props });
+        t = await shots.targetShot(r);
+        // Accessibility (axe) + Core Web Vitals from the TARGET render — captured
+        // independently of the oracle so they populate even for rungs with no oracle story.
+        run.a11y = scoreA11y(t.axe);
+        run.cwv = scoreCwv(t.cwv);
       } catch (e) {
-        console.error(`[accuracy] ${r.rung} render failed, marking visual/style unavailable: ${e.message}`);
+        console.error(`[accuracy] ${r.rung} target render failed, a11y/cwv unavailable: ${e.message}`);
+      }
+      if (t && r.hasOracleStory) {
+        try {
+          const o = await shots.oracleShot(r);
+          visual = scoreVisual(decodePng(t.pngBuffer), decodePng(o.pngBuffer));
+          style = scoreStyle(t.style, o.style);
+          structuralDom = scoreStructural({ tree: t.dom, props: gStruct.props }, { tree: o.dom, props: oStruct.props });
+        } catch (e) {
+          console.error(`[accuracy] ${r.rung} oracle render failed, visual/style unavailable: ${e.message}`);
+        }
       }
     }
 

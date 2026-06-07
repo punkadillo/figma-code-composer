@@ -15,11 +15,11 @@ test('aggregateTrialset collects qualityByRung alongside accuracyByRung', () => 
     mk('r2','atom',95,{ composite: 88 }),
     mk('r6','page',40,{ composite: 30 }),
   ] });
-  assert.deepEqual(ts.accuracyByRung, [{ rung:'atom', composite:95 }, { rung:'page', composite:40 }]);
-  assert.deepEqual(ts.qualityByRung, [{ rung:'atom', composite:88 }, { rung:'page', composite:30 }]);
+  assert.deepEqual(ts.accuracyByRung, [{ rung:'atom', label:'atom', composite:95 }, { rung:'page', label:'page', composite:40 }]);
+  assert.deepEqual(ts.qualityByRung, [{ rung:'atom', label:'atom', composite:88 }, { rung:'page', label:'page', composite:30 }]);
 });
 
 test('qualityByRung tolerates a run with no quality (composite null)', () => {
   const ts = aggregateTrialset({ trialId: 'heroui', runs: [ mk('r2','atom',95,undefined) ] });
-  assert.deepEqual(ts.qualityByRung, [{ rung:'atom', composite: null }]);
+  assert.deepEqual(ts.qualityByRung, [{ rung:'atom', label:'atom', composite: null }]);
 });
