@@ -223,9 +223,32 @@ Default `namingConvention` per cssSystem: kebab-case for tailwind/css/sass/unocs
 
 "Which AI tools should this scaffold wire for?" multi-select; defaults from existing files (`.claude/` → Claude Code default-on, `.cursor/` → Cursor default-on).
 
+### Step 6.5 — Autonomy level
+
+One `AskUserQuestion` (single question, per § Prompt cadence): *"When a build hits a mid-run decision gate (an unbound value, a stack/library mismatch, a removed token, an ambiguous selection) and you may not be around to answer — how should the pipeline behave?"*
+
+- **Interactive (default, first option)** — block and ask on every decision gate. Safest; stalls when you're away.
+- **Autonomous** — resolve each gate from a recorded policy and keep going, logging every decision to the handover's *Autonomous decisions* block for async review. Recommended when builds run unattended.
+
+Picking **Autonomous** writes the policy with the recommended defaults below; the user can hand-edit any key later. Picking **Interactive** writes `level: "interactive"` (gate keys still written at their `block` defaults so flipping later needs no re-scaffold). Genuinely unsafe gates (page-selected, recursion cycle) stay hard stops regardless. See `protocols/figma-manifest.md` and `figma-coordinator.md` § Autonomy policy.
+
 ### Step 7 — Compose + validate
 
 Compose config. Derive `writeScope.allowedDirs` from every path-bearing key (+`/**`); always include `.figma-pipeline/**`, `/tmp/**`, `.mcp.json`. Set `writeScope.alwaysBlocked` per `protocols/allowlist.md`.
+
+**Write the `autonomy` block from the Step 6.5 answer.** Autonomous → the recommended defaults; Interactive → `level: "interactive"` with all gate keys at `block`:
+
+```jsonc
+"autonomy": {
+  "level": "autonomous",                                  // or "interactive"
+  "onUnbound": "inline-and-flag",                         // "block" when interactive
+  "onStackMismatch": "update-current",
+  "onUnsupportedOverride": "extend-props",
+  "onLibrarySwap": "accept-and-flag",
+  "onRemovedToken": "update-if-replaced-else-keep-raw",
+  "onAmbiguousSelection": "pick-primary-and-flag"
+}
+```
 
 **Compose `writeScope.setupFiles[]` from the enabled tracks** — the exact project-level files Step 7.6 will provision, so `check-frozen-paths.sh` authorizes those writes (it reads `setupFiles` in addition to `allowedDirs`). Include only the paths that apply: the Tailwind entry CSS (`cssSystem.config.configFile`) when `tailwind-v4`; `vitest.config.*` + the unit setup file when unit-vitest; `playwright.config.*` (at `tests.e2e.configPath`) when e2e; `.storybook/**` when stories. This list is tight and setup-only — never component/token/icon output. (config.json is written here at Step 7 and then amended by the later steps — `skillsInstall`, `brevit`, `setup`, `graphify`, `gitignorePatch` — same as today; the setup writes in 7.6 need config.json already on disk so the hook can read `setupFiles`.)
 

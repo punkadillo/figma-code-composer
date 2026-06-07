@@ -121,26 +121,38 @@ Compute and print the complexity score + tier for a manifest JSON file. See [com
 
 ### `fcc kg:query`
 
-Retrieve top-K most-similar prior ledger entries for a manifest slice. See [knowledge-graph.md](./knowledge-graph.md).
+Retrieve ledger entries. Three mutually-exclusive modes, selected by which flag is present:
+- **Similarity** (`--slice`) — top-K most-similar prior entries for a manifest slice (embeddings).
+- **Exact instance** (`--figma-node-id`) — the load-bearing reuse lookup; exact ledger match, no embeddings.
+- **Reverse / consumers** (`--used-by`) — entries that *use* a given token. Exact reverse-index over `tokensUsed[]`, no embeddings.
+
+See [knowledge-graph.md](./knowledge-graph.md).
 
 **Effect (read-only):**
-- Read the slice at `--slice <path>`.
-- Embed `slice.summaryHint` via the configured provider.
-- Query `embeddings.sqlite` for top-K by cosine similarity.
-- Print JSON array of ledger entries sorted by similarity descending.
+- Similarity mode: read the slice at `--slice <path>`, embed `slice.summaryHint` via the configured provider, query `embeddings.json`/`.sqlite` for top-K by cosine similarity, print a JSON array sorted by similarity descending.
+- Exact instance / reverse mode: read `ledger.jsonl` and filter in memory (no embeddings). Print a JSON array of full ledger entries (insertion order). Zero matches → `[]` + exit 0.
 
 **Flags:**
 
 | Flag                 | Effect                                                |
 | -------------------- | ----------------------------------------------------- |
-| `--slice <path>`     | REQUIRED — path to a slice JSON                       |
-| `--top-k <n>`        | Default 5; max 20                                     |
-| `--min-similarity <0..1>` | Default 0.3; drop entries below this threshold   |
+| `--slice <path>`     | Similarity mode — path to a slice JSON                 |
+| `--figma-node-id <id>` | Exact-instance mode — match `ledgerEntry.figmaNodeId` |
+| `--used-by <token>`  | **Reverse mode** — list entries whose `tokensUsed[]` contains `<token>` (the token's dependents/consumers). `<token>` is the canonical token name as stored in `tokensUsed` (e.g. `color.brand.primary`), NOT the emitted CSS var. |
+| `--match <exact\|prefix>` | Reverse mode only. `exact` (default) matches one token; `prefix` matches a whole namespace (e.g. `--used-by color.brand --match prefix` returns every consumer of any `color.brand.*` token — for namespace-wide renames). |
+| `--kind <kind>`      | Filter results by entry kind (`component` default in reverse mode; `any` for all kinds). |
+| `--framework <fw>` / `--css-system <css>` | Optional stack filters — on a multi-stack ledger, return only dependents built for the active stack. |
+| `--top-k <n>`        | Similarity mode only. Default 5; max 20               |
+| `--min-similarity <0..1>` | Similarity mode only. Default 0.3; drop entries below this threshold |
+
+Exactly one of `--slice` / `--figma-node-id` / `--used-by` is required; supplying more than one → exit 2.
 
 **Exit codes:**
 - `0` — query executed (zero results is success)
-- `2` — slice unreadable
+- `2` — bad input (no mode flag, or more than one, or unreadable slice)
 - `3` — KG store missing or corrupt
+
+> **Reverse mode is a spec addition** (additive minor over the v0.1.0 surface). Callers MUST feature-detect: if `fcc kg:query --used-by …` exits non-zero with an unknown-flag error, fall back to reading `<storeDir>/ledger.jsonl` directly and filtering `tokensUsed[]` in-context. No new index file is required — the reverse lookup is a linear scan of the ledger (ledgers are small); a future `graph.json` token→component edge map could accelerate it without changing this contract.
 
 ---
 

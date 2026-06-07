@@ -14,7 +14,9 @@ This file is the **runtime configuration** every pipeline agent reads. Hand-edit
 
 `version`, `project`, `framework`, `language`, `cssSystem`, `tokens`, `components`, `icons`, `writeScope`.
 
-Optional (commonly present): `designSystem`, `stories`, `tests`, `figma`, `tools`.
+Optional (commonly present): `designSystem`, `stories`, `tests`, `figma`, `tools`, `complexity`, `knowledgeGraph`, `autonomy`.
+
+`autonomy` (optional; absent → `interactive`, every gate blocks) controls how mid-run decision gates resolve when the user may be away. `level ∈ {interactive, autonomous}`; per-gate keys `onUnbound`, `onStackMismatch`, `onUnsupportedOverride`, `onLibrarySwap`, `onRemovedToken`, `onAmbiguousSelection`. See `figma-coordinator.md` § Autonomy policy.
 
 ## Hard constraints
 
