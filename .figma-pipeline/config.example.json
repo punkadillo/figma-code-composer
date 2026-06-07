@@ -16,13 +16,18 @@
     "config": {
       "prefix": "tw:",
       "configFile": "src/styles/tailwind.css",
-      "extendTailwindMergePath": "src/lib/utils.ts"
+      "extendTailwindMergePath": "src/lib/utils.ts",
+      "componentDirGitignored": false
     }
   },
   "tokens": {
     "strategy": "tailwind-css-vars",
     "outputDir": "src/styles/tokens",
-    "files": ["primitives.css", "semantic.css", "components.css"],
+    "files": [
+      "primitives.css",
+      "semantic.css",
+      "components.css"
+    ],
     "namingConvention": "kebab-case",
     "prefix": "--app-",
     "fileLayout": "split"
@@ -47,14 +52,17 @@
     "enabled": true,
     "framework": "storybook",
     "outputDir": "co-located",
-    "titleConvention": "Components/{Layer}/{Name}"
+    "titleConvention": "Components/{Layer}/{Name}",
+    "testUtilsImport": "storybook/test"
   },
   "tests": {
     "unit": {
       "enabled": true,
       "framework": "vitest",
       "outputDir": "co-located",
-      "testingLibrary": "react-testing-library"
+      "testingLibrary": "react-testing-library",
+      "excludeE2E": true,
+      "setupFile": "vitest.setup.ts"
     },
     "e2e": {
       "enabled": true,
@@ -86,6 +94,13 @@
       "pnpm-lock.yaml",
       ".env",
       ".env.*"
+    ],
+    "setupFiles": [
+      "vitest.config.ts",
+      "vitest.setup.ts",
+      "playwright.config.ts",
+      ".storybook/**",
+      "src/styles/tailwind.css"
     ]
   },
   "tools": {
@@ -94,14 +109,27 @@
   },
   "complexity": {
     "enabled": true,
-    "thresholds": { "trivial": 20, "moderate": 50, "complex": 80 }
+    "thresholds": {
+      "trivial": 20,
+      "moderate": 50,
+      "complex": 80
+    }
   },
   "knowledgeGraph": {
     "enabled": true,
     "storeDir": ".figma-pipeline/kg",
-    "embeddings": { "provider": "local", "model": "Xenova/all-MiniLM-L6-v2" },
-    "retention": { "handoverDays": 30, "stagingDays": 7 },
-    "visualRegression": { "enabled": false, "thresholdPercent": 2 }
+    "embeddings": {
+      "provider": "local",
+      "model": "Xenova/all-MiniLM-L6-v2"
+    },
+    "retention": {
+      "handoverDays": 30,
+      "stagingDays": 7
+    },
+    "visualRegression": {
+      "enabled": false,
+      "thresholdPercent": 2
+    }
   },
   "brevit": {
     "installed": true,
@@ -109,5 +137,36 @@
     "enabled": true,
     "mode": "flatten",
     "abbreviation": false
+  },
+  "setup": {
+    "completedAt": "2026-06-07T00:00:00Z",
+    "css": {
+      "entryCss": "src/styles/tailwind.css",
+      "status": "provisioned",
+      "sourceDirectives": []
+    },
+    "unit": {
+      "configPath": "vitest.config.ts",
+      "setupFile": "vitest.setup.ts",
+      "status": "provisioned"
+    },
+    "e2e": {
+      "configPath": "playwright.config.ts",
+      "browsersInstalled": true,
+      "status": "provisioned"
+    },
+    "storybook": {
+      "configDir": ".storybook",
+      "status": "provisioned"
+    },
+    "depsInstalled": [
+      "vitest",
+      "@testing-library/react",
+      "@testing-library/user-event",
+      "jsdom",
+      "@playwright/test",
+      "storybook"
+    ],
+    "pending": []
   }
 }

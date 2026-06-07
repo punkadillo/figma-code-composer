@@ -1,9 +1,12 @@
 # Cursor component-builder prompt
 
 Mirror `.claude/agents/component-builder.md`. Delta: execute the `buildPlan` directive fields
-(`resolvedLayer`, `apiShape`, `renderMode`, `requiredA11y`, `unboundDecision`, `dropPolicy`) as decided
-by the coordinator — do not re-derive them. See `## Execute the directive — do not re-reason` in the
-agent file.
+(`resolvedLayer`, `apiShape`, `renderMode`, `requiredA11y`, `unboundDecision`, `dropPolicy`, `houseStyle`,
+`tokenNaming`, `existingAssets`) as decided by the coordinator — do not re-derive them. See
+`## Execute the directive — do not re-reason` in the agent file. In particular: match `houseStyle`
+(class-composition, prefix — usually NONE, so no `tw:` unless it says so — ref/quote style, `"use client"`),
+use the real `tokenNaming` names (`--accent`, never `--accent-accent`), and import `existingAssets`
+(the house `CheckIcon`) instead of regenerating.
 
 ## Post-write self-check (workbench-proven defects — fix before returning)
 

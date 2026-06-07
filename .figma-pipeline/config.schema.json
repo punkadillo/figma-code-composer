@@ -197,6 +197,10 @@
           "type": "string",
           "default": "Components/{Layer}/{Name}",
           "description": "Template — supports {Layer}, {Name}, {Domain}."
+        },
+        "testUtilsImport": {
+          "type": "string",
+          "description": "Version-aware Storybook test-utils import path, resolved by the wizard at setup time so story-author never probes: 'storybook/test' for Storybook >=10, '@storybook/test' for <10."
         }
       }
     },
@@ -216,6 +220,14 @@
             "testingLibrary": {
               "type": "string",
               "enum": ["react-testing-library", "vue-testing-library", "@testing-library/angular", "@testing-library/svelte", "none"]
+            },
+            "excludeE2E": {
+              "type": "boolean",
+              "description": "True when unit=vitest AND e2e is enabled — the unit runner config must exclude Playwright specs. The wizard provisions the exclusion at setup time (a dir-exclude when e2e lives in its own dir, a projects-split / .e2e naming convention when e2e is co-located) so `vitest run` never collects Playwright specs at command time."
+            },
+            "setupFile": {
+              "type": "string",
+              "description": "Path to the unit-runner setup file the wizard scaffolds (e.g. vitest.setup.ts) — jsdom/RTL matchers. Recorded so the runner config and test-author agree."
             }
           }
         },
@@ -305,6 +317,11 @@
           "minItems": 1,
           "description": "Glob patterns. Agents may write only inside these."
         },
+        "setupFiles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Exact project-level setup files the WIZARD is permitted to scaffold once at init (e.g. vitest.config.ts, playwright.config.ts, the Tailwind entry CSS, .storybook/**). Read by check-frozen-paths.sh in addition to allowedDirs. These are framework-setup artifacts the wizard writes on greenfield only — never component/token/icon output, and never edited by builders at command time."
+        },
         "alwaysBlocked": {
           "type": "array",
           "items": { "type": "string" },
@@ -327,6 +344,55 @@
       "properties": {
         "claudeCode": { "type": "boolean", "default": true },
         "cursor": { "type": "boolean", "default": true }
+      }
+    },
+    "setup": {
+      "type": "object",
+      "description": "Audit of the wizard's one-time framework-setup phase (Step 7.6). Every selectable track (CSS system, unit tests, e2e, storybook) is provisioned at init so the build/update/icons/tokens commands never fail at command time on missing setup. The coordinator's pre-flight verifies these artifacts exist on disk; a missing one aborts cleanly at pre-flight (zero specialists spawned) rather than mid-run. Each path entry is either 'provisioned' (wizard wrote it on greenfield) or 'pending' (file pre-existed and was user-owned — the wizard instructed the user and recorded the required invariant for verification).",
+      "properties": {
+        "completedAt": { "type": "string", "description": "ISO-8601 timestamp when Step 7.6 finished." },
+        "css": {
+          "type": "object",
+          "description": "Tailwind/CSS plumbing provisioned at init (entry CSS with @import, @source for gitignored component dirs, vite plugin presence). Token VALUES are still emitted by token-builder on first build.",
+          "properties": {
+            "entryCss": { "type": "string", "description": "Path to the CSS file that imports the framework (e.g. src/styles/tailwind.css)." },
+            "status": { "type": "string", "enum": ["provisioned", "pending", "not-applicable"] },
+            "sourceDirectives": { "type": "array", "items": { "type": "string" }, "description": "@source globs added for gitignored component dirs." }
+          }
+        },
+        "unit": {
+          "type": "object",
+          "properties": {
+            "configPath": { "type": "string" },
+            "setupFile": { "type": "string" },
+            "status": { "type": "string", "enum": ["provisioned", "pending", "not-applicable"] }
+          }
+        },
+        "e2e": {
+          "type": "object",
+          "properties": {
+            "configPath": { "type": "string" },
+            "browsersInstalled": { "type": "boolean", "description": "True once the wizard verified `npx playwright install` completed (user runs it in a separate terminal; the wizard re-checks before moving on)." },
+            "status": { "type": "string", "enum": ["provisioned", "pending", "not-applicable"] }
+          }
+        },
+        "storybook": {
+          "type": "object",
+          "properties": {
+            "configDir": { "type": "string", "description": ".storybook directory path." },
+            "status": { "type": "string", "enum": ["provisioned", "pending", "not-applicable"] }
+          }
+        },
+        "depsInstalled": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "npm devDependencies the wizard installed for the selected tracks (vitest, @testing-library/*, @playwright/test, storybook, …)."
+        },
+        "pending": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Human-readable invariants the wizard could NOT auto-provision because a user-authored file already existed — each entry names the file path + the exact edit the user was instructed to make. The coordinator surfaces these until verified."
+        }
       }
     },
     "skillsInstall": {

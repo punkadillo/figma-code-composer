@@ -37,9 +37,16 @@ Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § bui
 wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
 demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
 them, do NOT re-derive them:** `resolvedLayer`, `apiShape`, `renderMode`, `requiredA11y`, `unboundDecision`,
-`dropPolicy`. Re-derive ONLY what the directive omits. If a field you need is absent, derive it and note
-that in your return `notes`. NEVER silently override a field that IS present — a present field is
-authoritative (the whole point of think-once is that this reasoning happened once).
+`dropPolicy`, `houseStyle`, `tokenNaming`, `existingAssets`. Re-derive ONLY what the directive omits. If a
+field you need is absent, derive it and note that in your return `notes`. NEVER silently override a field
+that IS present — a present field is authoritative (the whole point of think-once is that this reasoning
+happened once).
+
+In particular: `houseStyle` already tells you the project's class-composition (`cva` vs a zero-dep `cn`
+filter-join vs `tailwind-merge`), prefix (often none — do NOT emit `tw:` unless `houseStyle.prefix` says
+so), ref style, quote style, and `"use client"` discipline — match it, don't infer it mid-build.
+`tokenNaming` gives the REAL on-disk token names (use `--accent`, never a guessed `--accent-accent`).
+`existingAssets` lists reusable on-disk icons/components (import the house `CheckIcon`; don't regenerate one).
 
 ## Write scope
 

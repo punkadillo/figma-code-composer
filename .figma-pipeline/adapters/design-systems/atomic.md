@@ -49,6 +49,8 @@ What it DOES enforce:
 
 Standard framework adapter applies — no DS-specific wrapper. For React + Tailwind v4 + atomic:
 
+> The `tw:` prefix in the example below is **illustrative** (shows a configured prefix). Emit it only when `config.cssSystem.config.prefix` is set; most projects have none → emit plain `flex gap-2 items-center`. See `adapters/css/tailwind-v4.md`.
+
 ```tsx
 // src/components/molecules/SearchBar/SearchBar.tsx
 import { Input } from "../../atoms/Input";

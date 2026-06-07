@@ -14,3 +14,9 @@ re-derive them. See `## Execute the directive — do not re-reason` in the agent
   re-exports — `export { CircleCheckIcon } from "./CircleCheckIcon";` (and `export type { … }` if types are
   exported). Mixing default and named re-exports broke the render build (report-08). Pick named, apply
   uniformly.
+
+## Delta — heroui trial fixes
+
+- **Vector first, always (steps 1–2).** Extract a clean `<path>` even when the MCP's first render is a raster `img` — a simple `currentColor`-bound glyph (e.g. a checkmark) MUST be vector so theming works. Raster fallback (`<image href>`) is for genuinely vector-less sources only (multicolour logos). When a Figma source is raster but reconstructable, emit a geometry-faithful vector approximation and record it in `flags` as a KNOWN fidelity gap — never a silent exact substitution.
+- **Prop-spread order (currentColor icons).** Spread `{...props}` FIRST, then the merged `style` — `<svg {...props} style={{ color, ...props.style }} />`. Spreading after `style` lets a caller passing `color` + `style` clobber the injected color.
+- **Type-only imports for `verbatimModuleSyntax`.** `import React, { type SVGProps } from 'react'`, not `import { SVGProps }` — a value-import of a type passes vitest but breaks `tsc -b` (a prior `CheckIcon.tsx` broke the whole app typecheck this way).

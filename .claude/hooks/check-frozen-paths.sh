@@ -80,7 +80,15 @@ if [[ -r "$CONFIG" ]] && command -v jq >/dev/null 2>&1; then
       exit 2
     fi
   done
-  ALLOWED_GLOBS=("${CFG_GLOBS[@]}" ".figma-pipeline/**" "/tmp/**" ".mcp.json")
+  # writeScope.setupFiles — exact project-level framework-setup artifacts the WIZARD
+  # provisions once at init (vitest.config.ts, playwright.config.ts, the Tailwind entry
+  # CSS, .storybook/**). Permitted in addition to allowedDirs. These are setup, not
+  # component/token/icon output; builders never target them at command time.
+  CFG_SETUP=()
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && CFG_SETUP+=("$line")
+  done < <(jq -r '.writeScope.setupFiles[]?' "$CONFIG" 2>/dev/null)
+  ALLOWED_GLOBS=("${CFG_GLOBS[@]}" "${CFG_SETUP[@]}" ".figma-pipeline/**" "/tmp/**" ".mcp.json")
 else
   # Bootstrap allowlist — what the wizard may touch before config.json exists.
   #   .gitignore      — Step 7.8 patch

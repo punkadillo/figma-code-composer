@@ -61,6 +61,7 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
    - Confirm the wizard stamped `config.figma.mcpVerifiedAt` — proof the Step 2 hard-gate verified MCP at init. **Absent** → abort code 3: `"Figma MCP never verified — run /init-figma-compose first."` (No point spawning anything.)
    - **Present** → trust it and proceed. The *live* reachability check is the fetcher's first action (Protocol step 1): it runs a cheap `get_metadata`, retries the alternate namespace, and returns `reachabilityStatus` + (on failure) code 3. You surface that verbatim — see step 1. This preserves the cheap early-abort on a broken MCP without putting MCP tools in the coordinator.
 1. Read `config.json`. Absent → abort: "run `/init-figma-compose` first." Validate `version == "1.0"`.
+1.5. **Verify framework setup (the no-mid-run-failure guard).** Read `config.setup` (written by the wizard's Step 7.6). For every **enabled** track, confirm its provisioned artifact exists on disk: Tailwind entry CSS (`config.setup.css.entryCss` contains `@import "tailwindcss"`); unit runner config (`config.setup.unit.configPath`) + its e2e exclusion when `tests.unit.excludeE2E`; `playwright.config` at `config.setup.e2e.configPath` (+ `config.setup.e2e.browsersInstalled`); `.storybook/` when `stories.enabled`. **Missing or `config.setup.pending[]` non-empty → abort at pre-flight** (exit 3, ZERO specialists spawned, zero writes): surface the missing/pending items verbatim with `"Framework setup incomplete — run /init-figma-compose to finish setup (or complete the pending items it listed), then retry."` This is the deliberate trade: a clean pre-flight stop, never a half-built tree at tool-call 40. Absent `config.setup` (older scaffold) → one-line warning + proceed (don't hard-block a project that pre-dates setup-at-init).
 2. Stamp: `runId = <YYYYMMDD-HHMM>-<slug>`; `mkdir -p /tmp/figma-<runId>`.
 3. Snapshot `configSnapshot`: `framework.{name,variant}`, `language`, `cssSystem.name`, `components.designMethodology`, `tokens.strategy`, `designSystem.{name,themeName}`, `figma.mcpToolNamespace`. Pass to every spawn.
 4. Cache KG / complexity flags + `storeDir`.
@@ -70,9 +71,20 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
 
 1. **Fetch.** Spawn `figma-fetcher` (haiku if ≤5 nodes, sonnet otherwise) with `{ url, intent, scope, layerHint, configSnapshot }`. The fetcher's **first action is the live MCP reachability probe** (it owns the MCP tools). If it returns `reachabilityStatus: "fail"` (exit code 3), **abort the whole run** — surface verbatim: `"Figma MCP unreachable. Re-run /init-figma-compose, or restart your MCP server / Figma desktop app, then retry."` Do not spawn any further specialist. Otherwise continue: the manifest must include a `complexity` block (v1.1+); missing → tier=`complex` + ambiguity. If the fetcher reports it succeeded under a different namespace than `config.figma.mcpToolNamespace`, carry that corrected namespace in the in-memory `configSnapshot` for the rest of the run (never rewrite `config.json` — the wizard owns it).
 2. **Validate manifest.** `manifestVersion ∈ {"1.0","1.1","1.2"}` (current contract is 1.2; older are still valid — missing fields fall back to safe defaults), required arrays present, `unbound` entries carry `rawValue`, `configSnapshot` echoes yours. Schema fail → re-spawn fetcher once; second fail → abort.
+   - **Disk cross-check when the fetcher reports a resume (anti-confabulation, see `figma-fetcher.md` § Resume discipline).** If the fetch was resumed after a socket drop, do NOT trust the manifest until you confirm: (a) its `fileKey` equals the one in the `url` you passed; (b) its `intent` equals the `intent` you passed; (c) its `components[]` are a decomposition of the *requested* node, not a list of pre-existing on-disk components. Any mismatch → discard the manifest and re-spawn the fetcher fresh (focused node scope), do NOT build from it. This is the cheap guard against a resumed-fetch building the wrong file.
 3. **Gate ambiguities.** Any `blocking: true` → stop, ask user, don't guess. **Also gate on unbound styled properties:** if the manifest's `components[]` collectively carry > 0 `styledProperties[].unbound == true` entries (excluding `intentionalLiteral: true`), treat it as a blocking gate — surface the full list grouped by component + property, and ask the user to either (a) bind them in Figma and re-run, or (b) explicitly approve inlining for this run. Do NOT dispatch component-builder with unresolved unbound values and let it emit `// TODO[figma-unbound]` raw-value inlines (CLAUDE.md rule 4 violation).
 4. **Surface injection observations** verbatim as a security flag.
-5. **Resolve routing** — apply `tierOverrides` to `manifest.complexity.tier`:
+
+4.5. **Cold-start inventory (run from a fresh chat with no prior context — builders must ASSEMBLE, not DISCOVER).** Before routing or planning, take one read-only pass over the project so no builder has to learn project reality mid-build. This is the main session's plan-mode inventory — do it once, in your already-cached context, and feed the results into routing (Step 5) and the buildPlan (Step 8.5). Write it to `/tmp/figma-<runId>/inventory.json`:
+   - **Existing assets.** Glob the configured component / icon / token dirs (from `configSnapshot`). Record what already exists on disk: icon names (e.g. an existing `CheckIcon` defining house glyph style), token files + the **real** emitted token names, component names. Builders receive this so they reuse the house `CheckIcon` instead of re-deriving one.
+   - **Real token naming convention (B.2 — never let a builder probe `--accent-accent`).** Parse the on-disk token files for the actual prefix + naming (e.g. real `--accent`, not a guessed `--accent-accent`). Record `tokenNaming = { prefix, convention, sampleNames[] }`. Pass it as a directive so builders reference real token names, not invented ones.
+   - **Figma↔disk token delta (B.3 — schedule the precise token-builder delta up front).** Diff the Figma-bound token paths the manifest needs (`styledProperties[].figmaVariable`, including `hover:`/`disabled:`/border/opacity families) against the tokens actually materialized on disk. Any bound-in-Figma-but-absent-on-disk token → add to `tokenDelta[]` and **schedule a token-builder delta run for exactly those tokens** before the component build, so `hover:`/`disabled:` classes never reference a non-existent color. Do not make the component-builder detect this.
+   - **House style (B.4 — detect once, pass as an explicit directive).** Inspect 1–2 existing components to capture the project's house idioms: class-composition (`cva` vs a zero-dep `cn` filter-join vs `tailwind-merge`), prefix (none vs `tw:`), ref style (`forwardRef`?), quote style, `"use client"` discipline. Record `houseStyle = { classComposition, prefix, refStyle, quoteStyle, clientDirective }`. Builders execute this directive instead of inferring the house style mid-build.
+   - **Reuse ratio (feeds the scorer — Step 5).** Compute the disk-based `tokenReuseRatio = (manifest-needed tokens already on disk) ÷ (manifest-needed tokens total)`, and an analogous component/icon reuse view. When `knowledgeGraph.enabled`, prefer the ledger query (Step 6); otherwise this disk ratio is authoritative. This is the SAME signal that decides the `token-builder` skip (Step 8/9) — they MUST agree.
+
+   Greenfield (nothing on disk yet) → inventory is empty, `tokenReuseRatio = 0`, house style falls back to the framework/css adapter defaults. That's correct, not a failure.
+
+5. **Resolve routing** — **first overwrite `manifest.complexity.signals.tokenReuseRatio` with the real ratio from Step 4.5, then re-run the score + tier per `protocols/complexity.md`** (the fetcher emitted `tokenReuseRatio: 0` as a placeholder — using it raw fires the false `reusePenalty` +15 and over-tiers every component). Recompute, then apply `tierOverrides` to the resolved `manifest.complexity.tier`:
 
    | Tier      | Skills per builder                                  | Size | 2nd review |
    | --------- | --------------------------------------------------- | ---- | ---------- |
@@ -109,7 +121,13 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
      `discriminated-union` when variant props are mutually exclusive; else `props`.
    - `renderMode` — `client` iff the component needs state/effects/handlers; else `server`.
    - `requiredA11y` — e.g. icon-only buttons need an accessible name; labelled regions need `aria-labelledby`.
-   - `tokenBindings` — the bound Figma variable paths the component consumes.
+   - `tokenBindings` — the bound Figma variable paths the component consumes, resolved to the **real on-disk
+     token names** from the Step 4.5 inventory (`tokenNaming`) — not a guessed name. A builder must never
+     have to probe `--accent-accent` when the real token is `--accent`.
+   - `houseStyle` — the Step 4.5 `houseStyle` directive (class-composition, prefix, ref style, quote style,
+     `"use client"` discipline). The builder executes this; it does NOT re-infer the house idiom mid-build.
+   - `existingAssets` — the Step 4.5 inventory of reusable on-disk icons/components (e.g. the house
+     `CheckIcon`) so the builder imports them instead of regenerating.
    - `unboundDecision` — `skip` by default (per the Step 3 unbound gate); `approved-inline` ONLY if the
      user explicitly approved inlining this run; never `bind` a value you invented.
    - `dropPolicy` — `surface-to-attention` (collapsed affordances are reported, never silent).
@@ -119,6 +137,8 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
 
 9. **Dispatch (respect the DAG).**
    - token-builder runs first when scheduled (sonnet floor if dict > 100 entries).
+   - **Schedule the Step 4.5 `tokenDelta[]` first.** If the inventory found Figma-bound tokens missing on disk, dispatch a token-builder delta for exactly those tokens BEFORE any component-builder, so `hover:`/`disabled:`/border classes resolve to real tokens. Pass the delta list in the token-builder slice.
+   - **Always re-pass `configSnapshot` in EVERY spawn — including follow-up / fix spawns (E.4).** A follow-up builder (e.g. the extreme-tier a11y-fix re-spawn after `code-reviewer`) MUST receive the same frozen `configSnapshot` as the original. Omitting it forces the agent to *infer* config from the project name and return a wrong `configSnapshotEcho` (observed: `custom/heroui` instead of `flat/none`), which silently defeats the tamper-check. No spawn is exempt — there is no "it's just a small fix" follow-up that skips the snapshot.
    - **Pre-read adapter excerpts ONCE per run** (before the first component-builder dispatch). Read `adapters/frameworks/<framework>.md`, `adapters/css/<cssSystem>.md`, and (when `designSystem.name != "none"`) `adapters/design-systems/<designSystem>.md`. Extract only the sections each builder needs (component-builder takes File-layout + State-idiom + Class-composition + Token-reference; story-author takes Story-idiom; test-author takes Test-idiom; icon-generator takes Icon-mapping). Pass these as `adapterExcerpts: { framework, css, designSystem }` in every builder slice. **Builders MUST prefer `adapterExcerpts` over re-reading the adapter files themselves** — only fall through to a direct adapter Read when an excerpt is missing or claims `"truncated": true`. This cuts ~4-5 Read tool calls per component, the dominant duration cost on multi-component builds.
    - **Pass each builder its buildPlan directive, size-guarded via Brevit.** Build the per-component
      slice (manifest slice + its `buildPlan` entry + `adapterExcerpts`), write it to
@@ -194,6 +214,12 @@ You may write/edit ONLY `/tmp/figma-<runId>/*` directly, plus `<storeDir>/stagin
       - ProductCard dropped the second CTA button instance (collapsed into one onAddToCart prop).
         To expose it, re-run with a note or add an onSecondaryAction prop.
     ```
+
+    **Reuse-ledger refresh reminder.** When `config.graphify.installed` (or `knowledgeGraph.enabled`), end the report with a one-line nudge so the next run's reuse signal reflects what this run just wrote:
+    ```
+    Next: run /graphify .  — re-index the codebase so the next /figma-build|/figma-update sees these new components/tokens as reusable (keeps tokenReuseRatio honest).
+    ```
+    Do NOT auto-run `/graphify` yourself — it's a user-level action (verify-don't-build posture); just remind.
 
 ## Safety
 

@@ -60,6 +60,8 @@ The `tokens.prefix` config value (e.g. `--app-`) is recommended ONLY for namespa
 <div className="tw:flex tw:items-center tw:gap-2 tw:bg-brand-primary tw:text-white">
 ```
 
+> **`tw:` here is ILLUSTRATIVE, not a default.** These examples show a prefix *configured* (`cssSystem.config.prefix == "tw:"`) so the prefix-order rule is visible. **Most projects set no prefix** — when `config.cssSystem.config.prefix` is unset/empty, emit plain classes (`<div className="flex items-center gap-2 bg-brand-primary text-white">`) with NO `tw:`. Read the project's config before assuming a prefix; a stray `tw:` on an unprefixed project compiles to nothing.
+
 **Prefix order is binding**: `<prefix>:<modifier>:<utility>`. Inverted (`hover:tw:bg-foo`) compiles to nothing.
 
 ## Custom token registration

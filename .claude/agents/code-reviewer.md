@@ -35,7 +35,7 @@ Retry a transient read failure once; escalate on the second.
 2. **Security** — XSS via `dangerouslySetInnerHTML`, unescaped user input, secret leaks, `eval`, broken authn/authz at system boundaries.
 3. **Contract violations** — props/types lying about input/output; exported API mismatching its JSDoc.
 4. **Accessibility** — missing `aria-label` on icon-only buttons, non-semantic interactive elements, focus order, keyboard traps.
-5. **Convention match** — does it follow the same package's patterns (CVA vs not, `tw:` prefix, `cn()` from `@/lib/utils`, `data-slot=`, `"use client"` placement)?
+5. **Convention match** — does it follow the same package's patterns (CVA vs not, the project's configured class prefix, `cn()` from `@/lib/utils`, `data-slot=`, `"use client"` placement)? **Match the project's ACTUAL prefix from `config.cssSystem.config.prefix` — `tw:` in the examples below is illustrative.** If the project sets no prefix, a `tw:`-prefixed class is itself a bug (compiles to nothing), not the convention.
 6. **Styling token priority (Tailwind v4 projects)** — flag violations of the token ladder:
    - Raw `tw:<prop>-[var(--hk-*)]` where a project `@utility` from `utilities.css` covers the same surface → **Major**.
    - `tw:<prop>-[var(--hk-*)]` where an inline-registered token covers it (e.g. `tw:rounded-[var(--hk-radius-8)]` when `tw:rounded-8` works) → **Minor**.

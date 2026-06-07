@@ -117,4 +117,4 @@ describe("{{Name}}", () => {
 - **`cva` + `tailwind-merge`**: when both are used, custom token groups MUST be registered in `extendTailwindMerge` or `tailwind-merge` will silently strip them.
 - **`useEffect` for prop sync**: forbidden — always derive inline.
 - **`React.FC`**: avoid; use explicit return-type-less function components or `forwardRef`.
-- **Tailwind v4 prefix order**: always `<prefix>:<modifier>:<utility>`, e.g. `tw:hover:bg-foo`. Inverted (`hover:tw:bg-foo`) compiles to nothing.
+- **Tailwind v4 prefix order**: always `<prefix>:<modifier>:<utility>`, e.g. `tw:hover:bg-foo`. Inverted (`hover:tw:bg-foo`) compiles to nothing. (**`tw:` is illustrative** — it only applies when `config.cssSystem.config.prefix` is set; most projects have no prefix and emit `hover:bg-foo`. See `adapters/css/tailwind-v4.md`.)

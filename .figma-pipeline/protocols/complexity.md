@@ -53,7 +53,14 @@ Component normalizations:
 | `iconPenalty`      | `100 * min(1, iconCount / 20)`                     |
 | `reusePenalty`     | `100 * max(0, 1 - tokenReuseRatio)`                |
 
-The weights sum to 1.0. `tokenReuseRatio` requires a KG query — if `config.knowledgeGraph.enabled = false`, treat it as `0` (worst case, highest penalty) so the coordinator defaults to a higher tier.
+The weights sum to 1.0.
+
+**`tokenReuseRatio` is supplied by the coordinator, not the fetcher.** The fetcher emits `tokenReuseRatio: 0` only as a *placeholder* (it has no reuse view at fetch time). Before it resolves the routed tier, the coordinator MUST overwrite this signal with the **real** reuse ratio it computes in its cold-start inventory (see `figma-coordinator.md` § Cold-start inventory):
+
+- `config.knowledgeGraph.enabled = true` → the ledger query supplies the ratio.
+- `config.knowledgeGraph.enabled = false` → use the **disk-based** ratio (existing tokens/components on disk that satisfy the manifest's needs ÷ total needed). This is the same signal that decides whether `token-builder` is skipped — they MUST agree.
+
+**Do NOT hard-code `tokenReuseRatio = 0` when KG is off.** Treating KG-off as zero reuse fires `reusePenalty` at its **max +15** on every run even when on-disk reuse is near-total — which over-scores every component and tips borderline ones (e.g. a 69.8 → 84.8 component) up a routing tier on a false signal. KG-off is the common path; the disk-based ratio keeps it honest. Only fall back to `0` when there is genuinely no reuse view at all (no KG, no on-disk inventory).
 
 ## Tier resolution
 

@@ -16,3 +16,19 @@ Cursor delta (full-variable mode for DS / token builds):
 Cursor delta (layer classification):
 
 - **Classify by INTENT signals, not node depth alone** — see `protocols/component-layout.md` § Layer resolution. Record `layerConfidence` (`high|medium|low`) for every atomic-methodology component. Surface `low` confidence as a non-blocking ambiguity so the coordinator's think-once pass (Step 8.5) resolves it rather than silently down-grading the tier.
+
+Cursor delta (complexity tier — canonical enum only):
+
+- **Compute `score`/`tier` strictly from `protocols/complexity.md` — never emit ad-hoc labels.** `tier ∈ {trivial, moderate, complex, extreme}` only; NEVER `high`/`medium`/`low`. Run the formula; don't eyeball a label (a fabricated `tier:"high", score:94` for a 44.9/moderate component was a real defect). Emit `tokenReuseRatio: 0` as a placeholder — the coordinator overwrites it with the real disk/ledger ratio before routing.
+
+Cursor delta (dark-mode alias resolution):
+
+- **Per-mode capture is mandatory; a missing dark value is a flag, not a silent drop.** When a non-default mode resolves to an unfollowable alias, re-resolve once via the variables API; still unresolvable → emit the mode value as `null` + a non-blocking ambiguity. Never fabricate a dark value (the Switch `foreground/*` dark-alias gap).
+
+Cursor delta (resume discipline — untrusted until disk-validated):
+
+- A resumed fetch after a socket drop is **untrusted**. Before emitting: confirm `fileKey` equals the original URL's, `intent` equals the request, and `components[]` decompose the *requested* node (not a list of on-disk components). Token/hex values produced by a resume are suspect — prefer `null` + ambiguity over a hallucinated value. Any mismatch → discard, request a fresh focused re-fetch. (A Calendar resume once confabulated a wrong `fileKey` + `intent:update` + hallucinated hex.)
+
+Cursor delta (self-describing manifest):
+
+- **Embed the `configSnapshot` in the manifest root — never `null`.** The on-disk manifest must be self-describing; don't rely on the chat-return echo alone.

@@ -70,14 +70,27 @@ ONLY files under `config.tokens.outputDir/**`. Any other write → abort.
    `skipped[]` with a reason — NEVER silently dropped (the report-05 `blur`/effect loss).
 
 7. **Naming.** Convert Figma path → identifier per `tokens.namingConvention` (default `kebab-case`). Prepend `tokens.prefix`. Examples in `protocols/token-strategy.md` § Token naming.
-8. **Theming.** Single-mode → emit once to `:root`. Multi-mode (full-variable DS build) → `default` mode
-   to `:root`, EACH other Figma mode to `[data-theme="<mode>"]` (CSS) or one JS export per mode (JS). A DS
-   build that captured `light`+`dark` MUST emit BOTH — never just the default mode (the report-05 single-
-   mode collapse). Semantic aliases (`var()` chains) are emitted ONCE and stay correct across all modes
-   because only the primitives' values change per `[data-theme]` block.
+8. **Theming.** Emit a mode block for **every** mode any incoming token defines — driven by the manifest's
+   `modes`, NOT by build type. A token with only a `default` value → emit once to `:root`. **Any token whose
+   `modes` carries a non-default entry (typically `dark`) → emit `default` to `:root` AND each other mode to
+   `[data-theme="<mode>"]`** (CSS) or one JS export per mode (JS). This holds for a *component* build too, not
+   just a full-variable DS build: when the manifest gives `surface/surface` dark `#18181b` or
+   `accent-soft-foreground` dark `#61a8fc`, those dark values MUST be written to a `[data-theme="dark"]`
+   block — the values are already in the manifest; failing to emit them is a token-builder emit gap (the
+   report's "captured-but-not-emitted" dark-mode defect, the majority case). A build that captured
+   `light`+`dark` MUST emit BOTH — never just the default mode. Semantic aliases (`var()` chains) are emitted
+   ONCE and stay correct across all modes because only the primitives' values change per `[data-theme]` block.
+   - A manifest token whose non-default mode value is `null` (the fetcher flagged it an unresolved alias —
+     `figma-fetcher.md` step 4) → emit the `default` value, SKIP that mode for that token, and surface a flag
+     `{ token, reason: "dark value unresolved upstream" }`. Never invent the dark value.
 9. **Update flow — write-first discipline.** On `intent: "create"`: emit each token file in ONE `Write` call. On `intent: "update"`: patch in place via `Edit` only when name matches. Include every change in the report (added/modified/removed). Rename requires both old + new; one side only → flag and skip. **Never run formatter probes** — consumer's tooling owns that.
 10. **Tailwind safety** (when `cssSystem.name` starts with `tailwind-`). `config.cssSystem.config.extendTailwindMergePath` set → append new token-group entries to that file (`extendTailwindMerge` config). Otherwise flag: "register the new token group in tailwind-merge to avoid silent class stripping."
-11. **Validate.** Run CSS-system parser-light check (`npx postcss <file> --no-map` for CSS systems). Report syntax errors with line numbers per file; don't abort other files.
+10b. **`@source` for gitignored component dirs (tailwind-v4 — BACKSTOP only; init owns this now).** The Tailwind entry CSS plumbing — including the `@source "<componentDir>"` for gitignored component dirs — is provisioned once by the **wizard's Step 7.6** (`config.setup.css`), so normally you do nothing here. Backstop: if `config.cssSystem.config.componentDirGitignored` is set but the entry CSS you can see lacks the matching `@source` (e.g. an older scaffold that pre-dates setup-at-init), add `@source "<relative-path-to-component-dir>";` to the entry CSS you own (`primitives.css`, next to `@import "tailwindcss";`) and `flag` it as a setup gap the wizard should have closed. Rationale unchanged: Tailwind v4 content detection respects `.gitignore`, so without the `@source` the app `dist` CSS silently omits component utilities (`bg-surface`, `rounded-3xl`, `text-*-soft-foreground`); Storybook stays styled because it scans stories independently.
+11. **Validate.** Sanity-check each emitted file. **Do NOT assume a standalone `postcss` CLI exists** — Tailwind v4 via `@tailwindcss/vite` builds green with *no* postcss CLI installed, so `npx postcss …` is a tooling gap there, not a CSS check (the report's false "postcss missing" recovery). Order of preference:
+    - A standalone CSS parser is actually available AND the CSS system needs it (`command -v postcss` succeeds, or the project depends on one) → use it.
+    - Otherwise fall back to a dependency-free check: brace balance, no stray declarations, one `@theme` definition per key. This is sufficient — the consumer's own build (`vite build` / `tsc -b`) is the real gate.
+
+    Report syntax errors with line numbers per file; don't abort other files. Never block a build to install postcss.
 12. **Stage to KG (when enabled).** ONE `kind: "tokenSet"` entry per run, with the **full resolved token set** (unchanged + modified + added — NOT just what you emitted; this is what next run's diff reads):
     ```bash
     npx fcc kg:stage --run-id <runId> --agent token-builder --entry '<json>'
