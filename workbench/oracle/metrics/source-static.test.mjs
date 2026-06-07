@@ -50,13 +50,21 @@ test('rtlReadiness rewards logical properties', () => {
   assert.equal(rtlReadiness('<div/>').score, 100); // nothing positional → neutral 100
 });
 
-test('commentEconomy flags >80-char and block comments, ignores urls', () => {
+test('commentEconomy flags >80-char + narrative blocks, ignores urls', () => {
   assert.equal(commentEconomy('const x = 1; // see https://example.com/very/long/url/that/keeps/going/and/going').overLength, 0);
   const long = '// ' + 'x'.repeat(90);
   assert.equal(commentEconomy(long).overLength, 1);
   const r = commentEconomy('/* a\n b\n c */');
-  assert.equal(r.blockComments, 1);
+  assert.equal(r.narrativeBlocks, 1);
   assert.ok(r.score < 100);
+});
+
+test('commentEconomy EXEMPTS JSDoc doc-comments (no contradiction with propTypeCompleteness)', () => {
+  const jsdoc = '/**\n * Color variant.\n * @default "primary"\n */\ninterface Props { x: string }';
+  const r = commentEconomy(jsdoc);
+  assert.equal(r.jsdocBlocks, 1);
+  assert.equal(r.narrativeBlocks, 0);
+  assert.equal(r.score, 100); // JSDoc must not be penalized
 });
 
 test('composability rewards forwardRef + rest spread + className', () => {

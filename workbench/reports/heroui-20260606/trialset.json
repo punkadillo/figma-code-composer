@@ -221,7 +221,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 76,
+          "ms": 60,
           "score": 100,
           "rating": "good"
         },
@@ -282,8 +282,9 @@
         "commentEconomy": {
           "lineComments": 15,
           "overLength": 0,
-          "blockComments": 10,
-          "score": 0
+          "jsdocBlocks": 9,
+          "narrativeBlocks": 1,
+          "score": 90
         },
         "composability": {
           "forwardRef": true,
@@ -328,10 +329,10 @@
         "keyboardReached": "0/0"
       },
       "runtimePerf": {
-        "score": 93,
+        "score": 97,
         "source": "playwright",
-        "mountMs": 76,
-        "mount": 93,
+        "mountMs": 60,
+        "mount": 97,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -574,7 +575,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 72,
+          "ms": 60,
           "score": 100,
           "rating": "good"
         },
@@ -637,8 +638,9 @@
         "commentEconomy": {
           "lineComments": 9,
           "overLength": 0,
-          "blockComments": 9,
-          "score": 10
+          "jsdocBlocks": 11,
+          "narrativeBlocks": 0,
+          "score": 100
         },
         "composability": {
           "forwardRef": true,
@@ -683,10 +685,10 @@
         "keyboardReached": "1/1"
       },
       "runtimePerf": {
-        "score": 94,
+        "score": 97,
         "source": "playwright",
-        "mountMs": 72,
-        "mount": 94,
+        "mountMs": 60,
+        "mount": 97,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -904,7 +906,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 72,
+          "ms": 84,
           "score": 100,
           "rating": "good"
         },
@@ -968,8 +970,9 @@
         "commentEconomy": {
           "lineComments": 16,
           "overLength": 0,
-          "blockComments": 2,
-          "score": 80
+          "jsdocBlocks": 3,
+          "narrativeBlocks": 1,
+          "score": 90
         },
         "composability": {
           "forwardRef": true,
@@ -1014,10 +1017,10 @@
         "keyboardReached": "29/29"
       },
       "runtimePerf": {
-        "score": 94,
+        "score": 90,
         "source": "playwright",
-        "mountMs": 72,
-        "mount": 94,
+        "mountMs": 84,
+        "mount": 90,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -1267,7 +1270,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 72,
+          "ms": 64,
           "score": 100,
           "rating": "good"
         },
@@ -1334,8 +1337,9 @@
         "commentEconomy": {
           "lineComments": 44,
           "overLength": 2,
-          "blockComments": 11,
-          "score": 0
+          "jsdocBlocks": 10,
+          "narrativeBlocks": 1,
+          "score": 70
         },
         "composability": {
           "forwardRef": true,
@@ -1380,10 +1384,10 @@
         "keyboardReached": "6/6"
       },
       "runtimePerf": {
-        "score": 94,
+        "score": 96,
         "source": "playwright",
-        "mountMs": 72,
-        "mount": 94,
+        "mountMs": 64,
+        "mount": 96,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -1626,7 +1630,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 68,
+          "ms": 72,
           "score": 100,
           "rating": "good"
         },
@@ -1687,8 +1691,9 @@
         "commentEconomy": {
           "lineComments": 32,
           "overLength": 0,
-          "blockComments": 1,
-          "score": 90
+          "jsdocBlocks": 27,
+          "narrativeBlocks": 0,
+          "score": 100
         },
         "composability": {
           "forwardRef": true,
@@ -1733,10 +1738,10 @@
         "keyboardReached": "44/44"
       },
       "runtimePerf": {
-        "score": 95,
+        "score": 94,
         "source": "playwright",
-        "mountMs": 68,
-        "mount": 95,
+        "mountMs": 72,
+        "mount": 94,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -2045,8 +2050,9 @@
         "commentEconomy": {
           "lineComments": 35,
           "overLength": 1,
-          "blockComments": 6,
-          "score": 30
+          "jsdocBlocks": 5,
+          "narrativeBlocks": 1,
+          "score": 80
         },
         "composability": {
           "forwardRef": true,
@@ -2565,8 +2571,9 @@
         "commentEconomy": {
           "lineComments": 9,
           "overLength": 0,
-          "blockComments": 10,
-          "score": 0
+          "jsdocBlocks": 8,
+          "narrativeBlocks": 2,
+          "score": 80
         },
         "composability": {
           "forwardRef": true,
@@ -2613,7 +2620,7 @@
       "runtimePerf": {
         "score": 100,
         "source": "playwright",
-        "mountMs": 41,
+        "mountMs": 38,
         "mount": 100,
         "inpMs": null,
         "inp": null,
@@ -2939,7 +2946,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 172,
+          "ms": 152,
           "score": 100,
           "rating": "good"
         },
@@ -2949,7 +2956,7 @@
           "rating": "good"
         },
         "tbt": {
-          "ms": 23,
+          "ms": 16,
           "score": 100,
           "rating": "good"
         }
@@ -3000,8 +3007,9 @@
         "commentEconomy": {
           "lineComments": 5,
           "overLength": 0,
-          "blockComments": 6,
-          "score": 40
+          "jsdocBlocks": 6,
+          "narrativeBlocks": 0,
+          "score": 100
         },
         "composability": {
           "forwardRef": true,
@@ -3046,10 +3054,10 @@
         "keyboardReached": "0/0"
       },
       "runtimePerf": {
-        "score": 65,
+        "score": 71,
         "source": "playwright",
-        "mountMs": 172,
-        "mount": 65,
+        "mountMs": 152,
+        "mount": 71,
         "inpMs": null,
         "inp": null,
         "reRenders": null,
@@ -3290,7 +3298,7 @@
         "score": 100,
         "source": "playwright",
         "lcp": {
-          "ms": 64,
+          "ms": 60,
           "score": 100,
           "rating": "good"
         },
@@ -3351,8 +3359,9 @@
         "commentEconomy": {
           "lineComments": 4,
           "overLength": 0,
-          "blockComments": 6,
-          "score": 40
+          "jsdocBlocks": 6,
+          "narrativeBlocks": 0,
+          "score": 100
         },
         "composability": {
           "forwardRef": true,
@@ -3397,10 +3406,10 @@
         "keyboardReached": "0/0"
       },
       "runtimePerf": {
-        "score": 96,
+        "score": 97,
         "source": "playwright",
-        "mountMs": 64,
-        "mount": 96,
+        "mountMs": 60,
+        "mount": 97,
         "inpMs": null,
         "inp": null,
         "reRenders": null,

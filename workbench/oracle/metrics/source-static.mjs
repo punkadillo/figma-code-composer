@@ -65,7 +65,11 @@ export function rtlReadiness(src) {
   return { logical, physical, score: total === 0 ? 100 : clamp((logical / total) * 100) };
 }
 
-// E/meta — Comment-economy compliance: validates the 80-char single-line rule (PIPELINE rule 8).
+// E/meta — Comment-economy compliance: the 80-char single-line rule (PIPELINE rule 8).
+// JSDoc doc-comments (`/** … */`) are EXEMPT — they document the public API and are
+// rewarded by propTypeCompleteness + the quality docs/dx dimensions; penalizing them
+// here would send contradictory signals. We penalize narrative `/* … */` blocks and
+// over-long `//` line comments only.
 export function commentEconomy(src) {
   const deUrl = src.replace(/https?:\/\//g, 'https_'); // avoid // in URLs
   let lineComments = 0, overLength = 0;
@@ -73,10 +77,15 @@ export function commentEconomy(src) {
     const idx = line.indexOf('//');
     if (idx < 0) continue;
     lineComments++;
-    if (line.slice(idx).length > 80) overLength++; // leader→EOL (indentation already excluded — we measure from //)
+    if (line.slice(idx).length > 80) overLength++; // measured from // (indentation excluded)
   }
-  const blockComments = (src.match(/\/\*[\s\S]*?\*\//g) || []).filter((b) => b.includes('\n')).length;
-  return { lineComments, overLength, blockComments, score: clamp(100 - (overLength + blockComments) * 10) };
+  const blocks = src.match(/\/\*[\s\S]*?\*\//g) || [];
+  const jsdocBlocks = blocks.filter((b) => b.startsWith('/**')).length;
+  const narrativeBlocks = blocks.filter((b) => b.includes('\n') && !b.startsWith('/**')).length;
+  return {
+    lineComments, overLength, jsdocBlocks, narrativeBlocks,
+    score: clamp(100 - (overLength + narrativeBlocks) * 10),
+  };
 }
 
 // H — Composability: forwardRef, rest-prop spread, className passthrough.

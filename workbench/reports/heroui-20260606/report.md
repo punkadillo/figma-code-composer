@@ -1,6 +1,6 @@
 # Workbench Trial Report — heroui-20260606
 
-> Generated: 2026-06-07T21:34:30.769Z · Rungs: 13
+> Generated: 2026-06-07T21:39:28.612Z · Rungs: 13
 
 ## Accuracy by ladder rung
 
@@ -106,18 +106,18 @@
 
 | rung | score | LCP (ms) | CLS | TBT (ms) |
 | --- | ---: | ---: | ---: | ---: |
-| complex-alert | 100 | 76 | 0 | 0 |
-| complex-card | 100 | 72 | 0 | 0 |
-| complex-dashboard | 100 | 72 | 0 | 0 |
-| complex-tabs | 100 | 72 | 0 | 0 |
-| extreme-calendar | 100 | 68 | 0 | 0 |
+| complex-alert | 100 | 60 | 0 | 0 |
+| complex-card | 100 | 60 | 0 | 0 |
+| complex-dashboard | 100 | 84 | 0 | 0 |
+| complex-tabs | 100 | 64 | 0 | 0 |
+| extreme-calendar | 100 | 72 | 0 | 0 |
 | moderate-input (cold) | 100 | 64 | 0 | 0 |
 | moderate-input (update) | — | — | — | — |
 | moderate-input (warm) | — | — | — | — |
 | moderate-switch | 100 | 0 | 0 | 0 |
 | tokens | — | — | — | — |
-| trivial-button | 100 | 172 | 0 | 23 |
-| trivial-chip | 100 | 64 | 0 | 0 |
+| trivial-button | 100 | 152 | 0 | 16 |
+| trivial-chip | 100 | 60 | 0 | 0 |
 | trivial-icon | — | — | — | — |
 
 > Captured in the render harness via `PerformanceObserver`. Scored against Google good/needs-improvement/poor bands (`oracle/cwv-weights.json`): LCP 0.4, CLS 0.3, TBT 0.3.
@@ -236,18 +236,18 @@
 
 | rung | health | types | complexity | css | dangerous | srv/client | rtl | comments | compose | naming | propTypes |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| complex-alert | 87 | 100 | 59 | 100 | 100 | 100 | 100 | 0 | 100 | 100 | 100 |
-| complex-card | 84 | 100 | 13 | 100 | 100 | 100 | 100 | 10 | 100 | 100 | 100 |
-| complex-dashboard | 93 | 100 | 100 | 100 | 100 | 60 | 100 | 80 | 100 | 80 | 100 |
-| complex-tabs | 81 | 96 | 0 | 100 | 100 | 100 | 100 | 0 | 100 | 100 | 100 |
-| extreme-calendar | 84 | 64 | 0 | 100 | 100 | 100 | 100 | 90 | 65 | 100 | 100 |
-| moderate-input (cold) | 86 | 92 | 41 | 100 | 100 | 100 | 100 | 30 | 100 | 80 | 100 |
+| complex-alert | 95 | 100 | 59 | 100 | 100 | 100 | 100 | 90 | 100 | 100 | 100 |
+| complex-card | 92 | 100 | 13 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 |
+| complex-dashboard | 94 | 100 | 100 | 100 | 100 | 60 | 100 | 90 | 100 | 80 | 100 |
+| complex-tabs | 88 | 96 | 0 | 100 | 100 | 100 | 100 | 70 | 100 | 100 | 100 |
+| extreme-calendar | 84 | 64 | 0 | 100 | 100 | 100 | 100 | 100 | 65 | 100 | 100 |
+| moderate-input (cold) | 90 | 92 | 41 | 100 | 100 | 100 | 100 | 80 | 100 | 80 | 100 |
 | moderate-input (update) | — | — | — | — | — | — | — | — | — | — | — |
 | moderate-input (warm) | — | — | — | — | — | — | — | — | — | — | — |
-| moderate-switch | 86 | 100 | 81 | 100 | 100 | 100 | 100 | 0 | 65 | 100 | 100 |
+| moderate-switch | 93 | 100 | 81 | 100 | 100 | 100 | 100 | 80 | 65 | 100 | 100 |
 | tokens | — | — | — | — | — | — | — | — | — | — | — |
-| trivial-button | 93 | 100 | 84 | 100 | 100 | 100 | 100 | 40 | 100 | 100 | 100 |
-| trivial-chip | 95 | 100 | 100 | 100 | 100 | 100 | 100 | 40 | 100 | 100 | 100 |
+| trivial-button | 99 | 100 | 84 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 |
+| trivial-chip | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 |
 | trivial-icon | — | — | — | — | — | — | — | — | — | — | — |
 
 > Static source scan (`oracle/metrics/source-static.mjs`): type strictness · cyclomatic-ish complexity · CSS hygiene · dangerous APIs · unnecessary `"use client"` · RTL logical-properties · comment economy (the 80-char rule) · composability · naming · prop-type/JSDoc completeness. `health` is the mean of available sub-scores.
@@ -276,18 +276,18 @@
 
 | rung | dom | nodes | depth | render | focus | keyboard | mount (ms) | perf |
 | --- | ---: | ---: | ---: | ---: | :--: | ---: | ---: | ---: |
-| complex-alert | 100 | 9 | 6 | 100 | — | 0/0 | 76 | 93 |
-| complex-card | 100 | 9 | 6 | 100 | ✓ | 1/1 | 72 | 94 |
-| complex-dashboard | 0 | 287 | 11 | 100 | ✓ | 29/29 | 72 | 94 |
-| complex-tabs | 100 | 15 | 7 | 100 | ✓ | 6/6 | 72 | 94 |
-| extreme-calendar | 0 | 113 | 9 | 100 | ✓ | 44/44 | 68 | 95 |
+| complex-alert | 100 | 9 | 6 | 100 | — | 0/0 | 60 | 97 |
+| complex-card | 100 | 9 | 6 | 100 | ✓ | 1/1 | 60 | 97 |
+| complex-dashboard | 0 | 287 | 11 | 100 | ✓ | 29/29 | 84 | 90 |
+| complex-tabs | 100 | 15 | 7 | 100 | ✓ | 6/6 | 64 | 96 |
+| extreme-calendar | 0 | 113 | 9 | 100 | ✓ | 44/44 | 72 | 94 |
 | moderate-input (cold) | 100 | 4 | 3 | 100 | ✓ | 1/1 | 64 | 96 |
 | moderate-input (update) | — | — | — | — | — | — | — | — |
 | moderate-input (warm) | — | — | — | — | — | — | — | — |
-| moderate-switch | 100 | 5 | 4 | 100 | ✓ | 1/1 | 41 | 100 |
+| moderate-switch | 100 | 5 | 4 | 100 | ✓ | 1/1 | 38 | 100 |
 | tokens | — | — | — | — | — | — | — | — |
-| trivial-button | 100 | 1 | 1 | 100 | — | 0/0 | 172 | 65 |
-| trivial-chip | 100 | 1 | 1 | 100 | — | 0/0 | 64 | 96 |
+| trivial-button | 100 | 1 | 1 | 100 | — | 0/0 | 152 | 71 |
+| trivial-chip | 100 | 1 | 1 | 100 | — | 0/0 | 60 | 97 |
 | trivial-icon | — | — | — | — | — | — | — | — |
 
 > DOM = nesting/bloat health (`metrics/dom-shape.mjs`). render = focus-visible + keyboard reachability + interaction-ok (`score-render-signals.mjs`). perf = mount-time band (`score-runtime-perf.mjs`); INP / re-renders / memory are capability-gated.
