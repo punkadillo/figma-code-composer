@@ -12,13 +12,13 @@
 //
 // targetTsx paths assume the flat layout. Before `run-accuracy.mjs`, reconcile
 // each targetTsx to the actual build output (glob target/src/components/<Name>/).
-// oracleStoryId values are best-guess HeroUI Storybook ids — verify them against
+// oracleStoryId values are best-guess Reference Storybook ids — verify them against
 // the built oracle Storybook before a `--render` (visual/style) pass.
 export const RUNG_MAP = {
   'trivial-button': {
     rung: 'trivial-button', component: 'Button',
     targetTsx: 'target/src/components/Button/Button.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/button/button.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/button/button.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-button--default',
     oracleStoryId: 'components-buttons-button--default',
@@ -26,7 +26,7 @@ export const RUNG_MAP = {
   'trivial-chip': {
     rung: 'trivial-chip', component: 'Chip',
     targetTsx: 'target/src/components/Chip/Chip.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/chip/chip.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/chip/chip.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-chip--default',
     oracleStoryId: 'components-data-display-chip--default',
@@ -34,7 +34,7 @@ export const RUNG_MAP = {
   'moderate-input': {
     rung: 'moderate-input', component: 'Input',
     targetTsx: 'target/src/components/Input/Input.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/input/input.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/input/input.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-input--default',
     oracleStoryId: 'components-forms-input--default',
@@ -42,7 +42,7 @@ export const RUNG_MAP = {
   'moderate-switch': {
     rung: 'moderate-switch', component: 'Switch',
     targetTsx: 'target/src/components/Switch/Switch.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/switch/switch.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/switch/switch.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-switch--default',
     oracleStoryId: 'components-controls-switch--default',
@@ -50,7 +50,7 @@ export const RUNG_MAP = {
   'complex-card': {
     rung: 'complex-card', component: 'Card',
     targetTsx: 'target/src/components/Card/Card.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/card/card.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/card/card.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-card--default',
     oracleStoryId: 'components-layout-card--default',
@@ -58,7 +58,7 @@ export const RUNG_MAP = {
   'complex-alert': {
     rung: 'complex-alert', component: 'Alert',
     targetTsx: 'target/src/components/Alert/Alert.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/alert/alert.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/alert/alert.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-alert--default',
     oracleStoryId: 'components-feedback-alert--default',
@@ -66,7 +66,7 @@ export const RUNG_MAP = {
   'complex-tabs': {
     rung: 'complex-tabs', component: 'Tabs',
     targetTsx: 'target/src/components/Tabs/Tabs.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/tabs/tabs.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/tabs/tabs.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-tabs--primary',
     oracleStoryId: 'components-navigation-tabs--default',
@@ -74,7 +74,7 @@ export const RUNG_MAP = {
   'extreme-calendar': {
     rung: 'extreme-calendar', component: 'Calendar',
     targetTsx: 'target/src/components/Calendar/Calendar.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/calendar/calendar.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/calendar/calendar.tsx',
     hasOracleStory: true,
     targetStoryId: 'components-components-calendar--default',
     oracleStoryId: 'components-date-and-time-calendar--default',
@@ -82,10 +82,10 @@ export const RUNG_MAP = {
   'complex-dashboard': {
     rung: 'complex-dashboard', component: 'Dashboard',
     targetTsx: 'target/src/components/DashboardDemo/DashboardDemo.tsx',
-    // Composition demo — no 1:1 component oracle; closest HeroUI demo is the
+    // Composition demo — no 1:1 component oracle; closest Reference demo is the
     // subtle-cards dashboard layout. Scored structurally + by quality judge, not
     // pixel-diffed to a single component story.
-    oracleTsx: 'ref-heroui/packages/storybook/.storybook/stories/demos/subtle-cards-demo.tsx',
+    oracleTsx: 'ref-oracle/packages/storybook/.storybook/stories/demos/subtle-cards-demo.tsx',
     hasOracleStory: false,
     targetStoryId: 'components-components-dashboarddemo--default',
     oracleStoryId: null,

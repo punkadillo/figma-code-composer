@@ -3,12 +3,9 @@
 // workbench/reports/<trial>/{trialset.json|results.json}. The dashboard is
 // shown DIRECTLY at the site root (no intermediate landing page); each trial is
 // also written to _site/<slug>/index.html for direct linking. The dashboard is
-// regenerated from the JSON (single source of truth = the tracked data).
-//
-// The benchmark used a specific reference design system as its oracle; the
-// PUBLISHED view genericizes that product name to "reference" at render time,
-// while the recorded trialset.json keeps the original — the source data is never
-// rewritten. No external deps; runs in CI on plain Node.
+// regenerated from the JSON (single source of truth = the tracked data). The
+// trial data is design-system-agnostic — the oracle is referred to generically as
+// "reference". No external deps; runs in CI on plain Node.
 //
 // Usage: node workbench/report/build-site.mjs [outDir]   (default outDir = _site)
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
@@ -17,12 +14,6 @@ import { renderDashboard, renderTrialsetDashboard } from './dashboard.mjs';
 
 const REPORTS_DIR = 'workbench/reports';
 const OUT = process.argv[2] || '_site';
-
-// Render-time only: neutralize the reference-DS product name in the published
-// HTML. Preserves leading-cap so mid-sentence proper-noun use still reads right
-// ("Reference oracle"), and rewrites the lowercase slug form ("heroui-…" →
-// "reference-…"). The source trialset.json is untouched.
-const genericize = (s) => s.replace(/heroui/gi, (m) => (/^[A-Z]/.test(m) ? 'Reference' : 'reference'));
 
 function findTrials() {
   if (!existsSync(REPORTS_DIR)) return [];
@@ -45,8 +36,8 @@ const built = [];
 for (const t of trials) {
   const r = JSON.parse(readFileSync(t.dataPath, 'utf8'));
   const isTrialset = Array.isArray(r.accuracyByRung);
-  const html = genericize(isTrialset ? renderTrialsetDashboard(r) : renderDashboard(r));
-  const slug = genericize(t.slug); // keep the genericized name out of the URL too
+  const html = isTrialset ? renderTrialsetDashboard(r) : renderDashboard(r);
+  const slug = t.slug;
   mkdirSync(join(OUT, slug), { recursive: true });
   writeFileSync(join(OUT, slug, 'index.html'), html);
   built.push({ srcSlug: t.slug, slug, html });

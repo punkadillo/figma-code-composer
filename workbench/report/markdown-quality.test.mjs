@@ -4,7 +4,7 @@ import { renderTrialsetMarkdown } from './markdown.mjs';
 
 const dim = (s) => ({ score: s, metric: s, judge: { score: s, rationales: [] } });
 const ts = {
-  trialId: 'heroui', generatedAt: null,
+  trialId: 'reference', generatedAt: null,
   rungs: [{ rung: 'atom', tier: 'trivial', runId: 'r2', icon: false, agents: [], fanIn: [],
     accuracy: { composite: 95, cappedAt: null, visual: { score: 98 }, style: { matchRate: 96 }, structural: { score: 90 }, gates: { build: true } },
     quality: { composite: 82, dimensions: { optimizedCode: dim(80), dx: dim(85), docs: dim(70), testDepth: dim(90), storybook: dim(80) }, weights: {} } }],

@@ -1,10 +1,10 @@
 // workbench/oracle/tokens-measurables.mjs
-// Computes the heroui-20260606 "NEW measurables" (STEPS.md §Review criteria) and
+// Computes the reference-20260606 "NEW measurables" (STEPS.md §Review criteria) and
 // writes <TRIAL>/measurables.json. Read-only over the target + results.json.
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const TRIAL = process.env.TRIAL || 'workbench/trials/heroui-20260606';
+const TRIAL = process.env.TRIAL || 'workbench/trials/example';
 const tgt = join(TRIAL, 'target');
 const read = (p) => (existsSync(p) ? readFileSync(p, 'utf8') : '');
 const countProps = (css) => (css.match(/^\s*--[a-zA-Z0-9-]+\s*:/gm) || []).length;

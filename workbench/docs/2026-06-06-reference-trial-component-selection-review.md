@@ -1,11 +1,11 @@
-# HeroUI Workbench Trial — Component & Demo Selection (for review)
+# Reference Workbench Trial — Component & Demo Selection (for review)
 
-> Date: 2026-06-06 · Status: **Draft for sign-off** · Proposed trial id: `heroui-20260606`
-> Figma kit: **HeroUI Figma Kit V3 (Community)** — fileKey `qGjFwr9ZWpLk8xsgskwEHe` (verified accessible via MCP `whoami` = Dev seat, Pro plan)
-> Oracle repo: `github.com/heroui-inc/heroui` branch `v3` @ commit `bf7e58f`
+> Date: 2026-06-06 · Status: **Draft for sign-off** · Proposed trial id: `reference-20260606`
+> Figma kit: **Reference Figma Kit V3 (Community)** — fileKey `qGjFwr9ZWpLk8xsgskwEHe` (verified accessible via MCP `whoami` = Dev seat, Pro plan)
+> Oracle repo: `github.com/reference-inc/reference` branch `v3` @ commit `bf7e58f`
 
 This document is the **review gate** for a new live workbench trial. It picks the components and demo
-examples to test **by complexity**, maps each to its HeroUI oracle, and defines what the generated code
+examples to test **by complexity**, maps each to its Reference oracle, and defines what the generated code
 is reviewed against. It exists to be approved/edited before any trial scaffolding or run.
 
 ---
@@ -59,7 +59,7 @@ Drawer, Dropdown (`5375:70150`), Modal (`5375:77858`), Pagination, Popover, Sele
 
 ---
 
-## 3. HeroUI v3 oracle mapping (from repo)
+## 3. Reference v3 oracle mapping (from repo)
 
 - **95 components** in `packages/react/src/components/`; **75 have a `*.stories.tsx`** (story oracle), 18 are
   leaf/structural or item-subcomponents without stories.
@@ -68,7 +68,7 @@ Drawer, Dropdown (`5375:70150`), Modal (`5375:77858`), Pagination, Popover, Sele
 - **Design tokens**: `packages/styles/themes/default/` — **87 CSS variables**, **2 modes (light + dark)** plus a
   `[data-vibrant-palette]` variant; categories: primitives, status colors (+ hover/soft), form-field tokens,
   3 shadows, radius/spacing knobs, calculated `color-mix` states.
-- **Reproduce the oracle**: `git clone --depth 1 --branch v3 https://github.com/heroui-inc/heroui.git`
+- **Reproduce the oracle**: `git clone --depth 1 --branch v3 https://github.com/reference-inc/reference.git`
   (pin to commit `bf7e58f`).
 
 Story-oracle availability per proposed rung: Button ✓, Chip ✓, Input ✓, Switch ✓, Card ✓, Alert ✓, Tabs ✓,
@@ -122,18 +122,18 @@ Each row is one run. `cmd` is the pipeline entry point. `oracle` is what the gen
 
 Established four-axis rubric:
 
-- **Accuracy** — visual (pixel-diff vs HeroUI storybook), style (computed-style match), structural
+- **Accuracy** — visual (pixel-diff vs Reference storybook), style (computed-style match), structural
   (source + rendered-DOM tree similarity), **build gate** (tsc + build + unit tests). Visual/style read low
   by design when target is `designSystem: none` — `struct·dom` + cross-rung trend are the meaningful signals.
 - **Quality** — 5-dimension judge panel (optimizedCode · dx · docs · testDepth · storybook), 3-vote median.
 - **Build gates** — deterministic (tsc/build/tests; a11y when axe is wired).
 - **Tokens-per-agent** — OTEL per-agent totals; the headline efficiency metric.
 
-**Reviewed against the hero-ui v3 repo (`ref-heroui/`):** each generated component's source + rendered story
-is compared to the corresponding HeroUI component (`packages/react/src/components/<name>/`) and its
+**Reviewed against the hero-ui v3 repo (`ref-oracle/`):** each generated component's source + rendered story
+is compared to the corresponding Reference component (`packages/react/src/components/<name>/`) and its
 `*.stories.tsx`; generated tokens are compared to `packages/styles/themes/default/` (count, layer structure,
 mode coverage). The dashboard demo is compared to the closest storybook composition (`login-demo` /
-dashboard demos). This is **Bar-A vs Bar-B** as before: divergence from HeroUI's react-aria + tailwind-variants
+dashboard demos). This is **Bar-A vs Bar-B** as before: divergence from Reference's react-aria + tailwind-variants
 architecture is expected under `designSystem: none` and is **flagged, not penalized**.
 
 **New measurables this trial:**
@@ -158,5 +158,5 @@ architecture is expected under `designSystem: none` and is **flagged, not penali
 
 ## 8. Sign-off
 
-Approve this selection (or edit the ladder rows) and the next steps are: scaffold `trials/heroui-20260606/`
+Approve this selection (or edit the ladder rows) and the next steps are: scaffold `trials/example/`
 (`ladder-nodes.json` + `rung-map.mjs` + `STEPS.md`), re-clone the `v3` oracle, then run the operator trial.

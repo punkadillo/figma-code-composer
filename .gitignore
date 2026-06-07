@@ -25,7 +25,7 @@ graphify-out/
 
 # workbench — raw trial telemetry & generated dashboards are not committed,
 # but the per-trial TEXT run-config (steps, ladder, env script) IS tracked so the
-# run is reproducible + visible in the repo. Heavy data (target/, ref-heroui/,
+# run is reproducible + visible in the repo. Heavy data (target/, ref-oracle/,
 # bodies/, run dirs, node_modules) stays ignored via the broad glob below.
 workbench/trials/**
 !workbench/trials/

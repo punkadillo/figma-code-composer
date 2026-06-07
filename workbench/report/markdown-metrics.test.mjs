@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { renderTrialsetMarkdown } from './markdown.mjs';
 
 const base = {
-  trialId: 'heroui', generatedAt: '2026-06-07T00:00:00Z',
+  trialId: 'reference', generatedAt: '2026-06-07T00:00:00Z',
   comparisons: {},
   rollup: { perAgent: [], dominance: { tokens: 'component-builder', time: 'component-builder', byTier: {} }, crossCheck: { otelTotalTokens: 6000, costsJsonlTotalTokens: 6000, deltaPct: 0 } },
   accuracyByRung: [], qualityByRung: [],

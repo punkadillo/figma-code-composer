@@ -25,7 +25,7 @@ import { readdirSync } from 'node:fs';
 import { RUNG_MAP, RUNG_TO_RUNID, scoredRungs } from './rung-map.mjs';
 import { isScorableTrial } from '../runner/run-manifest-builder.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260606';
+const TRIAL = process.env.TRIAL || 'trials/example';
 const WEIGHTS = JSON.parse(readFileSync(new URL('./weights.json', import.meta.url), 'utf8'));
 
 const readResults = (runId) => {

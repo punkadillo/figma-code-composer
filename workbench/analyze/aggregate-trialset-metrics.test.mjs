@@ -9,11 +9,11 @@ const agent = (name, total, costUsd, requests = 1) => ({
 });
 
 const runRes = (runId, rung, tier, agents, extra = {}) => ({
-  trialId: 'heroui', runs: [{ runId, rung, tier, scenario: { tier }, agents, fanIn: [], accuracy: { composite: 80 }, ...extra }],
+  trialId: 'reference', runs: [{ runId, rung, tier, scenario: { tier }, agents, fanIn: [], accuracy: { composite: 80 }, ...extra }],
 });
 
 test('aggregateTrialset derives per-rung tokenConsumption + cost from agents', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     runRes('r1', 'trivial-button', 'trivial', [agent('component-builder', 1000, 0.02), agent('figma-fetcher', 200, 0.005)]),
   ] });
   const r = ts.rungs[0];
@@ -23,7 +23,7 @@ test('aggregateTrialset derives per-rung tokenConsumption + cost from agents', (
 });
 
 test('aggregateTrialset carries a11y / headless / cwv from the run (null when absent)', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     runRes('r1', 'trivial-button', 'trivial', [agent('component-builder', 1000, 0.02)], {
       a11y: { score: 90, violationCount: 1, nodeCount: 2, violations: [] },
       headless: { score: 75, signals: { controlledProps: true, statelessValue: true, hookExtraction: false, forwardRef: true, sideEffectDiscipline: true } },
@@ -41,10 +41,10 @@ test('aggregateTrialset carries a11y / headless / cwv from the run (null when ab
 
 test('rungs sharing a base name get disambiguated labels (cold/warm/update)', () => {
   const inputRun = (runId, cache, mode) => ({
-    trialId: 'heroui',
+    trialId: 'reference',
     runs: [{ runId, rung: 'moderate-input', tier: 'moderate', scenario: { tier: 'moderate', cache, mode }, agents: [agent('component-builder', 100, 0.01)], fanIn: [], accuracy: { composite: 80 } }],
   });
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     inputRun('moderate-input-cold', 'cold', 'build'),
     inputRun('moderate-input-warm', 'warm', 'build'),
     inputRun('moderate-input-update', 'warm', 'update'),
@@ -61,14 +61,14 @@ test('rungs sharing a base name get disambiguated labels (cold/warm/update)', ()
 });
 
 test('a unique rung name keeps its plain label (no variant suffix)', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     runRes('trivial-button', 'trivial-button', 'trivial', [agent('component-builder', 100, 0.01)]),
   ] });
   assert.equal(ts.rungs[0].label, 'trivial-button');
 });
 
 test('aggregateTrialset emits tokensByRung, costByRung and an otelReport', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     runRes('r1', 'trivial-button', 'trivial', [agent('component-builder', 1000, 0.02, 3)]),
     runRes('r2', 'complex-card', 'complex', [agent('component-builder', 5000, 0.1, 5)]),
   ] });
@@ -87,8 +87,8 @@ test('aggregateTrialset carries tokenBinding + derives efficiency (latency/cache
     tokens: { input: total - cacheRead, output: 0, thinkingEst: 0, cacheRead, cacheCreation: 0, total },
     timeMs: { sumDuration: 100, wallSpan: 100, ttftAvg: 40 }, toolUses: 12, costUsd, requests,
   });
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [{
-    trialId: 'heroui',
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [{
+    trialId: 'reference',
     runs: [{ runId: 'r1', rung: 'complex-card', tier: 'complex', scenario: { tier: 'complex' },
       wallMs: 42000, agents: [withCache('component-builder', 1000, 700, 0.10, 5)], fanIn: [],
       accuracy: { composite: 50 }, tokenBinding: { score: 92, literals: 1, boundRefs: 4, samples: ['#fff'] } }],
@@ -103,8 +103,8 @@ test('aggregateTrialset carries tokenBinding + derives efficiency (latency/cache
 });
 
 test('aggregateTrialset carries codeHealth/tokenSystem/dom/render/perf + trial meta', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [{
-    trialId: 'heroui',
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [{
+    trialId: 'reference',
     runs: [{ runId: 'r1', rung: 'trivial-button', tier: 'trivial', scenario: { tier: 'trivial' },
       wallMs: 1000, agents: [agent('component-builder', 100, 0.01)], fanIn: [], accuracy: { composite: 80 },
       codeHealth: { typeStrictness: { score: 100 }, complexity: { score: 90 } },
@@ -128,7 +128,7 @@ test('aggregateTrialset carries codeHealth/tokenSystem/dom/render/perf + trial m
 });
 
 test('aggregateTrialset leaves tokenBinding null on a legacy run', () => {
-  const ts = aggregateTrialset({ trialId: 'heroui', runs: [
+  const ts = aggregateTrialset({ trialId: 'reference', runs: [
     runRes('r1', 'trivial-button', 'trivial', [agent('component-builder', 1000, 0.02)]),
   ] });
   assert.equal(ts.rungs[0].tokenBinding, null);

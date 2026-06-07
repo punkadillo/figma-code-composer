@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Compute real `visual` / `style` / `structural` accuracy sub-scores for the HeroUI trial by comparing the generated target component against the HeroUI oracle, combine with deterministic build gates, and surface populated accuracy in `report.md` + `dashboard.html`.
+**Goal:** Compute real `visual` / `style` / `structural` accuracy sub-scores for the Reference trial by comparing the generated target component against the Reference oracle, combine with deterministic build gates, and surface populated accuracy in `report.md` + `dashboard.html`.
 
 **Architecture:** Reuse the existing tested pure scorers (`score-visual`/`score-style`/`score-structural`/`score-gates`/`composeAccuracy`) untouched in their math. Add a dependency-free source parser (`extract-structural`), a weight-renormaliser (`effective-weights`), a pure assembler (`assemble-accuracy`), a rung→source/story map (`rung-map`), a Playwright dual-Storybook capture (`render-harness`), and an IO driver (`run-accuracy`). Sub-scores that can't be computed (no oracle story, Storybook down) are marked unavailable and their weight is renormalised away so the composite never collapses to 0.
 
-**Tech Stack:** Node ESM (node:test), `playwright` (project root `node_modules`), Storybook 10 (target + HeroUI), Tailwind v4. No new runtime deps for the pure modules (node builtins only).
+**Tech Stack:** Node ESM (node:test), `playwright` (project root `node_modules`), Storybook 10 (target + Reference), Tailwind v4. No new runtime deps for the pure modules (node builtins only).
 
 ---
 
@@ -434,7 +434,7 @@ git commit -m "feat(workbench): assemble accuracy from sub-scores with availabil
 - Create: `oracle/rung-map.mjs`
 - Test: `oracle/rung-map.test.mjs`
 
-Paths are relative to the trial root. Story ids follow Storybook's `kebab(title)--kebab(name)`. Target story titles come from `target/src/components/**/*.stories.tsx` (`title:` field); oracle titles are `Components/<Name>` per HeroUI `CLAUDE.md`. The "Default"/"Primary" canonical story is chosen per side.
+Paths are relative to the trial root. Story ids follow Storybook's `kebab(title)--kebab(name)`. Target story titles come from `target/src/components/**/*.stories.tsx` (`title:` field); oracle titles are `Components/<Name>` per Reference `CLAUDE.md`. The "Default"/"Primary" canonical story is chosen per side.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -475,7 +475,7 @@ export const RUNG_MAP = {
   atom: {
     rung: 'atom', component: 'Button',
     targetTsx: 'target/src/components/atoms/Button/Button.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/button/button.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/button/button.tsx',
     hasOracleStory: true,
     targetStoryId: 'atoms-button--default',
     oracleStoryId: 'components-button--default',
@@ -483,7 +483,7 @@ export const RUNG_MAP = {
   molecule: {
     rung: 'molecule', component: 'Input',
     targetTsx: 'target/src/components/atoms/Input/Input.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/input/input.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/input/input.tsx',
     hasOracleStory: true,
     targetStoryId: 'atoms-input--default',
     oracleStoryId: 'components-input--default',
@@ -491,7 +491,7 @@ export const RUNG_MAP = {
   organism: {
     rung: 'organism', component: 'Card',
     targetTsx: 'target/src/components/molecules/Card/Card.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/card/card.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/card/card.tsx',
     hasOracleStory: true,
     targetStoryId: 'molecules-card--default',
     oracleStoryId: 'components-card--default',
@@ -499,15 +499,15 @@ export const RUNG_MAP = {
   template: {
     rung: 'template', component: 'Form',
     targetTsx: 'target/src/components/organisms/Form/Form.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/form/form.tsx',
-    hasOracleStory: false,   // HeroUI Form has source but no story
+    oracleTsx: 'ref-oracle/packages/react/src/components/form/form.tsx',
+    hasOracleStory: false,   // Reference Form has source but no story
     targetStoryId: 'organisms-form--default',
     oracleStoryId: null,
   },
   'all-icons': {
     rung: 'all-icons', component: 'Alert',
     targetTsx: 'target/src/components/molecules/Alert/Alert.tsx',
-    oracleTsx: 'ref-heroui/packages/react/src/components/alert/alert.tsx',
+    oracleTsx: 'ref-oracle/packages/react/src/components/alert/alert.tsx',
     hasOracleStory: true,
     targetStoryId: 'molecules-alert--default',
     oracleStoryId: 'components-alert--default',
@@ -980,11 +980,11 @@ git commit -m "feat(workbench): regenerate report with dual-structural accuracy"
 
 ---
 
-## PHASE 2 — Render harness (visual + style vs HeroUI)
+## PHASE 2 — Render harness (visual + style vs Reference)
 
 > **P2 amendment (revision A):** the render harness `shoot()` must ALSO return a `dom` tree (used for `structuralDom`). Task 10's implementation below already includes the `dom` extraction. The driver's render block (Task 1.5c Step 1) already computes `structuralDom` from `t.dom`/`o.dom`.
 
-> **Risk gate:** the target Storybook (Task 9) is low-risk (deps installed). The HeroUI Storybook (Task 9b) is the real risk. If 9b cannot build/serve after the steps below, STOP Phase 2, leave visual/style as `—`, and proceed to Phase 3 — the report is already consistent from Phase 1.
+> **Risk gate:** the target Storybook (Task 9) is low-risk (deps installed). The Reference Storybook (Task 9b) is the real risk. If 9b cannot build/serve after the steps below, STOP Phase 2, leave visual/style as `—`, and proceed to Phase 3 — the report is already consistent from Phase 1.
 
 ### Task 9: Build the target Storybook and confirm story ids
 
@@ -1011,34 +1011,34 @@ git commit -m "fix(workbench): reconcile target story ids with built Storybook"
 
 ---
 
-### Task 9b: Build the HeroUI Storybook (risk gate)
+### Task 9b: Build the Reference Storybook (risk gate)
 
 **Files:**
 - Run-only.
 
-- [ ] **Step 1: Build HeroUI packages then its Storybook**
+- [ ] **Step 1: Build Reference packages then its Storybook**
 
 Run:
 ```bash
-cd trials/<trial-id>/ref-heroui
-pnpm build --filter=@heroui/react || true
-pnpm build --filter=@heroui/storybook --output-logs=new-only
+cd trials/<trial-id>/ref-oracle
+pnpm build --filter=@reference/react || true
+pnpm build --filter=@reference/storybook --output-logs=new-only
 cd -
 ```
-Expected: a `storybook-static` (location printed by the build; commonly `packages/storybook/storybook-static`). If the build errors on missing `@heroui/styles`, run `pnpm build --filter=@heroui/styles` first, then retry the storybook build.
+Expected: a `storybook-static` (location printed by the build; commonly `packages/storybook/storybook-static`). If the build errors on missing `@reference/styles`, run `pnpm build --filter=@reference/styles` first, then retry the storybook build.
 
 - [ ] **Step 2: Confirm oracle story ids**
 
-Run: `node -e "const s=require('./trials/<trial-id>/ref-heroui/packages/storybook/storybook-static/index.json'); console.log(Object.keys(s.entries).filter(k=>/button|input|card|alert/.test(k)).join('\n'))"`
+Run: `node -e "const s=require('./trials/<trial-id>/ref-oracle/packages/storybook/storybook-static/index.json'); console.log(Object.keys(s.entries).filter(k=>/button|input|card|alert/.test(k)).join('\n'))"`
 Expected: includes `components-button--*`, `components-alert--*`, etc. Reconcile `oracle/rung-map.mjs` `oracleStoryId` to the real `--default`/first story id; re-run `node --test oracle/rung-map.test.mjs`.
 
 - [ ] **Step 3: Decision checkpoint**
 
-If Steps 1–2 fail after reasonable effort, set `hasOracleStory: false` for all rungs in `oracle/rung-map.mjs` (documented as "HeroUI Storybook unavailable in this env"), commit that, and SKIP to Phase 3. Otherwise continue.
+If Steps 1–2 fail after reasonable effort, set `hasOracleStory: false` for all rungs in `oracle/rung-map.mjs` (documented as "Reference Storybook unavailable in this env"), commit that, and SKIP to Phase 3. Otherwise continue.
 
 ```bash
 git add oracle/rung-map.mjs
-git commit -m "fix(workbench): reconcile/disable oracle story ids per HeroUI Storybook build"
+git commit -m "fix(workbench): reconcile/disable oracle story ids per Reference Storybook build"
 ```
 
 ---
@@ -1064,7 +1064,7 @@ import { STYLE_PROPS } from './score-style.mjs';
 const TRIAL = process.env.TRIAL || 'trials/<trial-id>';
 export const CLIP = { x: 0, y: 0, width: 360, height: 240 };
 const TARGET_SB = join(TRIAL, 'target/storybook-static');
-const ORACLE_SB = join(TRIAL, 'ref-heroui/packages/storybook/storybook-static');
+const ORACLE_SB = join(TRIAL, 'ref-oracle/packages/storybook/storybook-static');
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript',
   '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.ico': 'image/x-icon', '.map': 'application/json' };
@@ -1173,10 +1173,10 @@ Expected: all PASS.
 
 ```bash
 git add reports/<trial-id>/trialset.json reports/<trial-id>/report.md reports/<trial-id>/dashboard.html trials/<trial-id>/*/results.json
-git commit -m "feat(workbench): populate visual+style accuracy vs HeroUI (P2)"
+git commit -m "feat(workbench): populate visual+style accuracy vs Reference (P2)"
 ```
 
-**End of Phase 2 — visual+style real for rungs with a HeroUI story.**
+**End of Phase 2 — visual+style real for rungs with a Reference story.**
 
 ---
 
@@ -1218,7 +1218,7 @@ Expected: FAIL — no "renormal…" text yet.
 In `report/markdown.mjs`, find the existing Accuracy note line (the one beginning `> Composite/visual/style/structural require live rendering`) and append a sentence. Replace that line with:
 
 ```js
-    L.push('> Composite/visual/style/structural require live rendering (pixel-diff + computed-style); cells read `—` when a sub-score was not computed (no HeroUI story for that rung, or the Storybook render was unavailable). When a sub-score is unavailable its weight is **renormalised** away across the remaining sub-scores, so the composite reflects only what was measured (see `availability` in `results.json`). The **build gate** column is real. "(capped)" marks a build-fail-capped composite.');
+    L.push('> Composite/visual/style/structural require live rendering (pixel-diff + computed-style); cells read `—` when a sub-score was not computed (no Reference story for that rung, or the Storybook render was unavailable). When a sub-score is unavailable its weight is **renormalised** away across the remaining sub-scores, so the composite reflects only what was measured (see `availability` in `results.json`). The **build gate** column is real. "(capped)" marks a build-fail-capped composite.');
 ```
 
 - [ ] **Step 4: Run tests to verify they pass**
@@ -1276,12 +1276,12 @@ git commit -m "feat(workbench): a11y gate via axe in accuracy render pass"
 - [ ] **Run every workbench suite:** `node --test 'oracle/*.test.mjs' 'report/*.test.mjs' 'analyze/*.test.mjs'` → all PASS.
 - [ ] **Accuracy is real:** `node -e "const t=require('./reports/<trial-id>/trialset.json'); console.log(t.accuracyByRung.map(r=>r.rung+':'+r.composite).join(' '))"` → integers for the 5 component rungs.
 - [ ] **Dashboard renders:** screenshot `reports/<trial-id>/dashboard.html` with Playwright; the Accuracy-by-rung bars are non-zero for scored rungs.
-- [ ] **Caveat present:** `grep -i 'designSystem' reports/<trial-id>/analysis/01-accuracy-feasibility.md` still documents the target-vs-HeroUI divergence; add a one-line pointer in `report.md` accuracy note if missing.
+- [ ] **Caveat present:** `grep -i 'designSystem' reports/<trial-id>/analysis/01-accuracy-feasibility.md` still documents the target-vs-Reference divergence; add a one-line pointer in `report.md` accuracy note if missing.
 
 ## Notes for the implementer
 
 - **DRY/YAGNI:** do not touch the pure scorer math — only `score-gates`/`score.mjs` get the additive subset change, fully covered by tests.
 - **The single reality-divergence point is story ids** (Tasks 6 Step 4, 9 Step 2, 9b Step 2). Always reconcile against the built `index.json`; never assume.
-- **Honest caveat stays:** target is `designSystem: none`; visual/style vs HeroUI read low by design. Structural + the cross-rung trend are the meaningful signals. Do not "fix" low visual scores by loosening `tolerance` — that would hide the real divergence.
+- **Honest caveat stays:** target is `designSystem: none`; visual/style vs Reference read low by design. Structural + the cross-rung trend are the meaningful signals. Do not "fix" low visual scores by loosening `tolerance` — that would hide the real divergence.
 - **Graceful degradation is a feature, not a fallback to apologise for:** a rung with no oracle story or a downed Storybook still yields a real composite from structural + gates.
 ```

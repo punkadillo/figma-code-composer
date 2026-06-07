@@ -10,9 +10,9 @@ import { judgePanel } from './judge.mjs';
 import { scoreDimensions, DIMS } from './quality/dimensions.mjs';
 import { composeQuality } from './quality-score.mjs';
 
-const TRIAL = process.env.TRIAL || 'workbench/trials/heroui-20260606';
+const TRIAL = process.env.TRIAL || 'workbench/trials/example';
 const QW = JSON.parse(readFileSync(new URL('./quality-weights.json', import.meta.url), 'utf8'));
-const PREP = '/tmp/judge-heroui';
+const PREP = '/tmp/judge-reference';
 const metrics = JSON.parse(readFileSync(join(PREP, 'metrics.json'), 'utf8'));
 
 for (const rung of Object.keys(RUNG_MAP)) {

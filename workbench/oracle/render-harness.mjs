@@ -27,10 +27,10 @@ function cwvInit() {
   } catch { /* observer types unsupported — leave zeros */ }
 }
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260606';
+const TRIAL = process.env.TRIAL || 'trials/example';
 export const CLIP = { x: 0, y: 0, width: 360, height: 240 };
 const TARGET_SB = join(TRIAL, 'target/storybook-static');
-const ORACLE_SB = join(TRIAL, 'ref-heroui/packages/storybook/storybook-static');
+const ORACLE_SB = join(TRIAL, 'ref-oracle/packages/storybook/storybook-static');
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript',
   '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.ico': 'image/x-icon', '.map': 'application/json' };
