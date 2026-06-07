@@ -81,4 +81,16 @@ After the think-once pass, for each component/icon to build:
 
 These work identically under Cursor because they're plain shell — `npx fcc kg:query`, `npx fcc kg:stage`, `npx fcc kg:merge`, `npx fcc handover` all run via Cursor's terminal-execution capability. Same exit codes apply.
 
+## Autonomy policy (Cursor delta)
+
+The `## Autonomy policy` section of `.claude/agents/figma-coordinator.md` applies identically — it's pure decision logic over `config.autonomy`, no Agent-tool dependency. In `interactive` mode (default) block and ask on every decision gate as today; in `autonomous` mode resolve each gate (`onUnbound`, `onStackMismatch`, `onUnsupportedOverride`, `onLibrarySwap`, `onRemovedToken`, `onAmbiguousSelection`) from policy, append the decision to `/tmp/figma-<runId>/autonomy.jsonl`, and surface it in the handover's *Autonomous decisions* block + the Step 12 report. The `onRemovedToken` token-rename path runs the dependents inline as an `intent:update` patch (no story/test re-run) — same cost win, just inline instead of spawned. Hard stops (page-selected, recursion cycle, MCP/setup aborts) stay hard stops regardless of level.
+
+## Crash recovery & checkpointing (Cursor delta)
+
+The `## Crash recovery & checkpointing` section of `.claude/agents/figma-coordinator.md` applies identically — the checkpoint and resume logic are plain file writes + reads, not Agent-tool features. Cursor specifics:
+
+- **Pre-flight step 1.7 (resume detection)** runs the same: scan `<storeDir>/staging/*/.checkpoint/checkpoint.json` for an orphan (`phase != "done"`, no handover/.failed.md); a `fileKey`+`intent`+`scope` match → reuse its `runId`, restore manifest + buildPlan, skip the fetch, and re-dispatch only the missing components/icons inline. Validate the restored manifest against disk first (`figma-fetcher.md` § Resume discipline).
+- **Checkpoint writes** happen at Step 8.5 (create) and on every inline builder completion (append to `completed[]`) — write `<storeDir>/staging/<runId>/.checkpoint/checkpoint.json` via Cursor's file tools.
+- **Backoff before the one retry** — on HTTP 529 / "Overloaded", wait (2s → 8s → 20s) before the single retry rather than retrying immediately; same model. Since builders run inline (no model-pinned spawn), the retry is just re-running the inline role on the current model.
+
 The pipeline is invoked via the slash commands mirrored in `.cursor/prompts/commands/`.

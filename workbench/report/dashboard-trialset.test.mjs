@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { renderTrialsetDashboard } from './dashboard.mjs';
 
 const ts = {
-  trialId: 'heroui', generatedAt: null,
+  trialId: 'reference', generatedAt: null,
   rungs: [], comparisons: { coldWarm: { coldRunId: 'c', warmRunId: 'w', tokenDeltaPct: -25 } },
   rollup: { perAgent: [{ agent: 'component-builder', tokens: { total: 100 }, timeMs: 10, costUsd: 0 }],
     dominance: { tokens: 'component-builder', time: 'component-builder', byTier: {} },

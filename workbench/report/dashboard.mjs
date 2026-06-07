@@ -201,15 +201,15 @@ export function renderDashboard(r) {
 // ── Trialset (ladder) dashboard ──────────────────────────────────────────────
 
 export function renderTrialsetDashboard(ts) {
-  const accBars = svgBars(ts.accuracyByRung.map((r) => ({ label: r.rung, value: r.composite ?? 0 })), { gradId: 'gAcc' });
-  const qualBars = svgBars((ts.qualityByRung || []).map((r) => ({ label: r.rung, value: r.composite ?? 0 })), { gradId: 'gQual' });
+  const accBars = svgBars(ts.accuracyByRung.map((r) => ({ label: r.label ?? r.rung, value: r.composite ?? 0 })), { gradId: 'gAcc' });
+  const qualBars = svgBars((ts.qualityByRung || []).map((r) => ({ label: r.label ?? r.rung, value: r.composite ?? 0 })), { gradId: 'gQual' });
   const tokenBars = svgBars(ts.rollup.perAgent.map((a) => ({ label: a.agent, value: a.tokens.total })), { gradId: 'gTok' });
 
   // Per-rung Quality table (mirrors report.md). Only rungs with a scored composite.
   const rungs = ts.rungs || [];
   const qRows = rungs.filter((r) => r.quality && r.quality.composite != null).map((r) => {
     const d = r.quality.dimensions;
-    return [r.rung, r.quality.composite, d.optimizedCode.score, d.dx.score, d.docs.score, d.testDepth.score, d.storybook.score];
+    return [r.label ?? r.rung, r.quality.composite, d.optimizedCode.score, d.dx.score, d.docs.score, d.testDepth.score, d.storybook.score];
   });
   const qualityTable = qRows.length
     ? htmlTable(['rung', 'composite', 'optimizedCode', 'dx', 'docs', 'testDepth', 'storybook'], qRows,
@@ -221,10 +221,122 @@ export function renderTrialsetDashboard(ts) {
   const gRows = rungs.filter((r) => r.gates).map((r) => {
     const g = r.gates; const t = g.tests;
     const pass = g.tsc !== false && g.build !== false && (!t || t.passed === t.total);
-    return [r.rung, mark(g.tsc), mark(g.build), t ? `${t.passed}/${t.total}` : '—', pass ? '✓' : '✗'];
+    return [r.label ?? r.rung, mark(g.tsc), mark(g.build), t ? `${t.passed}/${t.total}` : '—', pass ? '✓' : '✗'];
   });
   const gatesTable = gRows.length
     ? htmlTable(['rung', 'tsc', 'build', 'unit tests', 'gate'], gRows, { align: ['l', 'r', 'r', 'r', 'r'] })
+    : '';
+
+  // ── New per-rung tracks ──
+  const usd = (n) => '$' + (n ?? 0).toFixed(4);
+  const pending = (cmd) => `<p class="note">Pending — re-score: <code>${esc(cmd)}</code></p>`;
+
+  // Token Consumption + Cost to Build — measurables (data present for every trial).
+  const tokRungBars = svgBars((ts.tokensByRung || []).map((r) => ({ label: r.rung, value: r.total })), { gradId: 'gTokRung' });
+  const costRungBars = svgBars((ts.costByRung || []).map((r) => ({ label: r.rung, value: Math.round((r.usd ?? 0) * 10000) })), { gradId: 'gCost' });
+  const tokRungTable = (ts.tokensByRung || []).length
+    ? htmlTable(['rung', 'tier', 'total', 'output', 'cacheRead', 'cacheCreate'],
+        ts.tokensByRung.map((r) => [r.label ?? r.rung, r.tier, fmt(r.total), fmt(r.output), fmt(r.cacheRead), fmt(r.cacheCreation)]),
+        { align: ['l', 'l', 'r', 'r', 'r', 'r'] })
+    : '';
+  const costRungTable = (ts.costByRung || []).length
+    ? htmlTable(['rung', 'tier', 'cost', 'tokens'],
+        ts.costByRung.map((r, i) => [r.label ?? r.rung, r.tier, usd(r.usd), fmt((ts.tokensByRung || [])[i]?.total)]),
+        { align: ['l', 'l', 'r', 'r'] })
+    : '';
+
+  // Accessibility (axe), Stateless & Headless (static), Core Web Vitals (render).
+  const yn = (b) => (b ? '✓' : '✗');
+  const a11yRows = rungs.filter((r) => r.a11y && r.a11y.score != null)
+    .map((r) => [r.label ?? r.rung, r.a11y.score, r.a11y.violationCount, r.a11y.nodeCount]);
+  const a11yTable = a11yRows.length
+    ? htmlTable(['rung', 'score', 'violations', 'nodes'], a11yRows, { align: ['l', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs --render');
+  const hRows = rungs.filter((r) => r.headless && r.headless.score != null).map((r) => {
+    const s = r.headless.signals;
+    return [r.label ?? r.rung, r.headless.score, yn(s.controlledProps), yn(s.statelessValue), yn(s.hookExtraction), yn(s.forwardRef), yn(s.sideEffectDiscipline)];
+  });
+  const headlessTable = hRows.length
+    ? htmlTable(['rung', 'score', 'controlled', 'stateless', 'hook', 'forwardRef', 'effect-disc'], hRows, { align: ['l', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+  const cwvRows = rungs.filter((r) => r.cwv && r.cwv.score != null)
+    .map((r) => [r.label ?? r.rung, r.cwv.score, r.cwv.lcp?.ms ?? '—', r.cwv.cls?.value ?? '—', r.cwv.tbt?.ms ?? '—']);
+  const cwvTable = cwvRows.length
+    ? htmlTable(['rung', 'score', 'LCP (ms)', 'CLS', 'TBT (ms)'], cwvRows, { align: ['l', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs --render');
+
+  // Token binding (static) — literal-freedom per rung.
+  const tbRows = rungs.filter((r) => r.tokenBinding && r.tokenBinding.score != null)
+    .map((r) => [r.label ?? r.rung, r.tokenBinding.score, r.tokenBinding.literals, r.tokenBinding.boundRefs]);
+  const tbTable = tbRows.length
+    ? htmlTable(['rung', 'score', 'literals', 'var(--) refs'], tbRows, { align: ['l', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+
+  // Efficiency (telemetry-derived) — latency / cache-hit / tool-calls / ttft / per-accuracy cost.
+  const effRows = (ts.efficiencyByRung || []).map((e) => [
+    e.label ?? e.rung, e.tier, fmt(e.latencyMs), `${Math.round((e.cacheHitRatio ?? 0) * 100)}%`,
+    fmt(e.toolUses), fmt(e.ttftAvgMs),
+    e.costPerAccuracyPoint == null ? '—' : usd(e.costPerAccuracyPoint),
+    e.tokensPerAccuracyPoint == null ? '—' : fmt(e.tokensPerAccuracyPoint),
+  ]);
+  const effTable = effRows.length
+    ? htmlTable(['rung', 'tier', 'latency (ms)', 'cache-hit', 'tool-calls', 'ttft (ms)', '$/acc-pt', 'tok/acc-pt'], effRows,
+        { align: ['l', 'l', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : '';
+
+  // Static code health (B/C/G/H)
+  const sc = (m) => (m && m.score != null ? m.score : '—');
+  const chMean = (ch) => {
+    const xs = Object.values(ch).map((m) => m && m.score).filter((s) => s != null);
+    return xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : '—';
+  };
+  const chRows = rungs.filter((r) => r.codeHealth).map((r) => {
+    const c = r.codeHealth;
+    return [r.label ?? r.rung, chMean(c), sc(c.typeStrictness), sc(c.complexity), sc(c.cssHygiene), sc(c.dangerousApi), sc(c.serverClientBoundary), sc(c.rtlReadiness), sc(c.commentEconomy), sc(c.composability), sc(c.namingAdherence), sc(c.propTypeCompleteness)];
+  });
+  const chTable = chRows.length
+    ? htmlTable(['rung', 'health', 'types', 'complexity', 'css', 'dangerous', 'srv/client', 'rtl', 'comments', 'compose', 'naming', 'propTypes'], chRows,
+        { align: ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+
+  // Design tokens (A)
+  const dtRows = rungs.filter((r) => r.tokenSystem).map((r) => {
+    const t = r.tokenSystem;
+    return [r.label ?? r.rung, `${Math.round((t.semanticAliasRatio ?? 0) * 100)}%`, t.orphanRefs, t.coverage == null ? '—' : t.coverage];
+  });
+  const dtTable = dtRows.length
+    ? htmlTable(['rung', 'semantic-alias', 'orphan refs', 'coverage'], dtRows, { align: ['l', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs');
+
+  // DOM + render signals + runtime perf (B/C/D)
+  const drRows = rungs.filter((r) => r.domShape || r.renderSignals || r.runtimePerf).map((r) => {
+    const d = r.domShape, s = r.renderSignals, p = r.runtimePerf;
+    const focus = s && s.focusVisible != null ? (s.focusVisible ? '✓' : '✗') : '—';
+    return [r.label ?? r.rung, sc(d), d ? d.nodeCount : '—', d ? d.maxDepth : '—', sc(s), focus, s?.keyboardReached ?? '—', p?.mountMs ?? '—', sc(p)];
+  });
+  const drTable = drRows.length
+    ? htmlTable(['rung', 'dom', 'nodes', 'depth', 'render', 'focus', 'keyboard', 'mount (ms)', 'perf'], drRows,
+        { align: ['l', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r'] })
+    : pending('TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs --render');
+
+  // Process & build meta (E/F/G) — trial-level
+  const g = (m) => (m == null ? '—' : m.score != null ? `${m.score}` : `— (${m.reason || 'n/a'})`);
+  const pm = ts.processMeta || {}, bm = ts.buildMetrics || {};
+  const pmRows = [
+    ['KG reuse rate', g(pm.reuseRate)], ['Update diff-size', g(pm.updateDiffSize)], ['Retry/error rate', g(pm.retryRate)],
+    ['HITL gate count', g(pm.hitlGateCount)], ['Tier-routing accuracy', g(pm.tierRoutingAccuracy)],
+    ['Prompt-injection resistance', g(pm.promptInjectionResistance)],
+    ['Import cycles', g(bm.circularDeps) + (bm.circularDeps ? ` (${bm.circularDeps.cycleCount}/${bm.circularDeps.nodes})` : '')],
+    ['Bundle size (gated)', g(bm.bundleSize)], ['Lint (gated)', g(bm.lintConformance)],
+  ];
+  const pmTable = (ts.processMeta || ts.buildMetrics) ? htmlTable(['metric', 'value'], pmRows, { align: ['l', 'r'] }) : '';
+
+  // OpenTelemetry report — per-agent cost/ttft + per-rung cost.
+  const otel = ts.otelReport;
+  const otelTable = otel
+    ? htmlTable(['agent', 'requests', 'total tokens', 'output', 'cost', 'ttft (ms)'],
+        otel.perAgent.map((a) => [a.agent, fmt(a.requests), fmt(a.tokens.total), fmt(a.tokens.output), usd(a.costUsd), fmt(a.ttftAvgMs)]),
+        { align: ['l', 'r', 'r', 'r', 'r', 'r'] })
     : '';
 
   const data = esc(JSON.stringify(ts));
@@ -257,16 +369,53 @@ export function renderTrialsetDashboard(ts) {
     ${kpi('Token-dominant', ts.rollup.dominance.tokens)}
     ${kpi('OTEL ↔ costs Δ', (cc.deltaPct ?? 0) + '%', 'cross-check')}
     ${kpi('Quality-scored', scored + ' rungs', '3-vote median panel')}
+    ${kpi('Cost-dominant', otel?.costDominantAgent ?? '—', 'by OTEL costUsd')}
   </div>
 
   <section><div class="panel"><h2>Accuracy by rung (composite)</h2>
-    <p class="note">Composite blends visual / style / structural / gates (a build failure caps it). Computed live: target vs HeroUI Storybook render (visual pixel-diff + style) and rendered-DOM + source structural; unavailable sub-scores renormalise away. <code>icon-only</code> / <code>page</code> are out of fidelity scope (shown as 0). Visual / style read low by design — target is <code>designSystem: none</code> vs HeroUI.</p>${accBars}</div></section>
+    <p class="note">Composite blends visual / style / structural / gates (a build failure caps it). Computed live: target vs the reference oracle Storybook render (visual pixel-diff + style) and rendered-DOM + source structural; unavailable sub-scores renormalise away. <code>icon-only</code> / <code>page</code> are out of fidelity scope (shown as 0). Visual / style read low by design — target is <code>designSystem: none</code> vs the reference design system.</p>${accBars}</div></section>
 
   <section><div class="panel"><h2>Quality by rung (composite)</h2>
     <p class="note">Source judge, <strong>3-vote median panel</strong> per dimension (visual / style need live rendering, not included). <code>icon-only</code> / <code>page</code> are out of scope.</p>${qualBars}${qualityTable}</div></section>
 
   <section><div class="panel"><h2>Build gates by rung (deterministic)</h2>
     <p class="note">The source-derivable slice of accuracy: <code>tsc</code> + <code>vite build</code> (whole-target) and per-rung unit tests. Visual / style fidelity needs live rendering.</p>${gatesTable}</div></section>
+
+  <section><div class="panel"><h2>Token consumption by rung</h2>
+    <p class="note">OTEL-reported tokens per rung (lower is better). <code>cacheRead</code> typically dominates the total — prompt-cache hits are counted but billed cheap.</p>${tokRungBars}${tokRungTable}</div></section>
+
+  <section><div class="panel"><h2>Cost to build by rung</h2>
+    <p class="note">OTEL <code>costUsd</code> summed per rung (bars scaled ×10⁴ for visibility at sub-cent values). The cross-check KPI reconciles OTEL totals against the coordinator <code>costs.jsonl</code> ledger.</p>${costRungBars}${costRungTable}</div></section>
+
+  <section><div class="panel"><h2>Accessibility by rung (axe-core)</h2>
+    <p class="note">WCAG audit over the rendered story root. Score starts at 100; each violation subtracts a per-impact penalty × min(nodes, cap) (<code>oracle/a11y-weights.json</code>).</p>${a11yTable}</div></section>
+
+  <section><div class="panel"><h2>Stateless &amp; Headless by rung</h2>
+    <p class="note">Static source analysis: controlled (prop-driven) API, no internal value state, extracted/headless logic, <code>forwardRef</code>, side-effect discipline (<code>oracle/headless-weights.json</code>).</p>${headlessTable}</div></section>
+
+  <section><div class="panel"><h2>Core Web Vitals by rung</h2>
+    <p class="note">Captured via <code>PerformanceObserver</code> in the render harness, scored against Google good/needs-improvement/poor bands (LCP 0.4 · CLS 0.3 · TBT 0.3 — <code>oracle/cwv-weights.json</code>).</p>${cwvTable}</div></section>
+
+  <section><div class="panel"><h2>Token binding by rung</h2>
+    <p class="note">Literal-freedom: 100 when no hardcoded design values (hex / <code>rgb()</code> / arbitrary Tailwind values / raw px·rem) are inlined; each literal deducts (<code>oracle/score-token-binding.mjs</code>). Tracks binding rule 4 — styled values should bind to tokens, not inline.</p>${tbTable}</div></section>
+
+  <section><div class="panel"><h2>Efficiency by rung</h2>
+    <p class="note">Telemetry-derived, no new capture (<code>analyze/efficiency.mjs</code>): wall-clock latency, prompt-cache hit ratio (<code>cacheRead / total</code>), tool-calls, request-weighted TTFT, and cost/tokens per accuracy-point (— when the rung is unscored).</p>${effTable}</div></section>
+
+  <section><div class="panel"><h2>OpenTelemetry report</h2>
+    <p class="note">Per-agent cost, tokens and request-weighted TTFT from the OTEL stream (<code>events.jsonl</code> + <code>spans.jsonl</code>), metered by Claude Code. Cost-dominant agent: <code>${esc(otel?.costDominantAgent ?? '—')}</code>.</p>${otelTable}</div></section>
+
+  <section><div class="panel"><h2>Static code-health by rung</h2>
+    <p class="note">Source scan (<code>oracle/metrics/source-static.mjs</code>): type strictness · complexity · CSS hygiene · dangerous APIs · unnecessary <code>"use client"</code> · RTL logical-properties · comment economy (80-char rule) · composability · naming · prop-type/JSDoc. <code>health</code> = mean of sub-scores.</p>${chTable}</div></section>
+
+  <section><div class="panel"><h2>Design tokens by rung</h2>
+    <p class="note">Semantic-alias share (tokens aliasing via <code>var()</code>), orphan <code>var(--x)</code> refs, and coverage vs Figma (— when needed-count unavailable) — <code>oracle/metrics/design-tokens.mjs</code>.</p>${dtTable}</div></section>
+
+  <section><div class="panel"><h2>DOM &amp; render by rung</h2>
+    <p class="note">DOM nesting/bloat health, focus-visible + keyboard reachability + interaction-ok, and mount-time band. INP / re-renders / memory are capability-gated.</p>${drTable}</div></section>
+
+  <section><div class="panel"><h2>Process &amp; build meta</h2>
+    <p class="note">Trial-level. <code>—</code> with a reason = signal not captured in this trial (e.g. determinism needs two runs; reuse-rate needs KG <code>resolution</code> data); the scorers compute once that data exists. Bundle/lint need a build / eslint run.</p>${pmTable}</div></section>
 
   <section><div class="panel"><h2>Tokens per agent (all rungs)</h2>
     <p class="note">Total tokens attributed to each agent, summed across every rung.</p>${tokenBars}</div></section>

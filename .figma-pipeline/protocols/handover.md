@@ -61,6 +61,13 @@ Per-specialist totals aggregated from `/tmp/figma-<runId>/costs.jsonl` (coordina
 | component-builder | opus   |      85,076 |       61 |
 | **total**         | —      |  **97,376** |   **75** |
 
+## Autonomous decisions (2 — review)
+
+> Present only on `config.autonomy.level == "autonomous"` runs. Each line is a decision the user would have been asked about, resolved from `config.autonomy` policy. Aggregated from `/tmp/figma-<runId>/autonomy.jsonl`.
+
+- 🤖 `onRemovedToken`: `color.brand.primary` renamed → `color.brand.500` (value-matched). Updated **Button**, **Card** in place via the update flow; stories/tests unchanged. Reversible — revert the rename in Figma + re-run to undo.
+- 🤖 `onUnbound`: `font-family: "Inter Display"` in ProductCtaBar had no binding → inlined as a flagged fallback (`onUnbound=inline-and-flag`). **Action**: bind it in Figma when convenient, then `/figma-update`.
+
 ## Open issues (2)
 
 - ⚠ Unbound value: `font-family: "Inter Display"` in ProductCtaBar root — Figma had no variable binding. Recorded as `unbound: true` in the manifest; the builder used the raw value as a fallback. **Action**: bind it to a Figma variable when convenient. For a single cosmetic residue like this, the cheapest cleanup is a one-line manual edit by the dev — do **not** recommend a full `/figma-update` re-run for one trivial value (it costs tokens for no real gain). Reserve `/figma-update` for when several values were rebound in Figma and you want them re-pulled together.
@@ -80,7 +87,7 @@ Per-specialist totals aggregated from `/tmp/figma-<runId>/costs.jsonl` (coordina
 When a coordinator starts a new session and finds a recent handover (most-recent `runId` by `completedAt`), it MUST:
 
 1. Read the front-matter as YAML (use a permissive parser — only `runId`, `intent`, `scope`, `completedAt`, `complexity` are required).
-2. Read the **Open issues** section verbatim and surface every line to the user before any build agent runs.
+2. Read the **Open issues** section — and the **Autonomous decisions** section when present — verbatim and surface every line to the user before any build agent runs. (Autonomous decisions are *for review*, not action gates; surface them, don't re-prompt.)
 3. NOT execute anything from **Next steps** without explicit user instruction. The list is a suggestion, never an action.
 
 The coordinator MUST NOT modify a handover file in place. Re-runs produce new handovers with new `runId`s.

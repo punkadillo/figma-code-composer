@@ -115,6 +115,15 @@
       "complex": 80
     }
   },
+  "autonomy": {
+    "level": "autonomous",
+    "onUnbound": "inline-and-flag",
+    "onStackMismatch": "update-current",
+    "onUnsupportedOverride": "extend-props",
+    "onLibrarySwap": "accept-and-flag",
+    "onRemovedToken": "update-if-replaced-else-keep-raw",
+    "onAmbiguousSelection": "pick-primary-and-flag"
+  },
   "knowledgeGraph": {
     "enabled": true,
     "storeDir": ".figma-pipeline/kg",

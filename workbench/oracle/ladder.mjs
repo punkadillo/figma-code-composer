@@ -1,7 +1,7 @@
 // workbench/oracle/ladder.mjs
-// The complexity ladder for the heroui-20260606 trial. Rungs are named by
+// The complexity ladder for the reference-20260606 trial. Rungs are named by
 // COMPLEXITY tier (trivial/moderate/complex/extreme), not a design methodology.
-// Component rungs score against HeroUI Storybook; the dashboard rung against the
+// Component rungs score against Reference Storybook; the dashboard rung against the
 // closest storybook demo; tokens against packages/styles; trivial-icon checks
 // icon a11y.
 export const LADDER = [

@@ -12,10 +12,20 @@ import { assembleAccuracy } from './assemble-accuracy.mjs';
 import { scoreVisual } from './score-visual.mjs';
 import { scoreStyle } from './score-style.mjs';
 import { decodePng } from './png.mjs';
+import { architectureMetrics } from './metrics/architecture.mjs';
+import { scoreA11y } from './score-a11y.mjs';
+import { scoreCwv } from './score-cwv.mjs';
+import { scoreTokenBinding } from './score-token-binding.mjs';
+import { staticSourceMetrics } from './metrics/source-static.mjs';
+import { designTokenMetrics } from './metrics/design-tokens.mjs';
+import { domShape } from './metrics/dom-shape.mjs';
+import { scoreRenderSignals } from './score-render-signals.mjs';
+import { scoreRuntimePerf } from './score-runtime-perf.mjs';
+import { readdirSync } from 'node:fs';
 import { RUNG_MAP, RUNG_TO_RUNID, scoredRungs } from './rung-map.mjs';
 import { isScorableTrial } from '../runner/run-manifest-builder.mjs';
 
-const TRIAL = process.env.TRIAL || 'trials/heroui-20260606';
+const TRIAL = process.env.TRIAL || 'trials/example';
 const WEIGHTS = JSON.parse(readFileSync(new URL('./weights.json', import.meta.url), 'utf8'));
 
 const readResults = (runId) => {
@@ -35,6 +45,13 @@ function runGateFor(gates) {
 export async function runAccuracy({ render = false, shots = null } = {}) {
   if (!existsSync(TRIAL)) {
     throw new Error(`[accuracy] TRIAL dir "${TRIAL}" not found. Set TRIAL=trials/<id> before scoring.`);
+  }
+  // Read the emitted token CSS once (trial-level) for design-token metrics.
+  let tokenCss = '';
+  const tokenDir = join(TRIAL, 'target/src/styles/tokens');
+  if (existsSync(tokenDir)) {
+    for (const f of readdirSync(tokenDir).filter((f) => f.endsWith('.css')))
+      tokenCss += readFileSync(join(tokenDir, f), 'utf8') + '\n';
   }
   for (const r of scoredRungs()) {
     const runId = RUNG_TO_RUNID[r.rung];
@@ -64,23 +81,47 @@ export async function runAccuracy({ render = false, shots = null } = {}) {
       console.error(`[accuracy] ${r.rung}: reachability unknown (legacy capture, no figma-manifest.json) — scoring anyway`);
     }
 
-    const gStruct = extractStructural(readFileSync(join(TRIAL, r.targetTsx), 'utf8'));
+    const targetSrc = readFileSync(join(TRIAL, r.targetTsx), 'utf8');
+    const gStruct = extractStructural(targetSrc);
     const oStruct = extractStructural(readFileSync(join(TRIAL, r.oracleTsx), 'utf8'));
     const structuralSource = scoreStructural(gStruct, oStruct);
     let structuralDom = null;
 
+    // Static source analysis — always available (no render needed).
+    run.headless = architectureMetrics(targetSrc);
+    run.tokenBinding = scoreTokenBinding(targetSrc);
+    run.codeHealth = staticSourceMetrics(targetSrc, { language: 'ts', exportName: r.component });
+    run.tokenSystem = designTokenMetrics({ tokenCss, componentSrcs: [targetSrc] });
+    // Relative-import basenames → feeds the trial-level import-cycle check.
+    run.importEdges = [...targetSrc.matchAll(/from\s+['"](\.[^'"]+)['"]/g)]
+      .map((m) => m[1].split('/').pop().replace(/\.\w+$/, ''));
+
     const gates = await scoreGates({ runGate: runGateFor(run.gates), gates: ['typecheck', 'build', 'tests'] });
 
     let visual = null, style = null;
-    if (render && shots && r.hasOracleStory) {
+    if (render && shots && r.targetStoryId) {
+      let t = null;
       try {
-        const t = await shots.targetShot(r);
-        const o = await shots.oracleShot(r);
-        visual = scoreVisual(decodePng(t.pngBuffer), decodePng(o.pngBuffer));
-        style = scoreStyle(t.style, o.style);
-        structuralDom = scoreStructural({ tree: t.dom, props: gStruct.props }, { tree: o.dom, props: oStruct.props });
+        t = await shots.targetShot(r);
+        // Accessibility (axe) + Core Web Vitals + DOM-shape + render signals + runtime
+        // perf from the TARGET render — captured independently of the oracle.
+        run.a11y = scoreA11y(t.axe);
+        run.cwv = scoreCwv(t.cwv);
+        run.domShape = domShape(t.dom);
+        run.renderSignals = scoreRenderSignals(t.signals);
+        run.runtimePerf = scoreRuntimePerf(t.perf);
       } catch (e) {
-        console.error(`[accuracy] ${r.rung} render failed, marking visual/style unavailable: ${e.message}`);
+        console.error(`[accuracy] ${r.rung} target render failed, a11y/cwv unavailable: ${e.message}`);
+      }
+      if (t && r.hasOracleStory) {
+        try {
+          const o = await shots.oracleShot(r);
+          visual = scoreVisual(decodePng(t.pngBuffer), decodePng(o.pngBuffer));
+          style = scoreStyle(t.style, o.style);
+          structuralDom = scoreStructural({ tree: t.dom, props: gStruct.props }, { tree: o.dom, props: oStruct.props });
+        } catch (e) {
+          console.error(`[accuracy] ${r.rung} oracle render failed, visual/style unavailable: ${e.message}`);
+        }
       }
     }
 

@@ -1,7 +1,7 @@
 # Quality judge rubric
 
 Each judge agent scores ONE dimension 0–100 for the generated component, given:
-its source, stories, tests, docs, and the HeroUI reference (oracle). Return
+its source, stories, tests, docs, and the Reference reference (oracle). Return
 `{ score, rationale }`. Score against these criteria; be calibrated, not generous.
 
 ## optimizedCode (0–100)

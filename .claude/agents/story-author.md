@@ -29,6 +29,10 @@ field you need is absent, derive it and note that in your return `notes`. NEVER 
 that IS present — a present field is authoritative (the whole point of think-once is that this reasoning
 happened once).
 
+## Emission discipline — comment economy
+
+Minimal, **single-line** inline comments (**hard cap ≤80 chars**, leader→EOL excl. indentation) in story code — no narrative block/banner comments, no comment that restates the story or echoes a Figma node name. Emit one only for non-obvious intent; prefer self-documenting story/arg names. (Storybook `argTypes` descriptions + `.mdx` prose are documentation, not code comments — write them as needed.) Full rule: `protocols/figma-manifest.md` § Emission discipline.
+
 ## Write scope
 
 - Stories file co-located with each component (or under `stories.outputDir` when not `co-located`).

@@ -1,4 +1,4 @@
-{ "trialId": "heroui", "generatedAt": null,
+{ "trialId": "reference", "generatedAt": null,
   "runs": [{ "runId": "r6", "rung": "page", "tier": "extreme", "scenario": { "icon": false, "tier": "extreme" }, "command": "/figma-build page", "wallMs": 5000,
     "agents": [{ "agent": "component-builder", "model": "opus", "tokens": { "input": 900, "output": 0, "thinkingEst": 0, "cacheRead": 0, "cacheCreation": 0, "total": 900 }, "timeMs": { "sumDuration": 500, "wallSpan": 500, "ttftAvg": 20 }, "toolUses": 9, "costUsd": 0.9 }],
     "fanIn": [], "accuracy": { "composite": 40, "cappedAt": null, "visual": { "diffPct": 50, "score": 50 }, "style": { "matchRate": 45 }, "structural": { "score": 30 }, "gates": { "typecheck": true, "build": false, "tests": false, "a11y": true } },

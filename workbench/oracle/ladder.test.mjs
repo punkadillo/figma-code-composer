@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { LADDER, oracleSourceFor } from './ladder.mjs';
 
-test('LADDER covers the heroui-20260606 rungs, named by complexity', () => {
+test('LADDER covers the reference-20260606 rungs, named by complexity', () => {
   assert.equal(LADDER.length, 11);
   assert.deepEqual(LADDER.map(r => r.rung),
     ['trivial-icon','tokens','trivial-button','trivial-chip','moderate-input','moderate-switch',

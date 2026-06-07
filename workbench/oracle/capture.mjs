@@ -1,5 +1,5 @@
 // workbench/oracle/capture.mjs
-// LIVE oracle capture (operator phase). Component rungs → HeroUI Storybook;
+// LIVE oracle capture (operator phase). Component rungs → Reference Storybook;
 // template/page rungs → Figma screenshot. Returns { image, style, dom }.
 // IO-only orchestration: all scoring logic lives in the tested pure modules.
 import { decodePng } from './png.mjs';

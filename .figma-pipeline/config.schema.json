@@ -448,6 +448,54 @@
         }
       }
     },
+    "autonomy": {
+      "type": "object",
+      "description": "How the coordinator handles mid-run decision gates when the user may be unavailable. In 'autonomous' mode the coordinator answers each resolvable gate from this pre-recorded policy (the policy IS the user's standing decision — binding rules 4 & 5 are honored, not bypassed) and logs every auto-resolution to the handover's 'Autonomous decisions' block for async review. Gates with no safe default (page-selected, recursion cycle, MCP/setup aborts) stay hard stops regardless of level. Canonical resolution table in figma-coordinator.md § Autonomy policy; contract rules 3 & 6 in figma-manifest.md.",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["interactive", "autonomous"],
+          "default": "interactive",
+          "description": "'interactive' (default) blocks on every decision gate — today's behavior. 'autonomous' resolves each gate below from policy and continues, logging the decision."
+        },
+        "onUnbound": {
+          "type": "string",
+          "enum": ["block", "inline-and-flag", "skip-and-flag"],
+          "default": "block",
+          "description": "Gate #1 — a styled property has no Figma variable binding (rule 4). 'inline-and-flag' = standing pre-authorization to inline the rawValue as a fallback and flag it (equivalent to answering 'approve inlining for this run'). 'skip-and-flag' omits the property. 'block' = ask."
+        },
+        "onStackMismatch": {
+          "type": "string",
+          "enum": ["block", "update-current", "rebuild-current", "accept-existing"],
+          "default": "block",
+          "description": "Gate #2 — a KG-reusable component exists but was built for a different framework/cssSystem. 'update-current' patches it toward the active config via the intent:update flow (preferred — cheaper, no re-derivation drift). 'rebuild-current' re-derives from scratch. 'accept-existing' reuses as-is and flags."
+        },
+        "onUnsupportedOverride": {
+          "type": "string",
+          "enum": ["block", "extend-props", "drop-and-flag"],
+          "default": "block",
+          "description": "Gate #3 — a Figma instance override has no matching prop on the main component. 'extend-props' adds the prop to cover the override axis (the system's intent). 'drop-and-flag' omits it and surfaces it."
+        },
+        "onLibrarySwap": {
+          "type": "string",
+          "enum": ["block", "accept-and-flag", "rebuild"],
+          "default": "block",
+          "description": "Gate #4 — fromLibrary changed for a stable ledger id. 'accept-and-flag' keeps the existing build and flags (least destructive). 'rebuild' re-derives from the new source."
+        },
+        "onRemovedToken": {
+          "type": "string",
+          "enum": ["block", "update-if-replaced-else-keep-raw", "keep-raw-and-flag", "rebuild-dependent"],
+          "default": "block",
+          "description": "Gate #5 — a token used by a reused component was removed in Figma. 'update-if-replaced-else-keep-raw' (preferred): if the run's added tokens contain a value-matched successor, dispatch a batched intent:update token-rename patch to the dependents (preserves the token→component link surgically, ~3-8× cheaper than rebuild, stories/tests untouched); otherwise keep the last-known raw value as a fallback and flag. 'keep-raw-and-flag' never updates. 'rebuild-dependent' always re-derives (heaviest)."
+        },
+        "onAmbiguousSelection": {
+          "type": "string",
+          "enum": ["block", "pick-primary-and-flag"],
+          "default": "block",
+          "description": "Gate #7 — the selection has multiple top-level frames with no clear primary. 'pick-primary-and-flag' heuristically picks the largest/top-left frame as the component and loudly flags the choice. (Gate #6 'selection is a page' is NOT covered here — it stays a hard stop, no safe default.)"
+        }
+      }
+    },
     "knowledgeGraph": {
       "type": "object",
       "description": "Knowledge-graph + RAG configuration. The KG records every component the pipeline builds; the coordinator queries it before each build to enable reuse, prop-shape alignment, and skip-when-unchanged. See .figma-pipeline/protocols/knowledge-graph.md.",

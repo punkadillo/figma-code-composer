@@ -12,10 +12,10 @@ const fx = join(here, 'fixtures', 'trialset-mini');
 
 test('two fixture runs → trialset → trial report.md + dashboard.html', () => {
   const runs = ['run-atom.json', 'run-page.json'].map(f => JSON.parse(readFileSync(join(fx, f), 'utf8')));
-  const ts = aggregateTrialset({ trialId: 'heroui', runs,
+  const ts = aggregateTrialset({ trialId: 'reference', runs,
     comparisons: { coldWarm: { coldRunId: 'r6', warmRunId: 'r2' } } });
   assert.equal(ts.rungs.length, 2);
-  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', composite: 95 }, { rung: 'page', composite: 40 }]);
+  assert.deepEqual(ts.accuracyByRung, [{ rung: 'atom', label: 'atom', composite: 95 }, { rung: 'page', label: 'page', composite: 40 }]);
   assert.equal(ts.comparisons.coldWarm.tokenDeltaPct, -89); // (100-900)/900
 
   const out = mkdtempSync(join(tmpdir(), 'wb-ts-e2e-'));

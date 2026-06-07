@@ -178,7 +178,7 @@ When `figma-fetcher` walks a screen and encounters a Figma **INSTANCE** node, it
 
 1. **Instance + ledger hit (framework + cssSystem match)** — DO NOT spawn a builder for this entry. Hand the consuming component (the screen) the ledger entry's `filePath` + `exportName` so it imports the existing component. Record a `componentsReused[]` entry in the run report; record a `composes-instance` edge in the new component's ledger entry (when the screen itself becomes a ledger entry).
 
-2. **Instance + ledger hit but framework or cssSystem mismatch** — the existing entry was built for a different stack. DO NOT reuse silently. Surface a blocking ambiguity: *"Component X exists in the ledger built for `react/tailwind-v4`, but the current config is `vue/css-modules` — should I rebuild for the current stack, or leave both?"*. The user decides.
+2. **Instance + ledger hit but framework or cssSystem mismatch** — the existing entry was built for a different stack. DO NOT reuse silently. `interactive` → surface a blocking ambiguity: *"Component X exists in the ledger built for `react/tailwind-v4`, but the current config is `vue/css-modules` — should I rebuild for the current stack, or leave both?"* The user decides. `autonomous` → resolve via `config.autonomy.onStackMismatch` (default `update-current` patches toward the active stack via the update flow rather than a from-scratch rebuild) and record an Autonomous-decision entry. See `figma-coordinator.md` § Autonomy policy.
 
 3. **Instance + no ledger hit** — the main component has never been built. Build it FIRST (so subsequent instance references in the same run can be resolved as reuse), then mark all instance sites as reuse.
 
@@ -213,7 +213,7 @@ When `/figma-update` rebuilds Component X, every screen that composes X via `via
 
 ### Instance overrides → props
 
-Figma instance overrides (variant prop changes, text overrides) MUST surface as **props passed at the call site**, not as new component variants. The component-builder is responsible for exposing prop surface area on the main component that covers the override axes seen in instances. When an instance has an override that the main component doesn't support, flag it as a blocking ambiguity ("override sets `disabled=true` but Button has no `disabled` prop — extend the prop surface?").
+Figma instance overrides (variant prop changes, text overrides) MUST surface as **props passed at the call site**, not as new component variants. The component-builder is responsible for exposing prop surface area on the main component that covers the override axes seen in instances. When an instance has an override that the main component doesn't support: `interactive` → flag it as a blocking ambiguity ("override sets `disabled=true` but Button has no `disabled` prop — extend the prop surface?"). `autonomous` → resolve via `config.autonomy.onUnsupportedOverride` (default `extend-props` adds the prop to cover the override axis) and record an Autonomous-decision entry.
 
 ## Drift detection & policies
 
@@ -239,9 +239,9 @@ The user-driven cleanup command. Subcommands:
 
 | Case                                                | Policy                                                                 |
 | --------------------------------------------------- | ---------------------------------------------------------------------- |
-| Component composes itself via instance (recursion)  | Blocking ambiguity. The coordinator refuses to topo-sort cycles.       |
+| Component composes itself via instance (recursion)  | Blocking ambiguity — **always a hard stop**, no `config.autonomy` key (no safe default for a cyclic graph). The coordinator refuses to topo-sort cycles even in `autonomous` mode. |
 | Variant-set reuse — one main, many variants         | Each variant is its own ledger entry (separate `figmaNodeId`), sharing `mainComponentSetId`. Reuse keys on the specific variant id, not the set. |
-| Library swap (`fromLibrary` changes for same id)    | Surface as blocking ambiguity. The id is stable but the source is not — user decides rebuild vs. accept-as-is. |
+| Library swap (`fromLibrary` changes for same id)    | The id is stable but the source is not. `interactive` → blocking ambiguity (user decides rebuild vs. accept-as-is). `autonomous` → resolve via `config.autonomy.onLibrarySwap` (default `accept-and-flag`) + record. |
 | Renamed main component, same Figma ID               | Silent reuse (we key on ID, never name).                               |
 | Component deleted from Figma, ledger entry still exists | Orphan-on-disk-but-source-gone. `kg:verify` doesn't catch this (it checks disk, not Figma). `kg:repair --prune-orphans` lets the user delete.  |
 | Token unused by any component                       | Kept in the tokenSet entry. Orphan tokens are fine — design systems often pre-publish.                                                          |
@@ -250,7 +250,7 @@ The user-driven cleanup command. Subcommands:
 | Manual edit to a component file (`filePath` content drifted from build) | Out of scope — we trust user edits. `kg:verify` only checks existence + `exportName`, not content equivalence. If you want content-level drift detection, run the visual-regression pipeline (`config.knowledgeGraph.visualRegression.enabled`). |
 | `framework` change project-wide (e.g. react → vue)  | All prior-framework entries are stale. Coordinator surfaces them en masse on first build under the new framework; user runs `kg:repair --prune-orphans --where 'framework != "vue"'` to clear. |
 | `cssSystem` change                                  | Same as framework change — silent reuse blocked, surfaced for user decision. |
-| Reused component's tokens no longer exist (token removed) | Surfaced when token-builder's per-token diff reports `removed` for any token in `ledgerEntry.tokensUsed`. Blocking flag — user either re-adds the token or rebuilds the dependent component. |
+| Reused component's tokens no longer exist (token removed) | Surfaced when token-builder's per-token diff reports `removed` for any token in `ledgerEntry.tokensUsed`. `interactive` → blocking flag (re-add the token or rebuild dependents). `autonomous` → resolve via `config.autonomy.onRemovedToken` (default `update-if-replaced-else-keep-raw`): a value-matched successor in the run's `added` tokens → batched `intent:update` token-rename patch to dependents (preserves the link, stories/tests untouched); no successor → keep last-known raw value as a fallback + flag. See `figma-coordinator.md` § Token-rename update. |
 
 ### What `kg:verify` does NOT check
 
@@ -279,7 +279,9 @@ See [cli.md](./cli.md) for the full surface. KG-relevant subcommands:
 
 | Subcommand                                          | Caller             | Side effects                                  |
 | --------------------------------------------------- | ------------------ | --------------------------------------------- |
-| `fcc kg:query --slice <path> --top-k 5`             | figma-coordinator  | Read-only; returns JSON of top-K ledger entries |
+| `fcc kg:query --slice <path> --top-k 5`             | figma-coordinator  | Read-only; returns JSON of top-K ledger entries (similarity mode) |
+| `fcc kg:query --figma-node-id <id>`                 | figma-coordinator  | Read-only; exact instance-reuse lookup (no embeddings) |
+| `fcc kg:query --used-by <token> [--match prefix]`   | figma-coordinator  | Read-only; **reverse index** — entries whose `tokensUsed[]` contains the token (its dependents). Inverts the `uses-token` edge. Used by the `onRemovedToken` token-rename path to find which components to patch. No embeddings; linear ledger scan. |
 | `fcc kg:stage --run-id <id> --agent <name> --entry <json>` | each builder       | Appends one line to `staging/<runId>/<agent>.jsonl` |
 | `fcc kg:merge --run-id <id>`                        | figma-coordinator  | Atomic merge → `ledger.jsonl`; rebuilds graph + embeddings; deletes staging |
 | `fcc kg:rebuild`                                    | user (or doctor)   | Rebuilds `graph.json` + re-embeds all summaries from `ledger.jsonl` |

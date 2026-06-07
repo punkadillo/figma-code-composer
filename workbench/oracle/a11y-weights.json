@@ -1,0 +1,5 @@
+{
+  "penalty": { "critical": 25, "serious": 15, "moderate": 7, "minor": 3 },
+  "perNodeCap": 3,
+  "floor": 0
+}

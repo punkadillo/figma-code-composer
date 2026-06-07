@@ -1,0 +1,5 @@
+{
+  "lcp": { "good": 2500, "poor": 4000, "weight": 0.4 },
+  "cls": { "good": 0.1, "poor": 0.25, "weight": 0.3 },
+  "tbt": { "good": 200, "poor": 600, "weight": 0.3 }
+}

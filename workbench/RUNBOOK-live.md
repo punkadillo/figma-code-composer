@@ -1,10 +1,10 @@
-# HeroUI live trial runbook (Plans 2 + 3)
+# Reference live trial runbook (Plans 2 + 3)
 
 Prereq: `export FP_ALLOW_RESTRICTED_WRITE=1` in every shell that writes under `workbench/`.
-Trial id below is `heroui-<date>`; create `workbench/trials/<trialId>/` and `workbench/reports/<trialId>/`.
+Trial id below is `reference-<date>`; create `workbench/trials/<trialId>/` and `workbench/reports/<trialId>/`.
 
 ## 1. Reference + target
-- Clone the oracle (read-only): `git clone --depth 1 -b v3 https://github.com/heroui-inc/heroui workbench/trials/<trialId>/ref-heroui`
+- Clone the oracle (read-only): `git clone --depth 1 -b v3 https://github.com/reference-inc/reference workbench/trials/<trialId>/ref-oracle`
 - Scaffold the write-target: a fresh React + Tailwind v4 app at `workbench/trials/<trialId>/target/`.
 - `/init-figma-compose` against the target: framework=react, cssSystem=tailwind-v4, designSystem=none, methodology=atomic. Add `workbench/**` to `config.writeScope.allowedDirs`.
 
@@ -12,7 +12,7 @@ Trial id below is `heroui-<date>`; create `workbench/trials/<trialId>/` and `wor
 - `mcp__figma__get_metadata` on pages `0:1` (cover) and `10:1849` (icons); pick one node per rung per `workbench/oracle/ladder.mjs` (LADDER). Record `{ rung -> nodeId }`.
 
 ## 3. Capture the oracle bundles
-- Component rungs (icon-only/atom/molecule/organism/all-icons): start HeroUI Storybook (`pnpm --filter @heroui/storybook dev`) or use `storybook-sb-mcp`; capture screenshot+style+DOM of the matching story.
+- Component rungs (icon-only/atom/molecule/organism/all-icons): start Reference Storybook (`pnpm --filter @reference/storybook dev`) or use `storybook-sb-mcp`; capture screenshot+style+DOM of the matching story.
 - Template/page rungs: `mcp__figma__get_screenshot` of the node (visual) + `mcp__figma__get_variable_defs` (style reference).
 - Decode screenshots with `workbench/oracle/png.mjs` `decodePng` into the RGBA shape the visual scorer expects.
 
@@ -47,7 +47,7 @@ Snapshot each run's `/tmp/figma-<runId>/costs.jsonl` into `<runId>/costs/`. Note
 
 ## 6b. Quality scorecard (per run)
 - Collect the generated artifacts for the rung: component source, `*.stories.tsx`, `*.test.tsx`, and the docs file.
-- For each of the 5 dimensions (optimizedCode, dx, docs, testDepth, storybook), spawn a **3-vote judge panel**: 3 fresh judge agents, each given the artifacts + the HeroUI oracle reference + `workbench/oracle/rubric.md`, each returning `{ score, rationale }`. Wire them through `makeJudgeFor(deps, rubric)` from `workbench/oracle/judge-live.mjs`.
+- For each of the 5 dimensions (optimizedCode, dx, docs, testDepth, storybook), spawn a **3-vote judge panel**: 3 fresh judge agents, each given the artifacts + the Reference oracle reference + `workbench/oracle/rubric.md`, each returning `{ score, rationale }`. Wire them through `makeJudgeFor(deps, rubric)` from `workbench/oracle/judge-live.mjs`.
 - Score the run with `scoreBoth(bundle, { fidelityWeights, runGate, qualityWeights: <oracle/quality-weights.json>, judgeFor, judgeVotes: 3 })`. Write the returned `{ fidelity, quality }` into the run row as `accuracy` (= fidelity) and `quality`.
 - Deterministic metric overrides (optional): pass real tsc/coverage/bundler numbers into the metric layer instead of the heuristic defaults.
 

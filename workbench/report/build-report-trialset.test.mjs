@@ -9,12 +9,12 @@ test('buildReport renders trialset inputs via the trialset renderers', () => {
   const dir = mkdtempSync(join(tmpdir(), 'wb-ts-'));
   const p = join(dir, 'trialset.json');
   writeFileSync(p, JSON.stringify({
-    trialId: 'heroui', generatedAt: null, rungs: [], comparisons: {},
+    trialId: 'reference', generatedAt: null, rungs: [], comparisons: {},
     rollup: { perAgent: [], dominance: { tokens: 'x', time: 'x', byTier: {} }, crossCheck: { otelTotalTokens: 0, costsJsonlTotalTokens: 0, deltaPct: 0 } },
     accuracyByRung: [{ rung: 'atom', composite: 95 }],
   }));
   buildReport(p, '2026-06-03T00:00:00Z');
   assert.ok(existsSync(join(dir, 'report.md')));
   assert.ok(existsSync(join(dir, 'dashboard.html')));
-  assert.match(readFileSync(join(dir, 'report.md'), 'utf8'), /Workbench Trial Report — heroui/);
+  assert.match(readFileSync(join(dir, 'report.md'), 'utf8'), /Workbench Trial Report — reference/);
 });

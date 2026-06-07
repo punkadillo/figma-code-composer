@@ -2,7 +2,7 @@
 // Deterministic prep for the 3-vote quality pass: assemble each scored rung's
 // artifact bundle (component/stories/tests/docs), compute metric sub-scores, and
 // emit a per-rung judge spec (artifact + oracle paths) the judge agents read.
-// Writes /tmp/judge-heroui/{metrics.json, <rung>.spec.json}. No results mutation.
+// Writes /tmp/judge-reference/{metrics.json, <rung>.spec.json}. No results mutation.
 import { readFileSync, existsSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { RUNG_MAP } from './rung-map.mjs';
@@ -10,8 +10,8 @@ import { codeMetrics } from './metrics/code.mjs';
 import { surfaceMetrics } from './metrics/surface.mjs';
 import { metricSubScores } from './quality/dimensions.mjs';
 
-const TRIAL = process.env.TRIAL || 'workbench/trials/heroui-20260606';
-const OUT = '/tmp/judge-heroui';
+const TRIAL = process.env.TRIAL || 'workbench/trials/example';
+const OUT = '/tmp/judge-reference';
 mkdirSync(OUT, { recursive: true });
 
 // rung -> component dir under target/src/components, + main basename

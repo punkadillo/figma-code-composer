@@ -9,3 +9,39 @@ token/time/fan-in/dominance. See the design spec at
 
 ## Build a report from a results.json
     npm run workbench:report -- workbench/reports/<trialId>/results.json
+
+## Measurement tracks (per rung)
+
+Each ladder rung carries these tracks in the trialset; the dashboard renders one
+panel per track and the markdown report mirrors them.
+
+| Track | Source | Module | Notes |
+| --- | --- | --- | --- |
+| Accuracy | render + source | `oracle/run-accuracy.mjs` | visual / style / structural / gates composite |
+| Build Gate | source | `oracle/score-gates.mjs` | tsc / build / unit tests |
+| Quality | source judge | `oracle/quality-*.mjs` | 3-vote median panel over `rubric.md` |
+| **Token Consumption** | OTEL | derived in `analyze/otel-report.mjs` | per-rung token totals (measurable, lower is better) |
+| **Cost to Build** | OTEL `costUsd` | `analyze/otel-report.mjs` | per-rung USD, reconciled vs `costs.jsonl` |
+| **Accessibility** | axe-core in render | `oracle/score-a11y.mjs` | WCAG audit; 100 minus per-impact penalties |
+| **Stateless & Headless** | static source | `oracle/metrics/architecture.mjs` | controlled API / no value state / hook split / forwardRef / effect discipline |
+| **Core Web Vitals** | `PerformanceObserver` in render | `oracle/score-cwv.mjs` | LCP / CLS / TBT vs Google bands |
+| **Token binding** | static source | `oracle/score-token-binding.mjs` | literal-freedom — hardcoded hex/rgb/px vs tokens (binding rule 4) |
+| **Efficiency** | OTEL (derived) | `analyze/efficiency.mjs` | latency, cache-hit ratio, tool-calls, ttft, cost/tokens-per-accuracy-point |
+| **OpenTelemetry report** | OTEL stream | `analyze/otel-report.mjs` | per-agent cost / tokens / ttft + cross-check |
+| **Static code-health** | static source | `oracle/metrics/source-static.mjs` | types · complexity · CSS hygiene · dangerous APIs · `"use client"` · RTL · comment economy · composability · naming · prop-types |
+| **Design tokens** | token CSS + source | `oracle/metrics/design-tokens.mjs` | semantic-alias ratio · orphan refs · coverage |
+| **DOM & render** | render harness | `metrics/dom-shape.mjs` · `score-render-signals.mjs` · `score-runtime-perf.mjs` | nesting/bloat · focus-visible + keyboard · mount-time |
+| **Process & build meta** | telemetry / source | `analyze/process-meta.mjs` · `analyze/build-metrics.mjs` | reuse-rate · update-diff · retry · HITL · tier-routing · injection-resistance · import-cycles |
+
+**Capability-gated** (compute when the tool/data is supplied, else `null` + reason): real line coverage & mutation score (`metrics/test-quality.mjs`), bundle size & lint (`analyze/build-metrics.mjs`), INP / re-renders / memory (`score-runtime-perf.mjs`), determinism (needs two runs). Nothing is faked.
+
+Token/Cost/OTEL are derived from the OTEL agent data present in every trial.
+Accessibility and Core Web Vitals require the render pass; Stateless & Headless is
+static. Re-score to populate them:
+
+    # static (headless) only
+    TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs
+    # + a11y + Core Web Vitals (needs the built target Storybook + axe-core)
+    TRIAL=trials/<id> node workbench/oracle/run-accuracy.mjs --render
+
+Per-track weights/thresholds live in `oracle/{a11y,cwv,headless}-weights.json`.
