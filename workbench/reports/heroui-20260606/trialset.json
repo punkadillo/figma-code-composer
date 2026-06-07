@@ -1,0 +1,1761 @@
+{
+  "trialId": "heroui-20260606",
+  "generatedAt": null,
+  "rungs": [
+    {
+      "rung": "trivial-icon",
+      "tier": "trivial",
+      "runId": "trivial-icon",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 33,
+          "tokens": {
+            "input": 87,
+            "output": 11669,
+            "thinkingEst": 0,
+            "cacheRead": 786741,
+            "cacheCreation": 65279,
+            "total": 863776
+          },
+          "timeMs": {
+            "sumDuration": 218195,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 0.47991755
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null
+    },
+    {
+      "rung": "tokens",
+      "tier": "moderate",
+      "runId": "tokens",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 45,
+          "tokens": {
+            "input": 12598,
+            "output": 30256,
+            "thinkingEst": 0,
+            "cacheRead": 2408440,
+            "cacheCreation": 246777,
+            "total": 2698071
+          },
+          "timeMs": {
+            "sumDuration": 438763,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.83437705
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null
+    },
+    {
+      "rung": "trivial-button",
+      "tier": "trivial",
+      "runId": "trivial-button",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 62,
+          "tokens": {
+            "input": 417,
+            "output": 37260,
+            "thinkingEst": 0,
+            "cacheRead": 2374335,
+            "cacheCreation": 227188,
+            "total": 2639200
+          },
+          "timeMs": {
+            "sumDuration": 487717,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7248612999999997
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 42,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 99.9,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 22,
+          "tree": 13,
+          "prop": 36
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 29,
+          "tree": 25,
+          "prop": 36
+        },
+        "structuralDom": {
+          "score": 22,
+          "tree": 13,
+          "prop": 36
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 57,
+            "metric": 41,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, static object maps, no dead code. Side effect (console.warn) runs in render body rather than via useEffect; static variant/size maps recreated per render but are trivially cheap.",
+                "Clean forwardRef, no dead code, good Tailwind class maps. Missing isLoading/fullWidth vs oracle. Inline warn in render body (not useMemo/useEffect) is a minor foot-gun. No unneeded re-renders.",
+                "Clean forwardRef, good cn usage, no dead code. Missing: no loading/spinner state, isLoading prop absent vs oracle. Variant/size maps defined inline each render (no useMemo), minor but real cost."
+              ]
+            }
+          },
+          "dx": {
+            "score": 67,
+            "metric": 50,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Full JSDoc on every prop, extends ButtonHTMLAttributes, sensible defaults, ref-forwarding, displayName set, prop names match HeroUI oracle. Composable and discoverable API.",
+                "Props well-typed with JSDoc, sensible defaults, extends ButtonHTMLAttributes. Missing fullWidth, isLoading, and ButtonGroup context from oracle. startContent/endContent API matches HeroUI but is not the actual prop pattern the oracle uses.",
+                "Typed props, sensible defaults, JSDoc on each prop. Misses fullWidth, isLoading, and ButtonGroup context that oracle exposes. API is narrower than HeroUI v3 surface; isDisabled vs disabled naming diverges from oracle."
+              ]
+            }
+          },
+          "docs": {
+            "score": 5,
+            "metric": 0,
+            "judge": {
+              "score": 8,
+              "rationales": [
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc comments in source are minimal inline cues, not a prop table or usage example doc.",
+                "No .md/.mdx docs file exists in the generated directory. Inline JSDoc comments are present but that is not a standalone docs artifact per rubric.",
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc on props provides minimal inline guidance but no standalone prop table, usage examples, or purpose doc."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers default, all 7 variants, all 3 sizes, onClick fire, disabled (attribute + click suppression), startContent/endContent, ref forwarding, className merge, isIconOnly a11y warn/no-warn, icon-only sizing, HTML attribute passthrough. No focus/keyboard nav or loading tests (component lacks loading prop).",
+                "Covers defaults, disabled (attribute + click guard), all variants/sizes, ref forwarding, className merge, startContent/endContent, icon-only a11y warning, and HTML attribute pass-through. Missing loading state, boundary/empty children, and full ARIA role assertions.",
+                "Covers default render, all variants/sizes, click/disabled interaction, ref forwarding, className merge, a11y icon-only warn, attribute passthrough, and default classes. Missing: loading state (absent), boundary/empty children, and role/aria assertions beyond warn check."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 89,
+            "metric": 100,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Stories for Default, all Variants, all Sizes, IconOnly, Disabled, WithStartAndEndContent; argTypes fully wired; Figma link and a11y param set; play interactions on 3 stories. No loading/error state story but component doesn't expose those props.",
+                "Stories for Default, Variants, Sizes, IconOnly, Disabled, and WithStartAndEndContent with play functions on key stories. ArgTypes wired with controls. Missing Loading story, all-sizes-disabled, and ButtonGroup compositions. autodocs tag present.",
+                "Six stories covering Default, Variants, Sizes, IconOnly, Disabled, WithStartAndEndContent. Controls/argTypes wired. Play functions on interactive stories. Missing: loading state story, fullWidth, and a combined size×variant matrix that would round out coverage."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 26,
+          "total": 26
+        }
+      }
+    },
+    {
+      "rung": "trivial-chip",
+      "tier": "trivial",
+      "runId": "trivial-chip",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 28,
+          "tokens": {
+            "input": 11682,
+            "output": 32286,
+            "thinkingEst": 0,
+            "cacheRead": 882126,
+            "cacheCreation": 154089,
+            "total": 1080183
+          },
+          "timeMs": {
+            "sumDuration": 451103,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.5703438500000004
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 47,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 100,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 45,
+          "tree": 33,
+          "prop": 63
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 61,
+          "tree": 60,
+          "prop": 63
+        },
+        "structuralDom": {
+          "score": 45,
+          "tree": 33,
+          "prop": 63
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 65,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 63,
+            "metric": 54,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, good cn usage, static lookup tables avoid dynamic class issues. tertiary and soft share identical styles (possible design gap). No memo needed for a pure display component. Minor: inline baseClasses split could be one cn call.",
+                "Clean forwardRef, lookup tables for classes, no dead code. Missing useMemo on colorClasses/sizeClasses (re-created every render). tertiary and soft are identical — wasted branches. Otherwise readable and idiomatic.",
+                "Clean forwardRef, lookup tables avoid dynamic class construction, no dead code. Missing useMemo for colorClasses/sizeClasses (recreated every render). soft/tertiary map identically—redundant. Solid but not optimal."
+              ]
+            }
+          },
+          "dx": {
+            "score": 70,
+            "metric": 50,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "All props typed, JSDoc on each prop, sensible defaults, spreads HTMLAttributes. Missing: no onClose/dismissible callback, no disabled prop, API diverges from HeroUI oracle's compound pattern (ChipRoot+ChipLabel). Usable but narrower than reference.",
+                "Good JSDoc on props, typed interfaces, sensible defaults. But variant names (primary/secondary/tertiary/soft) diverge from HeroUI oracle (solid/bordered/light/flat/faded/dot), reducing discoverability for HeroUI users. No disabled prop.",
+                "Well-typed props, sensible defaults, JSDoc on each prop, ref-forwarded, spreads HTML attrs. Variant names (primary/secondary/tertiary/soft) deviate from HeroUI v3 oracle (solid/bordered/light/flat/dot). Misleading API for consumers familiar with the real library."
+              ]
+            }
+          },
+          "docs": {
+            "score": 5,
+            "metric": 0,
+            "judge": {
+              "score": 8,
+              "rationales": [
+                "No .md or .mdx documentation file present in the generated directory. JSDoc comments in source are present but there is no standalone prop table, usage example doc, or README.",
+                "No .md or .mdx documentation file exists in the generated directory. JSDoc in the TSX is present but a proper doc file with prop table and usage examples is absent.",
+                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc comments are present in the component but do not constitute standalone documentation."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, both slots together, ref forwarding, className merge, a11y span/role check, and HTML attr passthrough. Missing: empty children edge case, aria-label on chip root assertion.",
+                "Covers defaults, all variants, all colors, all sizes, startContent/endContent slots, ref forwarding, className merging, and a basic a11y span check. Missing: disabled state, empty children, aria-label passthrough assertion on chip itself, role tests beyond span tagName.",
+                "Covers defaults, all 4 variants, all 5 colors, all 3 sizes, startContent/endContent slots, ref forwarding, className merging, a11y span-role check, and HTML attr passthrough. Missing: disabled state (not modeled), empty children, boundary/overflow edge cases. Solid mid-range coverage."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 84,
+            "metric": 100,
+            "judge": {
+              "score": 68,
+              "rationales": [
+                "Default, Variants, Colors, Sizes, and WithStartAndEndContent stories present; controls wired via argTypes; Figma design link and a11y param set. Missing stories for color×variant cross-matrix and no disabled/loading state. One play-test in WithStartAndEndContent.",
+                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. Controls wired via argTypes. Missing: disabled/dot variant stories, cross-variant×color matrix, no play-function assertions except on one story. A few meaningful states absent.",
+                "Stories for Default, Variants, Colors, Sizes, and WithStartAndEndContent. ArgTypes wired with controls. Figma link present. One play-test included. Missing: per-color-per-variant matrix, no disabled/empty state stories, only one play assertion."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 21,
+          "total": 21
+        }
+      }
+    },
+    {
+      "rung": "moderate-input",
+      "tier": "moderate",
+      "runId": "moderate-input-cold",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 59,
+          "tokens": {
+            "input": 1622,
+            "output": 35710,
+            "thinkingEst": 0,
+            "cacheRead": 1645419,
+            "cacheCreation": 172110,
+            "total": 1854861
+          },
+          "timeMs": {
+            "sumDuration": 563080,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.6795541999999999
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 30,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 98,
+          "score": 2
+        },
+        "style": {
+          "matchRate": 33,
+          "properties": {
+            "color": false,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": true,
+            "font-size": false,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": false,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 23,
+          "tree": 25,
+          "prop": 20
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 12,
+          "tree": 7,
+          "prop": 20
+        },
+        "structuralDom": {
+          "score": 23,
+          "tree": 25,
+          "prop": 20
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 63,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 39,
+            "metric": 0,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef with merged refs, useCallback guards, no dead code. Minor issue: mergedRef recreates on every render when ref is an object (missing stable identity). Number stepper is a thoughtful addition but adds conditional complexity not in oracle.",
+                "forwardRef, useCallback, useId used correctly. mergedRef callback is clean. Dead-code risk: CaretsExpandVertical viewBox-crop trick is clever but relies on SVG props pass-through — fragile, undocumented assumption. No cva/tv but cn is consistent per house style. Minor: ref dep in useCallback could change on every render.",
+                "Clean forwardRef + useId + useCallback usage. Manual ref merging instead of useImperativeHandle is slightly awkward; stepUp/stepDown dispatches a native Event not a React SyntheticEvent, which may miss some controlled-input cases. No dead code; memoization is reasonable but handleStep deps array is empty while it closes over nothing mutable — acceptable. Overall readable but not tight."
+              ]
+            }
+          },
+          "dx": {
+            "score": 78,
+            "metric": 70,
+            "judge": {
+              "score": 82,
+              "rationales": [
+                "Typed InputProps extends InputHTMLAttributes, sensible defaults, good JSDoc, forwardRef, displayName set. Missing errorMessage/helperText slots and no compound-component pattern (oracle uses context + slots). leadingIcon-only (no trailing) limits composability.",
+                "InputProps extends InputHTMLAttributes giving full native passthrough. Prop names (variant, label, leadingIcon) are intuitive. Dev-mode a11y warning is excellent DX. Missing: no errorMessage/helperText slot, no trailingIcon, no size prop — limiting vs HeroUI TextFieldContext pattern. Types are clean and JSDoc is thorough.",
+                "Extends InputHTMLAttributes fully, typed props with JSDoc, sensible defaults, MagnifierIcon convenience export, and accessible-name dev warning are all good DX. Missing: no error/helperText/required/clearable slots; variant naming ('primary'/'secondary') is bespoke and diverges from HeroUI's context-driven variant pattern, reducing composability."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md or .mdx documentation file present in the component directory. JSDoc comments in the source are good but do not substitute for a standalone docs file with prop table and usage examples.",
+                "No .md or .mdx documentation file exists in the Input directory. All documentation is inline JSDoc only. Rubric requires a separate docs file with prop table and usage examples to score above 49.",
+                "No .md or .mdx documentation file exists in the generated directory. JSDoc on props is present in source but there is no standalone docs artifact — score is near floor per rubric."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Covers render, ref forwarding, label association, auto-id, a11y warning paths (all 4 cases), variants, leadingIcon slot, disabled state (text + number), stepper interaction (click up/down + onChange), tabIndex, all native types, controlled/uncontrolled. Only gap: no boundary tests (min/max) or error state.",
+                "Covers: render smoke, ref forwarding, label association (3 cases), a11y warn (4 variants), variant class assertions, leadingIcon slot (3 cases), disabled + disabled stepper, number stepper interactions (increment, decrement, tabIndex), type preservation (email/url/search/password), onChange, controlled value. Near-complete boundary coverage.",
+                "Covers smoke render, forwardRef, label association (3 cases), a11y warn suppression (3 paths), variant class assertions, leadingIcon slot (3 cases), disabled state, number stepper interaction (increment/decrement/tabIndex), type union preservation (email/url/search/password), controlled value, and onChange. Missing: boundary (min/max/step), empty-string value edge, and aria-required/aria-invalid attribute pass-through."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 90,
+            "metric": 100,
+            "judge": {
+              "score": 80,
+              "rationales": [
+                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled — all with play functions and userEvent interactions. argTypes wired with controls. Missing: error/invalid state story, ReadOnly story, and no story for leadingIcon with number type.",
+                "7 stories covering Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled. Each has a play function with userEvent assertions. argTypes fully wired with controls. Figma URL and a11y params set. Missing: error/invalid state story, no ReadOnly story, no size variant (component has none). Otherwise solid.",
+                "7 stories (Default, Secondary, WithLabel, WithLeadingIcon, Number, Password, Disabled) with argTypes wired for variant/type/label/placeholder/disabled, play functions with userEvent interactions, a11y and Figma design params. Missing stories: error/invalid state, required field, all input types gallery, and controlled vs uncontrolled toggle. Solid but not exhaustive."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 26,
+          "total": 26
+        }
+      }
+    },
+    {
+      "rung": "moderate-switch",
+      "tier": "moderate",
+      "runId": "moderate-switch",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 59,
+          "tokens": {
+            "input": 3470,
+            "output": 38532,
+            "thinkingEst": 0,
+            "cacheRead": 1807428,
+            "cacheCreation": 162064,
+            "total": 2011494
+          },
+          "timeMs": {
+            "sumDuration": 659384,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7383584
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 46,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 99.7,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 43,
+          "tree": 71,
+          "prop": 0
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 26,
+          "tree": 43,
+          "prop": 0
+        },
+        "structuralDom": {
+          "score": 43,
+          "tree": 71,
+          "prop": 0
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 57,
+            "metric": 42,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Clean forwardRef, no prop-mirroring into state, correct controlled/uncontrolled split. Missing useCallback on handleChange; textClasses is a needless variable for a static string. No compound/context pattern diverges from HeroUI oracle but is idiomatic React.",
+                "Clean controlled/uncontrolled pattern, no dead code, good use of forwardRef. Missing useMemo for derived classes; textClasses recalculated every render. Deps on _SwitchControl adds indirection not in ref design.",
+                "Clean controlled/uncontrolled handling, no dead code. Missing useMemo on stable handlers; relies on private _SwitchControl sub-component not in oracle's compound API. Readable but structurally diverges from ref's context+slots pattern."
+              ]
+            }
+          },
+          "dx": {
+            "score": 63,
+            "metric": 50,
+            "judge": {
+              "score": 68,
+              "rationales": [
+                "Well-typed props with JSDoc, HeroUI-aligned names (isSelected/isDisabled/onValueChange), sensible defaults. API is monolithic vs oracle's composable SwitchRoot/Control/Thumb compound pattern, limiting consumer customizability.",
+                "Props are well-typed with JSDoc, HeroUI-style naming (isSelected, isDisabled, onValueChange). Missing compound sub-components (Control, Thumb, Icon, Content) present in ref oracle, limiting composability significantly.",
+                "Props well-named and typed (isSelected, onValueChange, isDisabled match HeroUI conventions). API is monolithic rather than the compound pattern (Root/Control/Thumb/Icon/Content) the oracle exposes, reducing composability for consumers."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md/.mdx docs file in the generated directory. Only inline JSDoc on the props interface. No prop table, no usage example doc, no purpose statement as a standalone document.",
+                "No .md or .mdx docs file in the generated directory. JSDoc comments on props are present in source but there is no standalone documentation artifact.",
+                "No .md/.mdx docs file in the generated directory. JSDoc comments on props provide minimal inline docs only; no standalone prop table, usage example, or purpose statement in a dedicated doc file."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Covers default, defaultSelected true/false, uncontrolled toggle+callback, controlled mode, label children, label click, disabled (input.disabled + no callback), keyboard Space, aria-describedby/aria-label forwarding, and ref forwarding. Strong a11y assertions.",
+                "Covers default render, uncontrolled toggle, controlled mode, disabled (click blocked), keyboard Space, aria-label/describedby forwarding, ref forwarding, and label-click. Missing loading/error states but a11y role assertions are solid.",
+                "Covers default render, defaultSelected true/false, controlled/uncontrolled toggle, disabled click, keyboard Space, aria-describedby/aria-label forwarding, ref forwarding, and label-click. Missing loading/error states and size-variant assertions."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "5 stories: Default, Selected, WithLabel (play function tests toggle), Disabled, Sizes. ArgTypes wired with controls. Missing a Controlled story showing isSelected+onValueChange pair. Otherwise solid variant coverage.",
+                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired, a11y enabled, and a play function on WithLabel. Missing controlled story and no story for each size in isolation; no loading/error variant story.",
+                "Five stories (Default, Selected, WithLabel, Disabled, Sizes) with argTypes wired and a play function on WithLabel. Missing controlled story and per-size individual stories; no compound-slot stories since the API differs from the oracle."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 15,
+          "total": 15
+        }
+      }
+    },
+    {
+      "rung": "complex-card",
+      "tier": "complex",
+      "runId": "complex-card",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 65,
+          "tokens": {
+            "input": 9447,
+            "output": 52711,
+            "thinkingEst": 0,
+            "cacheRead": 2327711,
+            "cacheCreation": 261340,
+            "total": 2651209
+          },
+          "timeMs": {
+            "sumDuration": 776601,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 3.0498358999999993
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 47,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 73.3,
+          "score": 27
+        },
+        "style": {
+          "matchRate": 50,
+          "properties": {
+            "color": true,
+            "background-color": false,
+            "padding": false,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": false,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 39,
+          "tree": 55,
+          "prop": 17
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 22,
+          "tree": 26,
+          "prop": 17
+        },
+        "structuralDom": {
+          "score": 39,
+          "tree": 55,
+          "prop": 17
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 39,
+            "metric": 0,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef, good helper booleans, no dead code. Slight redundancy: 3 near-identical inner content wrappers across full/row/column branches; could be extracted. No needless re-renders; no memoization needed at this scale.",
+                "Clean forwardRef, pure layout helpers, no dead code. Minor: renderCover as inline fn not memoized; CardHeader/CardFooter missing 'use client'. No useMemo/useCallback overuse. Solid but not optimal.",
+                "Idiomatic forwardRef, clean helper fns, good cn usage. Four layout branches with repeated inner-wrapper markup is slightly redundant; a single renderBody helper would DRY it. No unnecessary re-renders; no memo needed at this scale."
+              ]
+            }
+          },
+          "dx": {
+            "score": 74,
+            "metric": 50,
+            "judge": {
+              "score": 84,
+              "rationales": [
+                "Well-typed discriminated union on CardFooter, clear JSDoc on every prop, sensible defaults. Minor gap: CardFooter lacks forwardRef/ref forwarding and no className escape hatch. CardHeader heading semantics deferred to consumers (noted in docs).",
+                "Discriminated union on CardFooter is excellent. JSDoc on every prop, sensible defaults, full type exports via index.ts. cover/coverSrc dual API adds slight complexity. CardFooter lacks forwardRef (acceptable for discriminated union).",
+                "Discriminated union on CardFooter is excellent DX; layout enum is clear; JSDoc on every prop. Minor gaps: CardFooter lacks forwardRef/ref, title prop on CardHeader avoids semantic heading (mentioned but not guided), basic vs basic-img distinction is subtle."
+              ]
+            }
+          },
+          "docs": {
+            "score": 13,
+            "metric": 0,
+            "judge": {
+              "score": 22,
+              "rationales": [
+                "No .md or .mdx documentation file exists in the generated directory. Inline JSDoc on props is present but there is no standalone prop table, usage guide, or example doc — docs score is low per rubric.",
+                "No .md/.mdx docs file exists in the generated dir. JSDoc inline comments provide some guidance but there is no prop table, standalone usage example, or component-level documentation file.",
+                "No .md/.mdx docs file exists anywhere in the generated dir. Inline JSDoc on props is present but the rubric awards 90-100 for a dedicated doc with prop table and usage example; absence of that file lands this in the 0-49 band."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 92,
+            "metric": 100,
+            "judge": {
+              "score": 84,
+              "rationales": [
+                "Covers all 6 layouts, close button fire/no-fire, icon slot presence, coverAlt default, ref forwarding, className merge, compound composition, and all 4 CardFooter type discriminants including external link attrs. Missing: a11y role assertions and keyboard-focus behaviour tests.",
+                "Excellent breadth: ref, spreading, isClosable edge cases, parameterized layout matrix, all 4 footer discriminants, isolations tests. Missing: explicit aria-hidden assertions, keyboard nav, focus-visible checks.",
+                "Covers all 6 layout variants, closable/onClose, icon slot, coverSrc per-layout, ref forwarding, className merging, compound usage, and all 4 CardFooter discriminant branches with boundary isolation tests. Missing: a11y/role assertions on the card container itself and keyboard navigation of the close button."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 95,
+            "metric": 100,
+            "judge": {
+              "score": 90,
+              "rationales": [
+                "One story per layout variant (6), plus Closable, Blurred, WithIcon. All four CardFooter types and CardHeader states have their own stories with play functions and argTypes wired. Controls mapped for every prop; a11y addon enabled; Figma design URL linked.",
+                "9 Card stories covering all 6 layouts plus closable/blurred/icon; 4 CardHeader + 8 CardFooter stories. All have play functions with assertions, argTypes wired, Figma links, a11y:error param set.",
+                "9 stories across Card + all layout variants + Closable + Blurred + WithIcon; CardHeader has 4 stories; CardFooter covers all 4 types with play tests. Controls/argTypes fully wired; Figma + a11y params set. Slight gap: no story for custom cover slot or empty/no-children edge case."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 59,
+          "total": 59
+        }
+      }
+    },
+    {
+      "rung": "complex-alert",
+      "tier": "complex",
+      "runId": "complex-alert",
+      "icon": true,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 60,
+          "tokens": {
+            "input": 2541,
+            "output": 39582,
+            "thinkingEst": 0,
+            "cacheRead": 1628412,
+            "cacheCreation": 180671,
+            "total": 1851206
+          },
+          "timeMs": {
+            "sumDuration": 618461,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7062692499999996
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 56,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 51.7,
+          "score": 48
+        },
+        "style": {
+          "matchRate": 75,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": false,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 8,
+          "tree": 9,
+          "prop": 8
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 21,
+          "tree": 29,
+          "prop": 8
+        },
+        "structuralDom": {
+          "score": 8,
+          "tree": 9,
+          "prop": 8
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 65,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 56,
+            "metric": 30,
+            "judge": {
+              "score": 82,
+              "rationales": [
+                "Clean forwardRef, module-level constant maps, no dead code, displayName set. CloseIcon as inline component is minor overhead. No needless re-renders. Misses useMemo on resolvedIcon but variant is stable per render.",
+                "Idiomatic forwardRef, no dead code, object maps for variant lookup, proper displayName. Module-level JSX in defaultIconMap is benign. No unneeded memoization. Slightly flat vs oracle's slot-based architecture.",
+                "Clean forwardRef, no dead code, static color maps avoid recomputation. Missing useMemo for resolvedIcon. defaultIconMap defined at module level creates JSX at import time — fine but slightly wasteful. No needless re-renders."
+              ]
+            }
+          },
+          "dx": {
+            "score": 67,
+            "metric": 50,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "JSDoc on every prop, Omit<HTMLAttributes,'title'> avoids collision, sensible defaults, composable icon/actionLabel API, both AlertProps and AlertVariant exported. Slightly less composable than HeroUI's compound-subcomponent pattern.",
+                "Full JSDoc on every prop, sensible defaults, Omit<HTMLAttributes,'title'> correct, types exported. Monolithic prop-bag vs oracle's composable compound-component pattern limits advanced composition.",
+                "Props are well-typed and JSDoc-annotated. However, the generated API is a monolithic single-component vs the oracle's composable compound pattern (AlertRoot/AlertIndicator/AlertTitle/AlertDescription). Loses composability expected of HeroUI v3."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md/.mdx docs file in the generated directory. Inline JSDoc comments are present in Alert.tsx but there is no standalone documentation with a prop table or usage examples.",
+                "No .md/.mdx documentation file in the generated directory. Inline JSDoc comments present in source but no standalone prop table or usage example document.",
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc on props is the only docs surface; no prop table, no standalone usage examples, no README."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 89,
+            "metric": 100,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Covers role, title/desc render+omit, icon slot, all 5 variant color classes, action button click+omit, close button click+omit+no-handler safety, prop spreading, className merge. Missing a11y live-region and zero-props boundary case.",
+                "Covers role, title/desc null cases, all 5 variant color classes, icon toggle/override, action+close button click/omission/missing-handler. Lacks keyboard-only interaction tests and combined-state boundary cases.",
+                "Covers role, title, description, showIcon, icon override, all 5 variant color classes, action button click, onAction/onClose callbacks, missing-handler safety, className merge, and data-testid spread. Missing explicit a11y/aria-live assertions and boundary cases like empty string title."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 92,
+            "metric": 100,
+            "judge": {
+              "score": 84,
+              "rationales": [
+                "Five per-variant stories plus WithDescription, TitleOnly, WithAction, Closable, WithoutIcon. All argTypes wired with controls, play functions for each story, Figma design URL, a11y param set to error. Comprehensive coverage.",
+                "10 stories covering all 5 variants plus WithDescription, TitleOnly, WithAction, Closable, WithoutIcon. All have play functions, argTypes wired with controls, Figma URL and a11y config present.",
+                "9 stories covering all 5 variants plus WithDescription, TitleOnly, WithAction, Closable, WithoutIcon. Args/controls wired, play functions assert presence. Missing CustomIcon story and no story combining action + close simultaneously."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 22,
+          "total": 22
+        }
+      }
+    },
+    {
+      "rung": "complex-tabs",
+      "tier": "complex",
+      "runId": "complex-tabs",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 70,
+          "tokens": {
+            "input": 27740,
+            "output": 54195,
+            "thinkingEst": 0,
+            "cacheRead": 2303346,
+            "cacheCreation": 301930,
+            "total": 2687211
+          },
+          "timeMs": {
+            "sumDuration": 773696,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 3.664089700000001
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 49,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 93.4,
+          "score": 7
+        },
+        "style": {
+          "matchRate": 83,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": true,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 31,
+          "tree": 47,
+          "prop": 8
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 12,
+          "tree": 15,
+          "prop": 8
+        },
+        "structuralDom": {
+          "score": 31,
+          "tree": 47,
+          "prop": 8
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 64,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 36,
+            "metric": 0,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "forwardRef, useCallback, useId used well. readTabs and tabs array recreated every render without useMemo; useEffect on tabs dep fires unnecessarily. ResizeObserver wired correctly. No dead code.",
+                "Clean forwardRef, stable class maps, useCallback on hot paths, ResizeObserver wired correctly. readTabs() runs every render without useMemo; tabs.length dep on effect is a stale-closure smell; tabRefs Map never cleaned on unmount.",
+                "Clean forwardRef, good useCallback memoization, proper cleanup. readTabs() runs on every render without useMemo, causing moveFocus dep to stale and a subtle effect cascade on tabs.length change."
+              ]
+            }
+          },
+          "dx": {
+            "score": 77,
+            "metric": 50,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Typed JSDoc on every prop, clear controlled/uncontrolled API, composable <Tab> declarative pattern. Tab as null-render config marker may surprise devs; no forwardRef on Tab. Sensible defaults throughout.",
+                "Well-typed props with JSDoc, controlled/uncontrolled duality, disabledKeys + isDisabled both supported, sensible defaults. Tab as config-marker pattern is clever but deviates from HeroUI v3 compound-component idiom (TabList/TabPanel as siblings, not children).",
+                "Excellent JSDoc on every prop, clear controlled/uncontrolled split, intuitive names (isVertical, disabledKeys, onSelectionChange), aria-label typed. Declarative Tab marker pattern is clean. Minor: no size/icon slot."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md/.mdx doc file exists. Inline JSDoc covers props but there is no standalone usage guide, prop table, or example document. Docs score reflects absence per rubric.",
+                "No .md or .mdx documentation file exists in the generated directory. Only inline JSDoc on Tab.tsx and prop comments in Tabs.tsx; no prop table, no standalone usage doc.",
+                "No .md/.mdx docs file in generated dir. Tab.tsx has a usage @example block and JSDoc is accurate, but rubric requires a standalone doc file with prop table; absent drives score to low range."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 96,
+            "metric": 100,
+            "judge": {
+              "score": 91,
+              "rationales": [
+                "36 tests: smoke, default/controlled/uncontrolled selection, disabled via prop and disabledKeys, click-no-fire on disabled, roving tabindex, ArrowLeft/Right/Up/Down/Home/End, wrapping, skip-disabled, vertical axis guard, ARIA attributes, variant classes, fullWidth, className spread.",
+                "Covers smoke, default/controlled/uncontrolled selection, roving tabindex, full keyboard nav (arrows, Home, End, wrap, skip-disabled, vertical axis), disabled via prop and disabledKeys, aria-controls/labelledby cross-wiring, fullWidth, variant classes, and rest-props spread. Near-complete a11y and boundary coverage.",
+                "Covers default/defaultSelectedKey, disabled fallback, panel ARIA wiring, click, controlled (frozen + updating), roving tabindex, all arrow keys + Home/End, wrap, skip-disabled, vertical axis guard, fullWidth, variants. Minor gaps: focus-ring and empty-tabs edge case."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "9 stories covering primary, secondary, fullWidth, vertical, disabled, defaultSelectedKey, controlled, keyboard nav, and scrollable. All have play interaction tests. argTypes wired. Missing secondary+vertical combo story.",
+                "10 stories covering primary, secondary, fullWidth, vertical, disabled, defaultSelectedKey, controlled, keyboard nav, and scrollable. Play functions exercise click and keyboard interactions. Minor gap: no story for disabledKeys array path or aria-labelledby; argTypes wired for all main props.",
+                "9 stories cover all variants and states (primary, secondary, fullWidth, vertical, disabled, controlled, keyboard, scrollable). All argTypes wired, play functions with assertions on every story, autodocs + a11y params."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 40,
+          "total": 40
+        }
+      }
+    },
+    {
+      "rung": "complex-dashboard",
+      "tier": "complex",
+      "runId": "complex-dashboard",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 115,
+          "tokens": {
+            "input": 24482,
+            "output": 78038,
+            "thinkingEst": 0,
+            "cacheRead": 4169330,
+            "cacheCreation": 483928,
+            "total": 4755778
+          },
+          "timeMs": {
+            "sumDuration": 1267845,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 5.254069600000002
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 45,
+        "cappedAt": null,
+        "visual": null,
+        "style": null,
+        "structural": {
+          "score": 4,
+          "tree": 6,
+          "prop": 0
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0,
+          "style": 0,
+          "structural": 0.5714285714285715,
+          "gates": 0.4285714285714286
+        },
+        "structuralSource": {
+          "score": 4,
+          "tree": 6,
+          "prop": 0
+        },
+        "structuralDom": null,
+        "availability": {
+          "visual": false,
+          "style": false,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 61,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 66,
+            "metric": 54,
+            "judge": {
+              "score": 78,
+              "rationales": [
+                "Clean forwardRef, idiomatic JSX, no dead code. Inline SVG glyphs are fine for a demo. CubeIcon and AssetsIcon share identical paths (copy-paste). No memoization issues for static data.",
+                "Idiomatic forwardRef, cn merging, clean data separation. Glyphs defined as module-level FCs (stable refs). CubeIcon and AssetsIcon share identical paths—dead/duplicate code. No memoization needed at demo scale. navGroups/sceneCards as module constants is correct.",
+                "Clean composition, no dead code, forwardRef correct. Inline SVG glyph components are not memoized (recreated each render). Static data arrays are module-level constants (good). CubeIcon and AssetsIcon share identical paths — minor duplication."
+              ]
+            }
+          },
+          "dx": {
+            "score": 65,
+            "metric": 50,
+            "judge": {
+              "score": 72,
+              "rationales": [
+                "Props type is just HTMLAttributes<HTMLElement> — very thin API for a composition demo. Composition clarity is good: each sub-section clearly labeled. But no slot overrides or data props to customise nav/cards without forking.",
+                "Props are minimal but appropriate for a demo (HTMLAttributes passthrough + className). Composition clarity is high—child components accept render-prop slots clearly. Loses points for no prop to inject custom navGroups/sceneCards, making the demo non-customisable at the composition level.",
+                "Props type is just HTMLAttributes<HTMLElement> — minimal surface, correct for a demo screen. Composition clarity is high: each section component is clearly named and slotted. No customization hooks for nav/cards limits reuse but fits a demo. JSDoc is present and clear."
+              ]
+            }
+          },
+          "docs": {
+            "score": 13,
+            "metric": 0,
+            "judge": {
+              "score": 22,
+              "rationales": [
+                "No .md/.mdx doc file in the generated dir. JSDoc on the component is present and accurate but no prop table, no usage example, no dedicated docs artifact.",
+                "No .md/.mdx doc file present. JSDoc on the component is solid (explains layout, child components, data intent) but there is no prop table, no usage example outside the component itself, and no standalone documentation artifact.",
+                "No .md or .mdx doc file exists. JSDoc on the component is present but thin — describes layout, not props or usage patterns. No prop table, no standalone usage example outside code."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 87,
+            "metric": 100,
+            "judge": {
+              "score": 74,
+              "rationales": [
+                "Covers landmark roles, aria-current, all 12 cards, filter chips, search, ref forwarding, className merge. Missing: loading/error/empty states, keyboard nav, a11y role assertions beyond implicit landmarks.",
+                "Covers landmark roles, aria-current selection, search input, filter chips, all 12 card titles, ref forwarding, className merge, and avatar fallback. Misses: disabled/loading/error states (n/a for a demo), but no empty-state branch, no keyboard-navigation, no a11y-axe scan. Good breadth for a composition demo.",
+                "12 unit tests covering landmark roles, aria-current, search input, ref forwarding, className merge, all 12 card titles, filter chips, and user avatar. Missing: empty-state, loading/error states (n/a for demo), boundary assertions beyond count, and explicit a11y role checks on card grid semantics."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 51,
+            "metric": 50,
+            "judge": {
+              "score": 52,
+              "rationales": [
+                "Two stories (Default with play assertions, WithCustomClass). Play test checks key landmarks and active nav. Missing stories: dark mode, mobile/narrow viewport, loading skeleton state. Only one meaningful variant story.",
+                "Two stories (Default full-dashboard with play assertions, WithCustomClass). Play function checks key landmarks and aria-current. Missing: narrow-viewport/mobile story, dark-mode variant, no controls wired to meaningful args (only className). Title nesting 'Components/components/DashboardDemo' is malformed (double prefix).",
+                "Only 2 stories: Default (full dashboard) and WithCustomClass (trivial className override). No story for responsive/narrow viewport, no story demoing varied nav selections, no controls wired beyond className. play() assertions are solid but coverage of meaningful states is thin."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 14,
+          "total": 14
+        }
+      }
+    },
+    {
+      "rung": "extreme-calendar",
+      "tier": "extreme",
+      "runId": "extreme-calendar",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 150,
+          "tokens": {
+            "input": 54023,
+            "output": 118206,
+            "thinkingEst": 0,
+            "cacheRead": 6629644,
+            "cacheCreation": 713051,
+            "total": 7514924
+          },
+          "timeMs": {
+            "sumDuration": 1706533,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 8.354247950000001
+        }
+      ],
+      "fanIn": [],
+      "accuracy": {
+        "composite": 45,
+        "cappedAt": null,
+        "visual": {
+          "diffPct": 100,
+          "score": 0
+        },
+        "style": {
+          "matchRate": 83,
+          "properties": {
+            "color": true,
+            "background-color": true,
+            "padding": true,
+            "margin": true,
+            "gap": true,
+            "font-size": true,
+            "font-weight": true,
+            "font-family": false,
+            "line-height": true,
+            "border-radius": true,
+            "border-width": true,
+            "border-color": false
+          }
+        },
+        "structural": {
+          "score": 24,
+          "tree": 40,
+          "prop": 0
+        },
+        "gates": {
+          "typecheck": true,
+          "build": true,
+          "tests": true
+        },
+        "weights": {
+          "visual": 0.35000000000000003,
+          "style": 0.30000000000000004,
+          "structural": 0.20000000000000004,
+          "gates": 0.15000000000000002
+        },
+        "structuralSource": {
+          "score": 3,
+          "tree": 6,
+          "prop": 0
+        },
+        "structuralDom": {
+          "score": 24,
+          "tree": 40,
+          "prop": 0
+        },
+        "availability": {
+          "visual": true,
+          "style": true,
+          "structural": true,
+          "gates": true
+        }
+      },
+      "quality": {
+        "composite": 67,
+        "dimensions": {
+          "optimizedCode": {
+            "score": 41,
+            "metric": 0,
+            "judge": {
+              "score": 82,
+              "rationales": [
+                "Clean discriminated-union props, idiomatic forwardRef, disjoint class maps avoid tw-merge conflicts. Minor: years[] built with a for-loop each render (no useMemo); inline arrow in onFocusDate prop recreates fn each render.",
+                "Clean separation, disjoint class maps avoid twMerge, good useCallback/useMemo. Minor: props closure in commitSingle/commitRange captures stale props ref; year list builds 200-entry array on every picker render with no memo.",
+                "Clean architecture, disjoint class maps, roving-focus all correct. Minor: navMonths has nested setVisibleStartMonth inside setFocusedDate updater (ordering hazard), and CalendarGrid rebuilds outOfBounds inline on every render without useCallback/memo."
+              ]
+            }
+          },
+          "dx": {
+            "score": 86,
+            "metric": 80,
+            "judge": {
+              "score": 88,
+              "rationales": [
+                "Excellent JSDoc on every prop, discriminated union for selectionMode, sensible defaults, composable sub-components all exported. Minor: CalendarGrid exposes year+month separately instead of a single Date, slightly leaking internals.",
+                "Discriminated union on selectionMode is excellent. Full JSDoc on every prop, sensible defaults, forwardRef throughout, clean barrel index. Minor: CalendarGrid not forwardRef-useful (table ref rarely needed by consumers).",
+                "Excellent discriminated union props, JSDoc on every prop, sensible defaults, ref-forwarded everywhere, clean index.ts barrel. Minor deduction: controlled-vs-uncontrolled isControlled derived from value===undefined conflates null; no exported useCalendar hook."
+              ]
+            }
+          },
+          "docs": {
+            "score": 7,
+            "metric": 0,
+            "judge": {
+              "score": 12,
+              "rationales": [
+                "No .md or .mdx documentation file exists anywhere in the generated directory. JSDoc comments in source code are good but rubric requires a standalone doc with prop table and usage example.",
+                "No .md/.mdx documentation file exists in the generated directory. JSDoc comments are present in source but there is no standalone prop table, usage example doc, or README.",
+                "No .md or .mdx documentation file exists in the generated directory. JSDoc comments on props are present in source but no standalone prop table, usage examples, or README doc was produced."
+              ]
+            }
+          },
+          "testDepth": {
+            "score": 96,
+            "metric": 100,
+            "judge": {
+              "score": 91,
+              "rationales": [
+                "Covers smoke/roles, disabled state, today aria-current, controlled vs uncontrolled, range with swap, min/max/unavailable, all keyboard keys (Arrow/Page/Home/End/Enter/Space), roving-focus window invariant, picker a11y wiring, visibleMonths=2, ref forwarding, plus a thorough calendar-utils unit suite.",
+                "Covers smoke, color variants, disabled/unavailable states, today a11y, controlled/uncontrolled single+range, min/max, nav buttons, all arrow/Page/Home/End keys, Enter/Space, roving-focus window invariant with filler cells, picker a11y wiring, visibleMonths=2, ref forwarding. calendar-utils.test.ts covers all pure helpers with boundary cases (leap year, month overflow, null guards, reversed ranges). Only minor gap: no test for locale prop affecting rendered text.",
+                "calendar-utils.test has deep unit coverage (leap years, edge rollover, null guards, week-start permutations). Calendar.test adds disabled, unavailable, aria-current, controlled/uncontrolled, range swap, keyboard (all 8 keys), roving-focus window invariant, picker a11y wiring, two-month nav, ref forward — near-comprehensive."
+              ]
+            }
+          },
+          "storybook": {
+            "score": 94,
+            "metric": 100,
+            "judge": {
+              "score": 87,
+              "rationales": [
+                "16 stories covering Default, RangeTwoMonths, WithMonthYearPickers, 5 colors, Disabled, 2 weekday styles, MinMax, UnavailableDates, WithShadow, KeyboardNavigation, WeekStartsOnMonday, RangeControlled, LocaleFrench — all with play functions and argTypes wired. Missing: loading/error boundary states and a hover/focus visual-only story.",
+                "14 named stories covering default, range+two-months, month/year pickers, all 5 colors, disabled, weekday styles (short+long), min/max, unavailable dates, shadow, keyboard nav, week-start Monday, controlled range, French locale. All have play functions with assertions. Minor: ColorDefault/Success/Warning/Danger play functions are near-identical boilerplate; no story for visibleMonths=2 single mode or showShadow visual diff.",
+                "16 stories covering default, range+two-month, picker, 5 colors, disabled, weekday styles, min/max, unavailable, shadow, keyboard, week-start-monday, range-controlled, locale-french. Each has play() assertions. Missing: hover-preview story, no story per range mid-selection state."
+              ]
+            }
+          }
+        },
+        "weights": {
+          "optimizedCode": 0.25,
+          "dx": 0.2,
+          "docs": 0.15,
+          "testDepth": 0.25,
+          "storybook": 0.15
+        }
+      },
+      "gates": {
+        "tsc": true,
+        "build": true,
+        "tests": {
+          "passed": 130,
+          "total": 130
+        }
+      }
+    },
+    {
+      "rung": "moderate-input",
+      "tier": "moderate",
+      "runId": "moderate-input-warm",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 74,
+          "tokens": {
+            "input": 2211,
+            "output": 37128,
+            "thinkingEst": 0,
+            "cacheRead": 1852695,
+            "cacheCreation": 185633,
+            "total": 2077667
+          },
+          "timeMs": {
+            "sumDuration": 608442,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 1.7167698500000002
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null
+    },
+    {
+      "rung": "moderate-input",
+      "tier": "moderate",
+      "runId": "moderate-input-update",
+      "icon": false,
+      "agents": [
+        {
+          "agent": "custom",
+          "model": "claude-sonnet-4-6",
+          "requests": 10,
+          "tokens": {
+            "input": 842,
+            "output": 11192,
+            "thinkingEst": 0,
+            "cacheRead": 212612,
+            "cacheCreation": 67733,
+            "total": 292379
+          },
+          "timeMs": {
+            "sumDuration": 163536,
+            "wallSpan": 0,
+            "ttftAvg": 0
+          },
+          "toolUses": 0,
+          "costUsd": 0.48818834999999994
+        }
+      ],
+      "fanIn": [],
+      "accuracy": null,
+      "gates": null
+    }
+  ],
+  "comparisons": {
+    "coldWarm": {
+      "coldRunId": "moderate-input-cold",
+      "warmRunId": "moderate-input-warm",
+      "tokenDeltaPct": 12
+    },
+    "buildUpdate": {
+      "buildRunId": "moderate-input-cold",
+      "updateRunId": "moderate-input-update",
+      "tokenDeltaPct": -84
+    }
+  },
+  "rollup": {
+    "perAgent": [
+      {
+        "agent": "custom",
+        "tokens": {
+          "input": 151162,
+          "output": 576765,
+          "thinkingEst": 0,
+          "cacheRead": 29028239,
+          "cacheCreation": 3221793,
+          "total": 32977959
+        },
+        "timeMs": 8733356,
+        "costUsd": 33.26088295
+      }
+    ],
+    "dominance": {
+      "tokens": "custom",
+      "time": "custom",
+      "byTier": {
+        "trivial": {
+          "tokens": "custom"
+        },
+        "moderate": {
+          "tokens": "custom"
+        },
+        "complex": {
+          "tokens": "custom"
+        },
+        "extreme": {
+          "tokens": "custom"
+        }
+      }
+    },
+    "crossCheck": {
+      "otelTotalTokens": 32977959,
+      "costsJsonlTotalTokens": 32977959,
+      "deltaPct": 0
+    }
+  },
+  "accuracyByRung": [
+    {
+      "rung": "trivial-icon",
+      "composite": null
+    },
+    {
+      "rung": "tokens",
+      "composite": null
+    },
+    {
+      "rung": "trivial-button",
+      "composite": 42
+    },
+    {
+      "rung": "trivial-chip",
+      "composite": 47
+    },
+    {
+      "rung": "moderate-input",
+      "composite": 30
+    },
+    {
+      "rung": "moderate-switch",
+      "composite": 46
+    },
+    {
+      "rung": "complex-card",
+      "composite": 47
+    },
+    {
+      "rung": "complex-alert",
+      "composite": 56
+    },
+    {
+      "rung": "complex-tabs",
+      "composite": 49
+    },
+    {
+      "rung": "complex-dashboard",
+      "composite": 45
+    },
+    {
+      "rung": "extreme-calendar",
+      "composite": 45
+    },
+    {
+      "rung": "moderate-input",
+      "composite": null
+    },
+    {
+      "rung": "moderate-input",
+      "composite": null
+    }
+  ],
+  "qualityByRung": [
+    {
+      "rung": "trivial-icon",
+      "composite": null
+    },
+    {
+      "rung": "tokens",
+      "composite": null
+    },
+    {
+      "rung": "trivial-button",
+      "composite": 64
+    },
+    {
+      "rung": "trivial-chip",
+      "composite": 65
+    },
+    {
+      "rung": "moderate-input",
+      "composite": 63
+    },
+    {
+      "rung": "moderate-switch",
+      "composite": 64
+    },
+    {
+      "rung": "complex-card",
+      "composite": 64
+    },
+    {
+      "rung": "complex-alert",
+      "composite": 65
+    },
+    {
+      "rung": "complex-tabs",
+      "composite": 64
+    },
+    {
+      "rung": "complex-dashboard",
+      "composite": 61
+    },
+    {
+      "rung": "extreme-calendar",
+      "composite": 67
+    },
+    {
+      "rung": "moderate-input",
+      "composite": null
+    },
+    {
+      "rung": "moderate-input",
+      "composite": null
+    }
+  ]
+}

@@ -20,7 +20,7 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Button/Button.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/button/button.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-button--default',
+    targetStoryId: 'components-components-button--default',
     oracleStoryId: 'components-buttons-button--default',
   },
   'trivial-chip': {
@@ -28,7 +28,7 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Chip/Chip.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/chip/chip.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-chip--default',
+    targetStoryId: 'components-components-chip--default',
     oracleStoryId: 'components-data-display-chip--default',
   },
   'moderate-input': {
@@ -44,15 +44,15 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Switch/Switch.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/switch/switch.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-switch--default',
-    oracleStoryId: 'components-forms-switch--default',
+    targetStoryId: 'components-components-switch--default',
+    oracleStoryId: 'components-controls-switch--default',
   },
   'complex-card': {
     rung: 'complex-card', component: 'Card',
     targetTsx: 'target/src/components/Card/Card.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/card/card.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-card--default',
+    targetStoryId: 'components-components-card--default',
     oracleStoryId: 'components-layout-card--default',
   },
   'complex-alert': {
@@ -60,7 +60,7 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Alert/Alert.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/alert/alert.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-alert--default',
+    targetStoryId: 'components-components-alert--default',
     oracleStoryId: 'components-feedback-alert--default',
   },
   'complex-tabs': {
@@ -68,7 +68,7 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Tabs/Tabs.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/tabs/tabs.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-tabs--default',
+    targetStoryId: 'components-components-tabs--primary',
     oracleStoryId: 'components-navigation-tabs--default',
   },
   'extreme-calendar': {
@@ -76,18 +76,18 @@ export const RUNG_MAP = {
     targetTsx: 'target/src/components/Calendar/Calendar.tsx',
     oracleTsx: 'ref-heroui/packages/react/src/components/calendar/calendar.tsx',
     hasOracleStory: true,
-    targetStoryId: 'components-calendar--default',
-    oracleStoryId: 'components-date-time-calendar--default',
+    targetStoryId: 'components-components-calendar--default',
+    oracleStoryId: 'components-date-and-time-calendar--default',
   },
   'complex-dashboard': {
     rung: 'complex-dashboard', component: 'Dashboard',
-    targetTsx: 'target/src/components/Dashboard/Dashboard.tsx',
+    targetTsx: 'target/src/components/DashboardDemo/DashboardDemo.tsx',
     // Composition demo — no 1:1 component oracle; closest HeroUI demo is the
     // subtle-cards dashboard layout. Scored structurally + by quality judge, not
     // pixel-diffed to a single component story.
     oracleTsx: 'ref-heroui/packages/storybook/.storybook/stories/demos/subtle-cards-demo.tsx',
     hasOracleStory: false,
-    targetStoryId: 'components-dashboard--default',
+    targetStoryId: 'components-components-dashboarddemo--default',
     oracleStoryId: null,
   },
 };
