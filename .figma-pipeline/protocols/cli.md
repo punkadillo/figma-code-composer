@@ -71,12 +71,11 @@ Scaffold the pipeline into a project. (Default when no subcommand given, for bac
 
 ### `fcc doctor`
 
-Validate the local configuration, MCP reachability, and RTK detection.
+Validate the local configuration and MCP reachability.
 
 **Effect (read-only):**
 - Read `.figma-pipeline/config.json`. Validate against `config.schema.json`.
 - Print resolved output-structure tree (where each generated artifact will land).
-- Check `rtk` binary on PATH. Update `config.rtk.installed` + `config.rtk.version` if changed (writes config.json).
 - Check Figma MCP reachability via `mcp__figma__get_metadata` if available; if not, print the manual check.
 - Check `.figma-pipeline/kg/` directory health (sqlite-vec readable, ledger.jsonl parseable, no orphan staging dirs).
 
@@ -85,7 +84,7 @@ Validate the local configuration, MCP reachability, and RTK detection.
 | Flag                  | Effect                                                |
 | --------------------- | ----------------------------------------------------- |
 | `--explain-output`    | Print the resolved output-structure tree only         |
-| `--no-write`          | Don't update config.rtk; doctor is fully read-only    |
+| `--no-write`          | doctor is fully read-only                             |
 | `--mcp-skip`          | Skip MCP reachability check                           |
 
 **Exit codes:**
@@ -322,6 +321,14 @@ Guarded prune of `.figma-pipeline/skills/` down to a keep-set. The vetted replac
 - `0` — pruned (or nothing to prune)
 - `2` — bad input (empty/unsafe `--keep`, no skills dir)
 - `3` — guard tripped (disjoint keep-set) or out-of-scope target
+
+## `fcc brevit:encode [file]` / `fcc brevit:decode [file]`
+
+Opportunistic, size-guarded token-efficient wire format (`protocols/brevit.md`). `encode` reads `file`
+or stdin and writes the Brevit wire form ONLY when it round-trips AND is smaller than the JSON, else the
+raw JSON (it never inflates or loses data). `decode` inflates a wire payload back to JSON for tooling
+(scalars return as strings — documented drift). Absent/broken brevit → identity passthrough, exit 0.
+Never mutates config.
 
 ## Exit-code conventions (summary)
 

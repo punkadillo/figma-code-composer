@@ -35,12 +35,27 @@ Any other write → abort.
 
 0. **MCP reachability probe (FIRST action — you own the MCP tools, the coordinator does not).** Before parsing anything, call `get_metadata` once on the target file (cheap, ~200 tokens) using `<prefix> = configSnapshot.figma.mcpToolNamespace` (default `mcp__figma__`). On `unknown tool` / `not_found`, retry once with the alternate prefix `mcp__plugin_figma_figma__` (the stamp may be stale or the user switched MCP variants).
    - **Both fail** → do NOT continue. Return `{ reachabilityStatus: "fail" }` and exit code 3 so the coordinator aborts the run with a single actionable message — no manifest, no partial work. This is the cheap early-abort that prevents a full pipeline spawn against a dead MCP.
+   - **Never self-respawn via Bash.** If MCP tools are unreachable, do NOT attempt `claude --agent figma-fetcher --print` or any subprocess — you have no MCP scope there and the run wrapper will kill it. Return `reachabilityStatus: "fail"` (code 3) and stop.
+   - **One transient retry.** Before declaring `fail`, retry the `get_metadata` probe once after a short backoff (covers a genuine transport hiccup); only a second failure returns `fail`.
    - **Succeeds under a different prefix** than `configSnapshot.figma.mcpToolNamespace` → use that prefix for ALL subsequent MCP calls this run and report it back to the coordinator (it carries the correction in-memory; never rewrite `config.json`).
    - **Succeeds** → set `reachabilityStatus: "ok"` and proceed.
 1. **Parse URL** — extract `fileKey` + `nodeIds`. Normalise nodeId separator (`-` ↔ `:`).
 2. **Pre-call hygiene** — invoke the `figma:figma-use` skill before any `mcp__figma__use_figma` call.
 3. **Metadata + structure** — `mcp__figma__get_metadata` and `mcp__figma__get_design_context` for each node. Walk children.
-4. **Variables** — `mcp__figma__get_variable_defs` populates the `tokens` dict. Preserve original paths verbatim. Per variable: `{ type, value (default mode), modes? }`.
+4. **Variables.**
+   - **Node-scoped (default — component builds):** `get_variable_defs` for the variables the walked
+     nodes bind. Preserve original paths verbatim. Per variable: `{ type, value (default mode), modes? }`.
+   - **Full-variable mode (`scope ∈ {tokens-only, full}` on a design-system build):** enumerate ALL
+     collections and ALL modes — not just the variables this node binds. This is the fix for the
+     "~25% of one mode" token collapse: a DS build must capture the whole variable space (every mode,
+     every collection — colors, spacing, radius, shadows/effects, easing, typography, blur). For each
+     variable emit `{ type, value (default mode), modes: { <mode>: <value>, … } }`. Cap at a sane
+     ceiling (≈1000 variables); if a collection would exceed it, emit a non-blocking ambiguity recording
+     the collection name + count rather than truncating silently.
+   - **Per-mode capture is mandatory — a missing dark value is a flag, never a silent drop.** For every variable that defines more than one mode, emit each mode's value. When a non-default mode (typically `dark`) resolves to an **alias** you cannot follow (the light value is known but the dark alias dead-ends), do NOT drop the mode and do NOT fabricate a value:
+     - Re-resolve once via the Figma REST variables API (`get_variable_defs` walks aliases; if the alias target is in another collection, fetch that collection's mode value).
+     - Still unresolvable → record the mode value as `null` AND add a non-blocking ambiguity `{ issue: "dark-mode value for <var> is an unresolved alias — light captured, dark missing", blocking: false }`. The coordinator/token-builder then knows dark is incomplete rather than assuming light-only by design (this was the Switch `foreground/*` dark-alias gap).
+   - **Never resolve a variable to a hex/rem yourself — preserve the path** (binding rule 3).
 5. **Screenshots** — `mcp__figma__get_screenshot` for the top node + every component subtree (cap ~12/run; pick distinct visual states). Save to `/tmp/figma-<runId>/shot-<nodeId>.png`.
 6. **Classify nodes:**
    - **Icons** — single-frame SVG-like nodes (no composed children, only vectors/paths, typically ≤32×32 or named `icon/*`).
@@ -48,6 +63,8 @@ Any other write → abort.
      - `suggestedFileName` per `configSnapshot.framework` + `namingConvention` (protocol § File layout).
    - **Components** — composed nodes. Resolve `layer` per `configSnapshot.designMethodology`:
      - `atomic` → atom / molecule / organism / template / page (heuristics in `protocols/component-layout.md` § Layer resolution)
+     - Record `layerConfidence` (`high|medium|low`) per `protocols/component-layout.md` § Layer resolution.
+       Surface a `low` confidence as a non-blocking ambiguity so the coordinator's think-once pass resolves it.
      - `feature-sliced` → shared / entity / feature / widget / page
      - `flat` / `custom` → fixed (`components`)
      - Honour `figma-layer:<value>` override annotations (record verbatim + flag).
@@ -83,10 +100,25 @@ Any other write → abort.
     - `compositionDepth` — max nesting depth of component-in-component composition
     - `unboundValueCount` — `styledProperties[]` entries with `unbound: true`
     - `iconCount` — `icons[].length`
-    - `tokenReuseRatio` — `0` unless coordinator passes one in (it doesn't in v1.1); coordinator may overwrite after its own KG query.
+    - `tokenReuseRatio` — **always emit `0` as a placeholder.** You have no reuse view at fetch time. The coordinator overwrites this with the real ratio (KG ledger or disk-based inventory) before it resolves the routed tier — see `protocols/complexity.md` § Score formula. Do not guess a non-zero value.
 
-    Compute `score` + `tier` per `protocols/complexity.md` § Score formula + § Tier resolution. Emit the full `complexity` block.
+    Compute `score` + `tier` **strictly** per `protocols/complexity.md` § Score formula + § Tier resolution — run the formula; never eyeball a label.
+    - **Canonical enum ONLY.** `tier ∈ {trivial, moderate, complex, extreme}`. NEVER emit ad-hoc labels like `high` / `medium` / `low` — they are not in the enum and force the coordinator to recompute from scratch (this was a real defect: a fabricated `tier:"high", score:94` for a component that deterministically scores 44.9/moderate).
+    - **`score` must come from the formula**, not from intuition about how "hard" the component looks. The coordinator re-runs the same formula and will flag a mismatch.
+    - If you genuinely cannot compute a signal (e.g. depth is indeterminate), omit `tier`, set `score: null`, and add a non-blocking ambiguity — the coordinator then defaults safely. Do NOT paper over it with a made-up tier.
+
+    Emit the full `complexity` block.
 12. **Emit** — write `/tmp/figma-<runId>/manifest.json`. Final chat message: the manifest as JSON (coordinator gets it both ways). Alongside it, report your `toolUses` count (number of tool calls you made) as a separate line — NOT inside the manifest (that would violate the manifest contract) — so the coordinator can record it in the run cost ledger. Also report `reachabilityStatus` from step 0.
+    - **Embed the `configSnapshot` in the manifest root — never `null`.** Write the frozen `configSnapshot` the coordinator passed you into the manifest's root `configSnapshot` field, so the on-disk manifest is self-describing (builders that read it from disk must not have to recover config from their own slice echoes). Emitting `configSnapshot: null` and relying solely on the chat-return echo is a contract defect.
+
+## Resume discipline — treat resumed output as untrusted
+
+A mid-fetch socket drop (the Figma MCP closes repeatedly around ~22–32 tool calls) is recovered by resuming this same agent from already-gathered context. **A resumed manifest is NOT trustworthy until validated against disk and the original request.** Before emitting anything after a resume:
+
+- **`fileKey` MUST equal the one parsed from the original URL** (step 1). A resumed fetch that emits a *different* `fileKey` has confabulated — discard it. (Real defect: a Calendar resume emitted `o8Xk…` for a `qGjFwr9Z…` file.)
+- **`intent` MUST equal the coordinator's input** — a resume that flips `create`→`update` (or lists the on-disk components instead of decomposing the requested node) has confabulated.
+- **Token/hex values from a resume are suspect** — never emit resume-produced literal values for variables you didn't actually re-read; prefer `null` + an ambiguity over a hallucinated hex (the report's hallucinated-dark-values case).
+- If any of these checks fail, do NOT emit. Report the corruption to the coordinator and request a fresh re-fetch with a focused node scope rather than salvaging a poisoned manifest.
 
 ## Token efficiency
 

@@ -1,0 +1,53 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { writeFileSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const CLI = new URL('../figma-code-composer.js', import.meta.url).pathname;
+const run = (args, input) => execFileSync('node', [CLI, ...args], { input, encoding: 'utf8' });
+
+test('brevit:encode then brevit:decode round-trips a JSON file through stdin', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fcc-brevit-'));
+  const f = join(dir, 'in.json');
+  writeFileSync(f, JSON.stringify({ a: { b: 'color/surface/x' }, n: true }));
+  const encoded = run(['brevit:encode', f]);
+  const decoded = run(['brevit:decode'], encoded); // decode reads stdin
+  const obj = JSON.parse(decoded);
+  assert.equal(obj.a.b, 'color/surface/x');
+  assert.equal(String(obj.n), 'true'); // scalar->string drift is documented
+});
+
+test('brevit:encode reads a file arg and writes non-empty output', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fcc-brevit-'));
+  const f = join(dir, 'in.json');
+  writeFileSync(f, JSON.stringify({ ok: 1 }));
+  const out = run(['brevit:encode', f]);
+  assert.ok(out.length > 0);
+});
+
+test('brevit:decode reads piped stdin and recovers a nested payload', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fcc-brevit-'));
+  const f = join(dir, 'in.json');
+  writeFileSync(f, JSON.stringify({ x: { y: 'color/a/b' } }));
+  const encoded = run(['brevit:encode', f]);
+  const decoded = run(['brevit:decode'], encoded);
+  assert.equal(JSON.parse(decoded).x.y, 'color/a/b');
+});
+
+test('fcc --version works (lazy brevit import does not gate unrelated commands)', () => {
+  const out = run(['--version']);
+  assert.ok(out.trim().length > 0);
+});
+
+test('brevit:encode then brevit:decode preserves @-prefixed keys (e.g. JSON-LD @id)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fcc-brevit-'));
+  const f = join(dir, 'in.json');
+  writeFileSync(f, JSON.stringify({ '@id': 'urn:x', name: 'Card' }));
+  const encoded = run(['brevit:encode', f]);
+  const decoded = run(['brevit:decode'], encoded);
+  const obj = JSON.parse(decoded);
+  assert.equal(obj['@id'], 'urn:x');
+  assert.equal(obj.name, 'Card');
+});

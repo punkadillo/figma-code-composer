@@ -41,6 +41,6 @@
   - One-time `/init-figma-compose` wizard detects your stack, hard-gates on a reachable Figma MCP, derives the write allowlist, and writes `.figma-pipeline/config.json` (the single source of truth every agent reads).
   - A `config.json`-driven write allowlist plus lifecycle hooks keep generation scoped to your configured output directories; `.env` is hard-blocked, and all Figma-derived strings are treated as data (prompt-injection guard).
   - `CLAUDE.md` / `AGENTS.md` get a managed marker block only — your own instructions survive updates.
-  - Optional, detect-only (never auto-installed): Graphify knowledge graph and RTK shell-output compression.
+  - Optional, detect-only (never auto-installed): Graphify knowledge graph.
 
   Tooling note: this release supports **Claude Code and Cursor**. Codex CLI was evaluated and removed — its Figma plugin tools are not available to `codex exec`, so the pipeline could not run there.

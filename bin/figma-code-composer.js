@@ -3,7 +3,7 @@
 //
 // Subcommands:
 //   init [target]              Scaffold the pipeline into a project (default)
-//   doctor                     Validate config, check RTK install, MCP reachability
+//   doctor                     Validate config + MCP reachability
 //   complexity <manifest>      Print complexity score for a manifest JSON
 //   kg:query                   Retrieve top-K prior components for a manifest slice
 //   kg:stage                   Subagent writes a ledger delta (parallel-safe)
@@ -11,6 +11,8 @@
 //   kg:rebuild                 Rebuild graph.json + embeddings from ledger.jsonl
 //   handover                   Emit handover .md for a run
 //   skills:prune               Guarded prune of .figma-pipeline/skills/ to a keep-set
+//   brevit:encode              Flatten a JSON payload to Brevit wire format (round-trip-guarded)
+//   brevit:decode              Inflate a Brevit payload back to JSON (for tooling)
 //
 // Legacy: invoking without a subcommand defaults to `init` for backward compat.
 //
@@ -33,7 +35,8 @@
 //   --version / -v     Print package version
 
 import { createRequire } from "node:module";
-import { readFileSync, existsSync, mkdirSync, cpSync, chmodSync, statSync, readdirSync, writeFileSync, appendFileSync, openSync, closeSync, rmSync, renameSync } from "node:fs";
+import { readFileSync, readSync, existsSync, mkdirSync, cpSync, chmodSync, statSync, readdirSync, writeFileSync, appendFileSync, openSync, closeSync, rmSync, renameSync } from "node:fs";
+import { safeEncode, decodeText } from './lib/brevit.mjs';
 import { dirname, join, relative, resolve, isAbsolute, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createInterface } from "node:readline/promises";
@@ -120,6 +123,8 @@ const KNOWN_SUBCOMMANDS = new Set([
   "kg:repair",
   "handover",
   "skills:prune",
+  "brevit:encode",
+  "brevit:decode",
 ]);
 
 const SUBCOMMAND_HANDLERS = {
@@ -134,6 +139,8 @@ const SUBCOMMAND_HANDLERS = {
   "kg:repair":  runKgRepair,
   handover:     runHandover,
   "skills:prune": runSkillsPrune,
+  "brevit:encode": runBrevitEncode,
+  "brevit:decode": runBrevitDecode,
 };
 
 async function dispatch(argv) {
@@ -197,7 +204,7 @@ ${c("bold", "figma-code-composer")} (fcc) — Figma-to-code pipeline scaffold + 
 ${c("bold", "Subcommands:")}
   init [target]              Scaffold the pipeline into a project (default)
   migrate                    De-dupe a pre-ownership-split CLAUDE.md into the PIPELINE.md import
-  doctor                     Validate config, RTK install, MCP reachability
+  doctor                     Validate config + MCP reachability
   complexity <manifest>      Print complexity score for a manifest JSON
   kg:query                   Retrieve top-K prior components for a manifest slice
   kg:stage                   Subagent writes a ledger delta (parallel-safe)
@@ -207,6 +214,8 @@ ${c("bold", "Subcommands:")}
   kg:repair                  User-driven cleanup: prune orphans, rebuild, resolve paths
   handover                   Emit handover .md for a run
   skills:prune               Guarded prune of .figma-pipeline/skills/ to a --keep set
+  brevit:encode              Flatten a JSON payload to Brevit wire format (round-trip-guarded)
+  brevit:decode              Inflate a Brevit payload back to JSON (for tooling)
 
 ${c("bold", "Init usage:")}
   npx figma-code-composer [target] [options]
@@ -571,7 +580,6 @@ async function runInit(argv) {
   if (tools.includes("claude")) console.log(`     ${c("cyan", "Claude Code")}  →  /init-figma-compose`);
   if (tools.includes("cursor")) console.log(`     ${c("cyan", "Cursor")}       →  type /init-figma-compose in agent chat`);
   console.log(`  ${c("dim", "3.")} Read ${c("cyan", ".figma-pipeline/PIPELINE.md")} for binding rules + coverage (imported by your CLAUDE.md; AGENTS.md points to it).`);
-  console.log(`  ${c("dim", "4.")} (Optional) install RTK to compress shell-output tokens — the wizard will print the right install + per-tool init commands for your stack (Claude Code / Cursor). RTK is user-level only; never auto-installed.`);
   console.log("");
 }
 
@@ -1146,7 +1154,7 @@ function runDoctor(args) {
   if (!existsSync(CONFIG_PATH)) fail(2, "No .figma-pipeline/config.json — run /init-figma-compose first.");
   const cfg = loadConfig();
   const p = kgPaths(cfg);
-  const report = { config: "ok", kg: {}, rtk: {}, warnings: [] };
+  const report = { config: "ok", kg: {}, warnings: [] };
 
   // config sanity
   for (const k of ["version", "framework", "cssSystem", "tokens", "components", "writeScope"]) {
@@ -1166,9 +1174,6 @@ function runDoctor(args) {
       if (report.kg.orphans) report.warnings.push(`${report.kg.orphans} orphaned ledger entr${report.kg.orphans === 1 ? "y" : "ies"} — run 'fcc kg:repair --prune-orphans'`);
     } catch (e) { report.kg.error = e.message; report.warnings.push(`ledger unreadable: ${e.message}`); }
   } else report.kg.enabled = false;
-
-  // RTK detection
-  report.rtk.installed = !!(cfg.rtk && cfg.rtk.installed);
 
   if (f["explain-output"]) {
     const tree = {
@@ -1261,6 +1266,49 @@ async function runMigrate(args) {
 
   emit({ migrated: results, note: f["dry-run"] ? "dry run — nothing written" : "review CLAUDE.md.bak if anything looks off" }, true);
   process.exit(0);
+}
+
+// ─── fcc brevit:encode / brevit:decode ─────────────────────────────────────
+function readStdinSync() {
+  const chunks = [];
+  const buf = Buffer.alloc(65536);
+  let fd = 0;
+  while (true) {
+    let bytes;
+    try { bytes = readSync(fd, buf, 0, buf.length, null); }
+    catch (e) {
+      if (e.code === 'EAGAIN') { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1); continue; } // 1ms backoff — avoid busy-spin on non-blocking fd
+      if (e.code === 'EOF') break;
+      throw e;
+    }
+    if (bytes === 0) break;
+    chunks.push(Buffer.from(buf.subarray(0, bytes)));
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
+function readPayloadInput(argv) {
+  const fileArg = argv.find((a) => !a.startsWith('-'));
+  return fileArg ? readFileSync(fileArg, 'utf8') : readStdinSync(); // 0 = stdin
+}
+
+async function runBrevitEncode(argv) {
+  let raw;
+  try { raw = readPayloadInput(argv); }
+  catch { console.error('brevit:encode — no input (pass a file or pipe JSON on stdin)'); process.exit(2); }
+  let value;
+  try { value = JSON.parse(raw); }
+  catch { process.stdout.write(raw); return; } // already non-JSON → pass through
+  // Absent/broken brevit or guard failure → safeEncode returns raw JSON. Never fatal.
+  process.stdout.write(String(await safeEncode(value)));
+}
+
+async function runBrevitDecode(argv) {
+  let raw;
+  try { raw = readPayloadInput(argv); }
+  catch { console.error('brevit:decode — no input'); process.exit(2); }
+  try { process.stdout.write(JSON.stringify(decodeText(raw))); }
+  catch { process.stdout.write(raw); } // unparseable → pass through
 }
 
 // ─── entry ──────────────────────────────────────────────────────────────────

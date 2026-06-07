@@ -193,6 +193,12 @@
       "skillPath": "plugins/developer-essentials/skills/e2e-testing-patterns/SKILL.md",
       "computedHash": "6daed3254a84348588532aca327ec82a57cafefd7c97c50e75879788f7c1a18d"
     },
+    "epic-design": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering-team/skills/epic-design/SKILL.md",
+      "computedHash": "3ddfcbea6ea5086d052ad37f94503b8d4bad4d61d5d7fb1cabd8715c7add6b20"
+    },
     "feature-arch": {
       "source": "pproenca/dot-skills",
       "sourceType": "github",

@@ -8,6 +8,11 @@
 
 > `@`-imported by every agent in the Figma multi-agent system. **`figma-fetcher` is the only writer.** Every other agent treats the manifest as read-only input.
 
+> **Canonical vs wire form.** The manifest's canonical form is JSON on disk (`manifest.json`). Its *wire*
+> form for in-context slices MAY be Brevit-flattened when that is smaller — see `protocols/brevit.md`
+> (opportunistic + size-guarded). Brevit must round-trip variable paths byte-exact (binding rule 3); on
+> guard failure or when not smaller, slices stay raw JSON.
+
 ## Purpose
 
 One canonical JSON document, emitted by `figma-fetcher`, that every downstream agent consumes. It carries the parsed Figma design — classified by layer (per the active design methodology), with **original Figma variable names preserved** (never resolved to values) so the token-builder + component-builder can map them against the project's CSS system.
@@ -192,6 +197,7 @@ component-builder emits an `import { Button } from "<resolved import path>"` and
 2. **Variable names are preserved, never resolved.** `figmaVariable` always holds the raw Figma variable path. Resolving it to a hex/rem value in `styledProperties` is a contract violation. (The `tokens` dict carries the resolved values for the token-builder; consumers reading `styledProperties` map by name.)
 3. **Unbound values are flags.** `unbound: true` REQUIRES a non-null `rawValue`. `component-builder` MUST stop-and-flag any `unbound` styled property rather than invent a token or inline the raw value.
 4. **Layer drives placement.** The fetcher resolves `layer` (atomic/feature-sliced/component-based/flat/custom) against `config.components.designMethodology` and emits the matching `targetDir`. The component-builder writes only inside `targetDir`.
+   - `components[].layer` is **advisory** — the coordinator's think-once pass (Step 8.5) sets the authoritative `resolvedLayer` (see § buildPlan). `components[].layerConfidence` is `high|medium|low`.
 5. **Create vs. update.** `existsOnDisk` + `diskPath` are authoritative for the update flow. On `intent: "update"`, writers patch the file at `diskPath`; they never blind-overwrite.
 6. **Blocking ambiguities gate the run.** Any `ambiguities[]` entry with `blocking: true` forces `figma-coordinator` to ask the user before any build/icon agent runs.
 7. **Schema version.** `manifestVersion` MUST be one of `"1.0"`, `"1.1"`, or `"1.2"` (the current contract emits `"1.2"`; older versions remain valid — see the v1.2 note at the top). Any other value is a hard validation failure.
@@ -239,3 +245,36 @@ After all build/story/test specialists finish, `figma-coordinator` aggregates th
 ```
 
 The coordinator does NOT persist this to disk — it is surfaced to the user verbatim. Specialists verify their own writes against the filesystem before reporting; mismatches surface as flags.
+
+## § buildPlan (coordinator-produced, Step 8.5)
+
+The coordinator's think-once pass emits ONE `buildPlan` per run, derived from the validated manifest.
+It is the decided execution contract; builders execute it and do NOT re-derive its fields. Written to
+`/tmp/figma-<runId>/build-plan.json` (canonical JSON on disk); passed to builders in Brevit wire form
+when smaller (`protocols/brevit.md`, opportunistic + size-guarded).
+
+```jsonc
+{
+  "runId": "20260606-1200-heroui",
+  "components": [{
+    "name": "Card",
+    "resolvedLayer": "organism",          // final layer (NOT the fetcher's raw guess)
+    "layerConfidence": "high",            // "high" | "medium" | "low"
+    "apiShape": "compound",               // "props" | "compound" | "discriminated-union"
+    "renderMode": "server",               // "client" if state/effects/handlers present, else "server"
+    "requiredA11y": ["labelledby-on-region"],
+    "tokenBindings": ["color/surface/brand-primary", "radius/lg"],
+    "unboundDecision": "skip",            // "bind" | "skip" | "approved-inline" (per Step 3 gate)
+    "dropPolicy": "surface-to-attention", // how to report any collapsed affordance
+    "compose": []                         // reuse imports when a KG hit resolved the component
+  }],
+  "icons":  [{ "name": "CircleCheck", "fillModel": "currentColor", "a11y": "decorative-or-labelled" }],
+  "tokens": { "scope": "full-variable", "modes": ["light","dark"] }
+}
+```
+
+**Field authority.** A field PRESENT in a component's directive is authoritative — a builder MUST NOT
+re-decide it. A field the directive OMITS is the builder's to derive. `resolvedLayer` supersedes the
+fetcher's advisory `components[].layer`; `renderMode` supersedes any builder client/server guess;
+`apiShape` decides compound-vs-props-vs-union; `unboundDecision` reflects the Step 3 unbound gate
+(default `skip` — never an invented binding).

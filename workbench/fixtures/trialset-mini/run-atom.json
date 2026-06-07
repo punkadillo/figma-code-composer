@@ -1,0 +1,5 @@
+{ "trialId": "heroui", "generatedAt": null,
+  "runs": [{ "runId": "r2", "rung": "atom", "tier": "trivial", "scenario": { "icon": false, "tier": "trivial" }, "command": "/figma-build atom", "wallMs": 1000,
+    "agents": [{ "agent": "component-builder", "model": "opus", "tokens": { "input": 100, "output": 0, "thinkingEst": 0, "cacheRead": 0, "cacheCreation": 0, "total": 100 }, "timeMs": { "sumDuration": 100, "wallSpan": 100, "ttftAvg": 10 }, "toolUses": 1, "costUsd": 0.1 }],
+    "fanIn": [], "accuracy": { "composite": 95, "cappedAt": null, "visual": { "diffPct": 2, "score": 98 }, "style": { "matchRate": 96, "properties": {} }, "structural": { "score": 90 }, "gates": { "typecheck": true, "build": true, "tests": true, "a11y": true }, "weights": { "visual": 0.35, "style": 0.3, "structural": 0.2, "gates": 0.15 } } }],
+  "rollup": { "perAgent": [], "dominance": { "tokens": "component-builder", "time": "component-builder", "byTier": {} }, "crossCheck": { "otelTotalTokens": 100, "costsJsonlTotalTokens": 100, "deltaPct": 0 } } }

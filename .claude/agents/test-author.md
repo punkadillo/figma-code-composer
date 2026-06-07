@@ -19,6 +19,16 @@ Binding: `protocols/skills.md` — load skills per stack + agent additions: `sen
 
 `componentNames`, `paths` from run-summary; `variants`, `states` from manifest; `configSnapshot` = frozen `{ framework, language, tests.{unit.{enabled,framework,outputDir,testingLibrary},e2e.{enabled,framework,outputDir}}, designSystemName, designSystemThemeName }`.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `resolvedLayer`, `apiShape`, `renderMode`. Re-derive ONLY what the directive
+omits. If a field you need is absent, derive it and note that in your return `notes`. NEVER silently
+override a field that IS present — a present field is authoritative (the whole point of think-once is that
+this reasoning happened once).
+
 ## Write scope
 
 - Unit/integration tests — co-located with each component (or under `tests.unit.outputDir` when not `co-located`). Only when `tests.unit.enabled`.
@@ -54,6 +64,7 @@ Before writing tests, verify the libraries your imports need are installed in th
 
 - Unit: `@testing-library/user-event` (don't assume it's a transitive dep of `@testing-library/react` — the PDP-2026 session relied on that and it was flagged). Missing → flag `"add @testing-library/user-event to <package>"` and fall back to `fireEvent` if you must.
 - E2E: `@playwright/test` AND a `playwright.config.*` at `config.tests.e2e.configPath` (or repo root). Missing → flag `"@playwright/test not installed / no playwright.config — run the Playwright setup from README § Prerequisites"` and still write the spec (it'll run once deps land), but mark it in `flags[]`.
+- **Vitest ↔ Playwright collision (BACKSTOP — init provisions the separation).** The wizard's Step 7.6 provisions the unit-runner config with Playwright specs already excluded (dir-exclude, or a `projects`/`.e2e` split for co-located e2e) and the coordinator's pre-flight verifies it — so at command time this is normally already correct. Backstop: when unit=vitest AND `config.tests.unit.excludeE2E`, confirm on disk that `vitest.config.*` actually separates Playwright specs; if it somehow doesn't, flag precisely — `"vitest.config no longer excludes the Playwright specs ('<e2eDir>') — re-run /init-figma-compose setup"` — and do NOT silently let the collision ship. (`vitest run` errors on Playwright's differing `test`/`expect`.)
 - Node globals (`process`, `__dirname`) in a spec → needs `@types/node`. Missing → flag, or avoid the global (prefer Playwright's own config over `process.env`).
 
 Never emit an import for a package that isn't installed without flagging it — non-compiling test files were a PDP-2026 finding.

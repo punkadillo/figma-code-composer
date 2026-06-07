@@ -44,8 +44,16 @@ export const {{Name}} = forwardRef<HTMLDivElement, {{Name}}Props>(
 - Figma `variants[]` → `cva` variants object (`size: { sm: "...", md: "...", lg: "..." }`).
 - Figma `states[]` (hover, focus, disabled) → pseudo-class variants (`hover:`, `focus:`, `disabled:`) within `baseClasses`.
 - Boolean props (`isLoading`, `disabled`) → use `data-*` attributes for styling hooks when CSS system doesn't have a `:has()` workaround.
+- **Never narrow a native HTML attribute union.** Extend native props; do NOT
+  `Omit<…, "type">`-and-re-add a subset — that silently deletes valid values
+  (`email`/`url`/`tel`/`search`/`date`/… — the report-04 `Input` defect). To *react* to a specific value,
+  branch on it internally (`if (type === "password") …`) WITHOUT removing the other values from the public
+  type. Extend, never replace.
 
 ## State idiom
+- **`"use client"` is mandatory (hard rule, not a gotcha).** Any file using `useState`/`useEffect`/
+  `useReducer`/a stateful event handler under an App-Router/RSC default MUST have `"use client";` as its
+  FIRST line. This is a build-breaking omission (report-03 `Input.tsx`), not a style preference.
 - Local state: `useState`. Derived values: inline. Never mirror props into state via `useEffect`.
 - Controlled component pattern: optional `value` prop + `onValueChange` callback; internal `useState` only when uncontrolled.
 - Forwarded refs by default for any leaf-rendering component.
@@ -109,4 +117,4 @@ describe("{{Name}}", () => {
 - **`cva` + `tailwind-merge`**: when both are used, custom token groups MUST be registered in `extendTailwindMerge` or `tailwind-merge` will silently strip them.
 - **`useEffect` for prop sync**: forbidden — always derive inline.
 - **`React.FC`**: avoid; use explicit return-type-less function components or `forwardRef`.
-- **Tailwind v4 prefix order**: always `<prefix>:<modifier>:<utility>`, e.g. `tw:hover:bg-foo`. Inverted (`hover:tw:bg-foo`) compiles to nothing.
+- **Tailwind v4 prefix order**: always `<prefix>:<modifier>:<utility>`, e.g. `tw:hover:bg-foo`. Inverted (`hover:tw:bg-foo`) compiles to nothing. (**`tw:` is illustrative** — it only applies when `config.cssSystem.config.prefix` is set; most projects have no prefix and emit `hover:bg-foo`. See `adapters/css/tailwind-v4.md`.)

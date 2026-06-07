@@ -1,0 +1,16 @@
+{
+  "dimensions": {
+    "optimizedCode": 0.25,
+    "dx": 0.20,
+    "docs": 0.15,
+    "testDepth": 0.25,
+    "storybook": 0.15
+  },
+  "blend": {
+    "optimizedCode": { "metricWeight": 0.5, "judgeWeight": 0.5 },
+    "dx":            { "metricWeight": 0.3, "judgeWeight": 0.7 },
+    "docs":          { "metricWeight": 0.4, "judgeWeight": 0.6 },
+    "testDepth":     { "metricWeight": 0.5, "judgeWeight": 0.5 },
+    "storybook":     { "metricWeight": 0.5, "judgeWeight": 0.5 }
+  }
+}

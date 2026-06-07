@@ -31,6 +31,23 @@ Binding:
 - `routing` (optional) — `{ tier, skills[], model }` from coordinator. Load only the listed skills.
 - `adapterExcerpts` (optional, **prefer when present**) — `{ framework: { fileLayout, stateIdiom, classComposition, … }, css: { tokenReference, … }, designSystem?: { componentMap, providerWrapping, … } }`. Coordinator pre-reads the adapter files ONCE per run and hands you the sections you'd otherwise read yourself. **When `adapterExcerpts` is present and the field you need isn't `truncated: true`, use it instead of re-Reading the adapter file.** Falling through to a direct adapter Read is allowed only when the excerpt is missing or truncated. This saves ~4-5 Read tool calls per component dispatch.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `resolvedLayer`, `apiShape`, `renderMode`, `requiredA11y`, `unboundDecision`,
+`dropPolicy`, `houseStyle`, `tokenNaming`, `existingAssets`. Re-derive ONLY what the directive omits. If a
+field you need is absent, derive it and note that in your return `notes`. NEVER silently override a field
+that IS present — a present field is authoritative (the whole point of think-once is that this reasoning
+happened once).
+
+In particular: `houseStyle` already tells you the project's class-composition (`cva` vs a zero-dep `cn`
+filter-join vs `tailwind-merge`), prefix (often none — do NOT emit `tw:` unless `houseStyle.prefix` says
+so), ref style, quote style, and `"use client"` discipline — match it, don't infer it mid-build.
+`tokenNaming` gives the REAL on-disk token names (use `--accent`, never a guessed `--accent-accent`).
+`existingAssets` lists reusable on-disk icons/components (import the house `CheckIcon`; don't regenerate one).
+
 ## Write scope
 
 ONLY files inside the active methodology's component target directories (`atomicLayout.*Dir` / `featureSlicedLayout.*Dir` / `flatLayout.componentsDir`) and their `index.ts`/`index.js` barrels. Any other write → abort. Never write tokens / icons / stories / tests.
@@ -44,6 +61,28 @@ For each `styledProperties[]` entry across all components:
 3. Tailwind: verify any custom token-group prefix is registered (`adapters/css/tailwind-v4.md` § Custom token registration). Missing → flag, don't block.
 4. **Dependency audit (read `package.json` ONCE at run start).** For every library the adapter prescribes (`class-variance-authority`/`cva`, `clsx`, `tailwind-merge`, etc.) verify it's in `dependencies` or `devDependencies` of the component's package (`packages/<x>/package.json` in a monorepo, else root). Missing → do NOT emit the import; instead either (a) inline the equivalent without the lib (e.g. plain template-literal class composition instead of `cva`) and flag, or (b) record `flag: "adapter wants cva but it's not installed — run `npm i -D class-variance-authority` or the component falls back to manual class composition"`. **Never import a package that isn't installed** — it produces non-compiling output (the PDP-2026 session shipped a `cva` import with no `cva` dep).
 5. **Symbol audit for composed/imported components.** Before writing any `import { X } from "<path>"` for a sibling/reused component, verify the named export `X` actually exists at `<path>` (read the file or use the `exportName` the coordinator passed in `reusedComposes[]` / `priorReuseHints[]`). Never invent an import — the PDP-2026 session imported `{ Button }` from a file that only exports `ButtonV2`. Mismatch → use the real export name, or flag if no match.
+
+## Mandatory post-write self-check
+
+Before returning, self-grep your emitted files and fix any hit (these are the workbench-proven defects):
+
+- **Render mode → `"use client"`.** Honor `buildPlan.renderMode`. If `client` (or your file contains
+  `useState`/`useEffect`/`useReducer`/a stateful event handler) and the framework is React with an
+  App-Router/RSC default, the FIRST line of the file MUST be `"use client";`. A stateful file missing the
+  directive is a hard self-fail — fix before emit. (Report-03 `Input.tsx` shipped `useState` with no
+  `"use client"` → build break.)
+- **Zero `TODO[figma-bind]` / `TODO[figma-unbound]`.** An unbound (non-`intentionalLiteral`) value is
+  recorded in `skipped[]`, NEVER inlined with a TODO comment. (Report-04 negative example — Card inlined
+  `h-6`, `right-2.5`, `size-14`, `h-28` with `// TODO[figma-bind]`: FORBIDDEN. Alert obeyed the rule and
+  topped the quality score.)
+- **API shape.** Honor `buildPlan.apiShape`: `compound` → export sub-components (e.g. `CardHeader`/
+  `CardFooter`) and compose; do NOT hide regions behind `show*` booleans. `discriminated-union` → a
+  discriminated prop union, not a flat 30-prop bag. (Report-04 Card prop-bag explosion lost on dx.)
+- **A11y.** Honor `buildPlan.requiredA11y`. An icon-only control MUST require/emit an accessible name
+  (typed-required `aria-label`); refuse to emit an unlabeled icon-only button. (Report-04 Button documented
+  the requirement but rendered unlabeled.)
+- **No placeholder copy.** Never bake Figma placeholder strings (e.g. `title="This is an alert"`) as
+  default prop values — they are sample data, not defaults. (Report-03 Alert leaked placeholder defaults.)
 
 ## Protocol
 

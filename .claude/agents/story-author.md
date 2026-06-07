@@ -19,9 +19,20 @@ Binding: `protocols/skills.md` — per-stack skills + agent additions: `senior-q
 
 `componentNames`, `paths` from run-summary; `variants`, `states` from manifest; `figmaDesignUrl` per component (built by coordinator); `changedIcons[]` (may be empty); `configSnapshot` = frozen `{ framework, language, stories.{enabled,framework,outputDir,titleConvention}, iconsOutputDir, designSystemName, designSystemThemeName }`.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `resolvedLayer`, `apiShape`. Re-derive ONLY what the directive omits. If a
+field you need is absent, derive it and note that in your return `notes`. NEVER silently override a field
+that IS present — a present field is authoritative (the whole point of think-once is that this reasoning
+happened once).
+
 ## Write scope
 
 - Stories file co-located with each component (or under `stories.outputDir` when not `co-located`).
+- **Docs file** co-located with each component: `<Name>.mdx` (same dir as the stories file).
 - `<iconsOutputDir>/stories/Icons.stories.<ext>` (when `changedIcons[]` non-empty).
 
 Any other write → abort.
@@ -53,6 +64,18 @@ File ext: `<Name>.stories.<tsx|ts|vue|svelte>`. Title via `meta.title`.
 8. **A11y test floor** — `meta.parameters.a11y = { test: "error" }` on every meta; story passes axe at render time.
 9. **Visual regression** — Chromatic picks up stories automatically when `CHROMATIC_PROJECT_TOKEN` is set; per-story config only for intentional visual diffs (`parameters.chromatic = { delay: 200 }`).
 
+## Component docs — one `<Name>.mdx` per component (MANDATORY when `stories.enabled`)
+
+Missing docs are the single biggest quality drag (docs sub-score collapses to 5–13 when no `.md`/`.mdx` is emitted). Emit a Storybook MDX doc page per component alongside its stories — lightweight, autodocs-backed, no separate docs agent. One `Write` call per file. Each `<Name>.mdx`:
+
+1. **Storybook MDX shape.** `import { Meta, Title, Description, Primary, Controls, Stories } from "@storybook/blocks";` and `import * as <Name>Stories from "./<Name>.stories";`, then `<Meta of={<Name>Stories} />`. This binds the doc to the stories so the props table + canvas come from the same source of truth.
+2. **Required blocks, in order:** `<Title />`, a one-paragraph **purpose** description (what the component is for — derive from the manifest layer/role, not boilerplate), `<Primary />` (the canonical example), `<Controls />` (auto props table), then a short **Usage** section with a real code snippet (the most common invocation, props populated), and `<Stories />` (the remaining variants).
+3. **API surface, stated plainly.** When the buildPlan directive gives `apiShape: compound` or `discriminated-union`, document the sub-components / the discriminant prop and its allowed values — this is the part autodocs alone misses.
+4. **A11y + known gaps.** A one-line note on the component's accessibility contract (e.g. "icon-only trigger requires `aria-label`") and any `droppedAffordances` / fidelity gaps the builder surfaced, so the doc reflects reality.
+5. **No invented behaviour.** Document only what the component actually exposes — never describe a prop the source doesn't have. If you lack the info, omit the section rather than guess.
+
+On `intent: "update"` with a breaking prop-surface change, rewrite the `.mdx` fresh from the new surface (same one-Write discipline as stories).
+
 ## Icon stories (when `changedIcons[]` non-empty)
 
 Refresh `<iconsOutputDir>/stories/Icons.stories.<ext>`:
@@ -67,6 +90,8 @@ Refresh `<iconsOutputDir>/stories/Icons.stories.<ext>`:
 {
   "storiesCreated":      [{ "component": "ProductCtaBar", "path": "src/components/molecules/ProductCtaBar/ProductCtaBar.stories.tsx" }],
   "storiesUpdated":      [],
+  "docsCreated":         [{ "component": "ProductCtaBar", "path": "src/components/molecules/ProductCtaBar/ProductCtaBar.mdx" }],
+  "docsUpdated":         [],
   "iconStoriesTouched":  "src/icons/stories/Icons.stories.tsx",
   "toolUses":            22,
   "flags":               []

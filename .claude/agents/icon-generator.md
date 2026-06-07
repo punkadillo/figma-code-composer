@@ -17,6 +17,16 @@ Binding: `protocols/component-layout.md` § File layout (per-framework conventio
 
 `icons[]` entries: `nodeId`, `dataName`, `suggestedFileName`, `viewBox`, `fillModel`, `literalColors`, `existsOnDisk`, `diskPath`, optional `notes`. Plus `intent` (`create`/`update`) and `configSnapshot` = frozen `{ framework, language, namingConvention, designSystemName }`.
 
+## Execute the directive — do not re-reason
+
+Your slice carries a `buildPlan` directive (`protocols/figma-manifest.md` § buildPlan), passed in Brevit
+wire form when smaller (`protocols/brevit.md` — read the flattened `key.path:value` lines directly; do not
+demand JSON). **These directive fields are already decided by the coordinator's think-once pass — execute
+them, do NOT re-derive them:** `fillModel`, `a11y`. Re-derive ONLY what the directive omits. If a field
+you need is absent, derive it and note that in your return `notes`. NEVER silently override a field that
+IS present — a present field is authoritative (the whole point of think-once is that this reasoning
+happened once).
+
 ## Write scope
 
 ONLY `config.icons.outputDir/**` + the icon barrel (`config.icons.outputDir/<config.icons.barrelFile>`). Any other write → abort.
@@ -33,22 +43,29 @@ ONLY `config.icons.outputDir/**` + the icon barrel (`config.icons.outputDir/<con
 
 | `fillModel`    | Emit                                                                              |
 | -------------- | --------------------------------------------------------------------------------- |
-| `currentColor` | Replace all explicit fills with `currentColor`; accept `color` prop overriding via `style={{ color }}` (React) or framework equivalent |
+| `currentColor` | Replace all explicit fills with `currentColor`; accept `color` prop overriding via `style={{ color }}` (React) or framework equivalent. **Spread order is binding: spread `{...props}` FIRST, then apply the merged `style`** — `<svg {...props} style={{ color, ...props.style }} />`. Spreading `{...props}` *after* `style` lets a caller passing `color` + `style` together clobber the injected color (a real correctness bug). |
 | `literal`      | Keep literal hex; do NOT expose `color` prop (semantic markers — veg/non-veg/brand) |
 | `mixed`        | Per-path: variable-bound → `currentColor`; literal → keep hex                     |
 
 ## Protocol
 
-1. **Fetch SVG** — `mcp__figma__get_design_context` per icon (or screenshot fallback if vector unavailable). Optimise: collapse `<g>` wrappers, drop empty `<defs>`, round paths to 2 decimals, dedupe transforms.
-2. **Raster fallback** — if a node renders as raster (e.g. multicolour brand logo), embed `<image href="<base64 PNG>" />` + `<title>`. Flag it.
+1. **Fetch SVG — vector first, always.** `mcp__figma__get_design_context` per icon. **Extract the clean vector path even when the MCP's first render comes back as a raster `img` asset.** A simple single-colour glyph (e.g. a checkmark bound to `currentColor`) MUST be emitted as a real `<path>` so theming works — a raster defeats `currentColor` and `color`. Before accepting any raster: try `get_design_context` again for the vector geometry, walk `get_metadata` for child vector nodes, and only treat it as genuinely vector-less if no path data exists anywhere. Optimise: collapse `<g>` wrappers, drop empty `<defs>`, round paths to 2 decimals, dedupe transforms.
+2. **Raster fallback — genuinely vector-less ONLY, and flagged as a fidelity gap.** Fall back to `<image href="<base64 PNG>" />` + `<title>` ONLY when the source truly has no vector paths (e.g. a multicolour brand logo). When the Figma source is a raster PNG but the glyph is reconstructable, prefer a faithful vector reconstruction (canonical icon-set path / clean stroke approximation) over baking the raster — and record it in `flags` as a **known fidelity gap**, e.g. `{ icon, reason: "source is raster PNG; emitted geometry-faithful vector approximation, not byte-exact" }`. Never present an approximation as a silent exact substitution; never strip themeability to force-match a raster.
 3. **Sub-frame offset** — icon inside a larger frame → capture frame offset, translate inner content so viewBox starts at `0 0`. Otherwise visual layout breaks.
-4. **A11y default** — every icon sets `role="img"` + `aria-hidden="true"`; consumer can pass `title` (rendered as `<title>` inside SVG) and `aria-label` for meaningful icons.
+4. **A11y — resolve the `aria-hidden`/`aria-label` contradiction.** An icon is decorative OR labelled,
+   never both: if `aria-label`/`title` is provided → set `role="img"` and OMIT `aria-hidden`; otherwise →
+   `aria-hidden="true"` with no `role`. Do NOT hardcode `aria-hidden="true"` on a component that also
+   accepts `aria-label` (the report-04 dead-label defect).
 5. **Per-framework template** (per `protocols/component-layout.md`):
+   - **Type-only imports for `verbatimModuleSyntax` (TS projects).** Any imported symbol used ONLY as a type MUST use the `type` modifier — `import React, { type SVGProps } from 'react'`, not `import { SVGProps }`. A value-style import of a type breaks `tsc -b` under `verbatimModuleSyntax` (and silently passes `vitest`, so it only surfaces at the build gate — a prior rung's `CheckIcon.tsx` broke the whole app typecheck this way). Apply to every framework's typed icon template.
    - React: `.tsx` function component, props `{ className, size?, color?, title?, "aria-label"? }`.
    - Vue: `.vue` SFC, `<script setup lang="ts">` with the same props.
    - Angular: `<kebab-name>.component.ts` standalone, `[size]` `[color]` inputs.
    - Svelte: `.svelte` with `<script lang="ts">` props.
-6. **Barrel** — regenerate `<config.icons.outputDir>/<config.icons.barrelFile>` re-exporting every icon alphabetically.
+6. **Barrel export consistency.** Every icon export uses the SAME form in the barrel (`index.ts`): named
+   re-exports — `export { CircleCheckIcon } from "./CircleCheckIcon";` (and `export type { … }` if types are
+   exported). Mixing default and named re-exports broke the render build (report-08). Pick named, apply
+   uniformly. Regenerate `<config.icons.outputDir>/<config.icons.barrelFile>` re-exporting every icon alphabetically.
 7. **Update flow — write-first discipline.** On `intent: "create"`: emit each icon file in ONE `Write` call. On `intent: "update"` + `existsOnDisk: true`: diff fillModel + viewBox; patch via `Edit`. **Never run formatter probes** — consumer's tooling owns that.
 8. **Stage to KG (when enabled)** — once per icon written:
    ```bash
