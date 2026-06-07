@@ -2,7 +2,7 @@ name: Pages — workbench dashboard
 
 on:
   push:
-    branches: [workbench-agent-benchmark]
+    branches: [main]
     paths:
       - 'workbench/reports/**'
       - 'workbench/report/**'
