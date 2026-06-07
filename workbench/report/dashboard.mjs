@@ -373,7 +373,7 @@ export function renderTrialsetDashboard(ts) {
   </div>
 
   <section><div class="panel"><h2>Accuracy by rung (composite)</h2>
-    <p class="note">Composite blends visual / style / structural / gates (a build failure caps it). Computed live: target vs HeroUI Storybook render (visual pixel-diff + style) and rendered-DOM + source structural; unavailable sub-scores renormalise away. <code>icon-only</code> / <code>page</code> are out of fidelity scope (shown as 0). Visual / style read low by design — target is <code>designSystem: none</code> vs HeroUI.</p>${accBars}</div></section>
+    <p class="note">Composite blends visual / style / structural / gates (a build failure caps it). Computed live: target vs the reference oracle Storybook render (visual pixel-diff + style) and rendered-DOM + source structural; unavailable sub-scores renormalise away. <code>icon-only</code> / <code>page</code> are out of fidelity scope (shown as 0). Visual / style read low by design — target is <code>designSystem: none</code> vs the reference design system.</p>${accBars}</div></section>
 
   <section><div class="panel"><h2>Quality by rung (composite)</h2>
     <p class="note">Source judge, <strong>3-vote median panel</strong> per dimension (visual / style need live rendering, not included). <code>icon-only</code> / <code>page</code> are out of scope.</p>${qualBars}${qualityTable}</div></section>

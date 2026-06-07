@@ -1,5 +1,5 @@
 {
-  "trialId": "heroui-20260606",
+  "trialId": "reference-20260606",
   "generatedAt": null,
   "rungs": [
     {
@@ -115,9 +115,9 @@
             "judge": {
               "score": 74,
               "rationales": [
-                "JSDoc on every prop, Omit<HTMLAttributes,'title'> avoids collision, sensible defaults, composable icon/actionLabel API, both AlertProps and AlertVariant exported. Slightly less composable than HeroUI's compound-subcomponent pattern.",
+                "JSDoc on every prop, Omit<HTMLAttributes,'title'> avoids collision, sensible defaults, composable icon/actionLabel API, both AlertProps and AlertVariant exported. Slightly less composable than Reference's compound-subcomponent pattern.",
                 "Full JSDoc on every prop, sensible defaults, Omit<HTMLAttributes,'title'> correct, types exported. Monolithic prop-bag vs oracle's composable compound-component pattern limits advanced composition.",
-                "Props are well-typed and JSDoc-annotated. However, the generated API is a monolithic single-component vs the oracle's composable compound pattern (AlertRoot/AlertIndicator/AlertTitle/AlertDescription). Loses composability expected of HeroUI v3."
+                "Props are well-typed and JSDoc-annotated. However, the generated API is a monolithic single-component vs the oracle's composable compound pattern (AlertRoot/AlertIndicator/AlertTitle/AlertDescription). Loses composability expected of Reference v3."
               ]
             }
           },
@@ -1165,7 +1165,7 @@
               "score": 88,
               "rationales": [
                 "Typed JSDoc on every prop, clear controlled/uncontrolled API, composable <Tab> declarative pattern. Tab as null-render config marker may surprise devs; no forwardRef on Tab. Sensible defaults throughout.",
-                "Well-typed props with JSDoc, controlled/uncontrolled duality, disabledKeys + isDisabled both supported, sensible defaults. Tab as config-marker pattern is clever but deviates from HeroUI v3 compound-component idiom (TabList/TabPanel as siblings, not children).",
+                "Well-typed props with JSDoc, controlled/uncontrolled duality, disabledKeys + isDisabled both supported, sensible defaults. Tab as config-marker pattern is clever but deviates from Reference v3 compound-component idiom (TabList/TabPanel as siblings, not children).",
                 "Excellent JSDoc on every prop, clear controlled/uncontrolled split, intuitive names (isVertical, disabledKeys, onSelectionChange), aria-label typed. Declarative Tab marker pattern is clean. Minor: no size/icon slot."
               ]
             }
@@ -1882,8 +1882,8 @@
               "score": 82,
               "rationales": [
                 "Typed InputProps extends InputHTMLAttributes, sensible defaults, good JSDoc, forwardRef, displayName set. Missing errorMessage/helperText slots and no compound-component pattern (oracle uses context + slots). leadingIcon-only (no trailing) limits composability.",
-                "InputProps extends InputHTMLAttributes giving full native passthrough. Prop names (variant, label, leadingIcon) are intuitive. Dev-mode a11y warning is excellent DX. Missing: no errorMessage/helperText slot, no trailingIcon, no size prop — limiting vs HeroUI TextFieldContext pattern. Types are clean and JSDoc is thorough.",
-                "Extends InputHTMLAttributes fully, typed props with JSDoc, sensible defaults, MagnifierIcon convenience export, and accessible-name dev warning are all good DX. Missing: no error/helperText/required/clearable slots; variant naming ('primary'/'secondary') is bespoke and diverges from HeroUI's context-driven variant pattern, reducing composability."
+                "InputProps extends InputHTMLAttributes giving full native passthrough. Prop names (variant, label, leadingIcon) are intuitive. Dev-mode a11y warning is excellent DX. Missing: no errorMessage/helperText slot, no trailingIcon, no size prop — limiting vs Reference TextFieldContext pattern. Types are clean and JSDoc is thorough.",
+                "Extends InputHTMLAttributes fully, typed props with JSDoc, sensible defaults, MagnifierIcon convenience export, and accessible-name dev warning are all good DX. Missing: no error/helperText/required/clearable slots; variant naming ('primary'/'secondary') is bespoke and diverges from Reference's context-driven variant pattern, reducing composability."
               ]
             }
           },
@@ -2390,7 +2390,7 @@
             "judge": {
               "score": 72,
               "rationales": [
-                "Clean forwardRef, no prop-mirroring into state, correct controlled/uncontrolled split. Missing useCallback on handleChange; textClasses is a needless variable for a static string. No compound/context pattern diverges from HeroUI oracle but is idiomatic React.",
+                "Clean forwardRef, no prop-mirroring into state, correct controlled/uncontrolled split. Missing useCallback on handleChange; textClasses is a needless variable for a static string. No compound/context pattern diverges from Reference oracle but is idiomatic React.",
                 "Clean controlled/uncontrolled pattern, no dead code, good use of forwardRef. Missing useMemo for derived classes; textClasses recalculated every render. Deps on _SwitchControl adds indirection not in ref design.",
                 "Clean controlled/uncontrolled handling, no dead code. Missing useMemo on stable handlers; relies on private _SwitchControl sub-component not in oracle's compound API. Readable but structurally diverges from ref's context+slots pattern."
               ]
@@ -2402,9 +2402,9 @@
             "judge": {
               "score": 68,
               "rationales": [
-                "Well-typed props with JSDoc, HeroUI-aligned names (isSelected/isDisabled/onValueChange), sensible defaults. API is monolithic vs oracle's composable SwitchRoot/Control/Thumb compound pattern, limiting consumer customizability.",
-                "Props are well-typed with JSDoc, HeroUI-style naming (isSelected, isDisabled, onValueChange). Missing compound sub-components (Control, Thumb, Icon, Content) present in ref oracle, limiting composability significantly.",
-                "Props well-named and typed (isSelected, onValueChange, isDisabled match HeroUI conventions). API is monolithic rather than the compound pattern (Root/Control/Thumb/Icon/Content) the oracle exposes, reducing composability for consumers."
+                "Well-typed props with JSDoc, Reference-aligned names (isSelected/isDisabled/onValueChange), sensible defaults. API is monolithic vs oracle's composable SwitchRoot/Control/Thumb compound pattern, limiting consumer customizability.",
+                "Props are well-typed with JSDoc, Reference-style naming (isSelected, isDisabled, onValueChange). Missing compound sub-components (Control, Thumb, Icon, Content) present in ref oracle, limiting composability significantly.",
+                "Props well-named and typed (isSelected, onValueChange, isDisabled match Reference conventions). API is monolithic rather than the compound pattern (Root/Control/Thumb/Icon/Content) the oracle exposes, reducing composability for consumers."
               ]
             }
           },
@@ -2840,9 +2840,9 @@
             "judge": {
               "score": 74,
               "rationales": [
-                "Full JSDoc on every prop, extends ButtonHTMLAttributes, sensible defaults, ref-forwarding, displayName set, prop names match HeroUI oracle. Composable and discoverable API.",
-                "Props well-typed with JSDoc, sensible defaults, extends ButtonHTMLAttributes. Missing fullWidth, isLoading, and ButtonGroup context from oracle. startContent/endContent API matches HeroUI but is not the actual prop pattern the oracle uses.",
-                "Typed props, sensible defaults, JSDoc on each prop. Misses fullWidth, isLoading, and ButtonGroup context that oracle exposes. API is narrower than HeroUI v3 surface; isDisabled vs disabled naming diverges from oracle."
+                "Full JSDoc on every prop, extends ButtonHTMLAttributes, sensible defaults, ref-forwarding, displayName set, prop names match Reference oracle. Composable and discoverable API.",
+                "Props well-typed with JSDoc, sensible defaults, extends ButtonHTMLAttributes. Missing fullWidth, isLoading, and ButtonGroup context from oracle. startContent/endContent API matches Reference but is not the actual prop pattern the oracle uses.",
+                "Typed props, sensible defaults, JSDoc on each prop. Misses fullWidth, isLoading, and ButtonGroup context that oracle exposes. API is narrower than Reference v3 surface; isDisabled vs disabled naming diverges from oracle."
               ]
             }
           },
@@ -3192,9 +3192,9 @@
             "judge": {
               "score": 78,
               "rationales": [
-                "All props typed, JSDoc on each prop, sensible defaults, spreads HTMLAttributes. Missing: no onClose/dismissible callback, no disabled prop, API diverges from HeroUI oracle's compound pattern (ChipRoot+ChipLabel). Usable but narrower than reference.",
-                "Good JSDoc on props, typed interfaces, sensible defaults. But variant names (primary/secondary/tertiary/soft) diverge from HeroUI oracle (solid/bordered/light/flat/faded/dot), reducing discoverability for HeroUI users. No disabled prop.",
-                "Well-typed props, sensible defaults, JSDoc on each prop, ref-forwarded, spreads HTML attrs. Variant names (primary/secondary/tertiary/soft) deviate from HeroUI v3 oracle (solid/bordered/light/flat/dot). Misleading API for consumers familiar with the real library."
+                "All props typed, JSDoc on each prop, sensible defaults, spreads HTMLAttributes. Missing: no onClose/dismissible callback, no disabled prop, API diverges from Reference oracle's compound pattern (ChipRoot+ChipLabel). Usable but narrower than reference.",
+                "Good JSDoc on props, typed interfaces, sensible defaults. But variant names (primary/secondary/tertiary/soft) diverge from Reference oracle (solid/bordered/light/flat/faded/dot), reducing discoverability for Reference users. No disabled prop.",
+                "Well-typed props, sensible defaults, JSDoc on each prop, ref-forwarded, spreads HTML attrs. Variant names (primary/secondary/tertiary/soft) deviate from Reference v3 oracle (solid/bordered/light/flat/dot). Misleading API for consumers familiar with the real library."
               ]
             }
           },
