@@ -29,7 +29,7 @@ happened once).
 
 ## Emission discipline — comment economy
 
-Minimal, **single-line** comments only in icon components and the barrel — no block/multi-line comments, no banners, no comment that restates the SVG or echoes a Figma node name. Icon files are mostly path data; ship them comment-free. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+Minimal, **single-line** comments only (**hard cap ≤80 chars**, leader→EOL excl. indentation) in icon components and the barrel — no block/multi-line comments, no banners, no comment that restates the SVG or echoes a Figma node name. Icon files are mostly path data; ship them comment-free. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
 
 ## Write scope
 

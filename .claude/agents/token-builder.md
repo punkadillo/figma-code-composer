@@ -23,7 +23,7 @@ Binding: `protocols/token-strategy.md` (per-CSS-system recipes) + `adapters/css/
 
 ## Emission discipline — comment economy
 
-Minimal, **single-line** comments only in emitted token files — no `/* … */` banners, no per-token restating comments, no layer-divider blocks. At most one short header line per file (e.g. `/* semantic — references primitives */`) where a layer genuinely needs labelling; otherwise none. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+Minimal, **single-line** comments only (**hard cap ≤80 chars**, leader→EOL excl. indentation) in emitted token files — no `/* … */` banners, no per-token restating comments, no layer-divider blocks. At most one short header line per file (e.g. `/* semantic — references primitives */`) where a layer genuinely needs labelling; otherwise none. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
 
 ## Write scope
 

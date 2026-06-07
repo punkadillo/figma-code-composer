@@ -31,7 +31,7 @@ this reasoning happened once).
 
 ## Emission discipline — comment economy
 
-Minimal, **single-line** comments only — no block/multi-line comments, no banners or section dividers, no comment that restates an assertion. Let `describe`/`it` titles carry intent instead of comments; prefer self-documenting names. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
+Minimal, **single-line** comments only (**hard cap ≤80 chars**, leader→EOL excl. indentation) — no block/multi-line comments, no banners or section dividers, no comment that restates an assertion. Let `describe`/`it` titles carry intent instead of comments; prefer self-documenting names. Cuts output tokens every build. Full rule: `protocols/figma-manifest.md` § Emission discipline.
 
 ## Write scope
 
