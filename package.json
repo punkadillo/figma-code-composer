@@ -19,7 +19,7 @@
   "author": {
     "name": "Allan Jeo Joseph",
     "email": "allanjeo95@gmail.com",
-    "url": "https://github.com/raveracker"
+    "url": "https://github.com/punkadillo"
   },
   "type": "module",
   "engines": {
@@ -62,12 +62,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/raveracker/figma-code-composer.git"
+    "url": "git+https://github.com/punkadillo/figma-code-composer.git"
   },
   "bugs": {
-    "url": "https://github.com/raveracker/figma-code-composer/issues"
+    "url": "https://github.com/punkadillo/figma-code-composer/issues"
   },
-  "homepage": "https://github.com/raveracker/figma-code-composer#readme",
+  "homepage": "https://github.com/punkadillo/figma-code-composer#readme",
   "publishConfig": {
     "access": "public"
   },
