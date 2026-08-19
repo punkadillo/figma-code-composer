@@ -10,7 +10,7 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-3da639.svg?style=flat-square" alt="license: MIT"/></a>
   <a href="#quickstart"><img src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Cursor-6e40c9.svg?style=flat-square" alt="Claude Code · Cursor"/></a>
   <a href=".figma-pipeline/skills/"><img src="https://img.shields.io/badge/bundled%20skills-137-orange.svg?style=flat-square" alt="137 bundled skills"/></a>
-  <a href="https://raveracker.github.io/figma-code-composer/"><img src="https://img.shields.io/badge/workbench-dashboard-7c9cff.svg?style=flat-square" alt="workbench dashboard"/></a>
+  <a href="https://punkadillo.github.io/figma-code-composer/"><img src="https://img.shields.io/badge/workbench-dashboard-7c9cff.svg?style=flat-square" alt="workbench dashboard"/></a>
 </p>
 
 
@@ -499,8 +499,8 @@ Key sections:
 
 ## Links
 
-- **Repo**: [github.com/raveracker/figma-code-composer](https://github.com/raveracker/figma-code-composer)
+- **Repo**: [github.com/punkadillo/figma-code-composer](https://github.com/punkadillo/figma-code-composer)
 - **npm**: [`figma-code-composer`](https://www.npmjs.com/package/figma-code-composer)
-- **Issues**: [github.com/raveracker/figma-code-composer/issues](https://github.com/raveracker/figma-code-composer/issues)
+- **Issues**: [github.com/punkadillo/figma-code-composer/issues](https://github.com/punkadillo/figma-code-composer/issues)
 - **Binding rules**: [`CLAUDE.md`](./CLAUDE.md) · [`AGENTS.md`](./AGENTS.md)
 - **Protocols** (source of truth for agent behavior): [`.figma-pipeline/protocols/`](./.figma-pipeline/protocols/)
