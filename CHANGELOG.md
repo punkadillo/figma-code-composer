@@ -1,5 +1,13 @@
 # figma-code-composer
 
+## 1.2.1
+
+### Patch Changes
+
+- [#9](https://github.com/punkadillo/figma-code-composer/pull/9) [`5678733`](https://github.com/punkadillo/figma-code-composer/commit/56787332f83dcd165223ffcdc2dcc17edacc7ffa) Thanks [@punkadillo](https://github.com/punkadillo)! - Point package metadata at the punkadillo GitHub account. The repository,
+  bugs, homepage and author URLs still referenced the old handle, which now
+  404s, so every link the npm page renders was dead.
+
 ## 1.2.0
 
 ### Minor Changes

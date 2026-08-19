@@ -1,6 +1,6 @@
 {
   "name": "figma-code-composer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Drop-in, framework-agnostic Figma-to-code multi-agent pipeline scaffold for Claude Code and Cursor. Includes a knowledge-graph CLI for cross-run component reuse, complexity-driven routing, and handover-based session optimization.",
   "keywords": [
     "figma",
